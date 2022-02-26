@@ -14,15 +14,22 @@ module.exports = {
             fname: existingUser.fname,
             role: existingUser.userType,
           };
-          return res.status(200).send(user);
-        }
+          return res.status(200).send({ message: "User Found", data: user });
+        } else
+          return res
+            .status(400)
+            .send({ message: "Incorrect Password", data: null });
       } else {
         return res
           .status(404)
-          .send("User not found Please Enter Correct Credientials or Signup!");
+          .send({
+            message:
+              "User not found Please Enter Correct Credientials or Signup!",
+            data: null,
+          });
       }
     } catch (e) {
-      return res.status(400).send(e.message);
+      return res.status(400).send({ message: e.message, data: null });
     }
   },
   signup: async (req, res) => {
@@ -51,7 +58,7 @@ module.exports = {
         return res.status(200).send(user);
       }
     } catch (e) {
-      return res.status(400).send(e.message);
+      return res.status(400).send({ message: e.message, data: null });
     }
   },
 };

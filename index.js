@@ -4,6 +4,7 @@ const app = express();
 require("dotenv").config();
 const port = process.env.PORT;
 app.use(express.json());
+app.use(require("cors")());
 const string = process.env.CONNECTION_STRING;
 const AdminRoute = require("./routes/AdminRoute");
 const TouristRoute = require("./routes/TouristRoute");
