@@ -5,7 +5,7 @@ const Schema = mongoose.Schema({
   phoneNumber: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  profilePic: { type: String, default: "default.png" },
+  profilePic: { type: String, default: "/images/profile-pictures/default.png" },
   userType: { type: String, default: "tourist" },
   address: { type: String },
   city: { type: String, required: true },
