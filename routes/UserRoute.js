@@ -4,13 +4,13 @@ const UserController = require("../controllers/UserController");
 const router = require("express").Router();
 router.post(
   "/login",
-  userRules.loginUserRules,
+  // userRules.loginUserRules,
   validation,
   UserController.login
 );
 router.post(
   "/signup",
-  userRules.signUpUserRules,
+  // userRules.signUpUserRules,
   validation,
   UserController.signup
 );

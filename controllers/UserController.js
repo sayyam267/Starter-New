@@ -106,7 +106,6 @@ module.exports = {
         await newUser.save();
         const user = {
           email: newUser.email,
-          tourist,
           id: newUser._id,
           fname: newUser.fname,
           role: newUser.userType,
@@ -160,13 +159,13 @@ module.exports = {
             .status(200)
             .send({ message: "Fetched", data: existingUsers });
         } else {
-          res.status(404).send("NOT FOUND");
+          return res.status(404).send("NOT FOUND");
         }
       } else {
         throw Error("ADD QUERY PARAMS");
       }
     } catch (e) {
-      res.status(400).send(e.message);
+      return res.status(400).send(e.message);
     }
   },
   editProfile: async (req, res) => {
