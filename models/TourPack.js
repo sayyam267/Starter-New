@@ -8,7 +8,7 @@ const Schema = mongoose.Schema({
   destination: { type: String, required: true },
   addedOn: { type: Date, required: true },
   duration: { type: String, required: true },
-  touristID: { type: mongoose.Schema.Types.ObjectId, ref: "Tourists" },
+  // touristID: { type: mongoose.Schema.Types.ObjectId, ref: "Tourists" },
   VendorId: { type: mongoose.Schema.Types.ObjectId, ref: "Vendors" },
   seats: { type: Number, required: true },
   ValidTill: { type: Date, required: true },

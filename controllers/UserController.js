@@ -1,6 +1,8 @@
+const jwt = require("jsonwebtoken");
 const UserModel = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 const multer = require("multer");
+require("dotenv").config();
 const storage = multer.diskStorage({
   destination: (req, res, cb) => {
     cb(null, "public/Images/profile-pictures");
@@ -25,7 +27,10 @@ module.exports = {
             fname: existingUser.fname,
             role: existingUser.userType,
           };
-          return res.status(200).send({ message: "User Found", data: user });
+          const token = await jwt.sign(user, process.env.PRIVATE_KEY);
+          return res
+            .status(200)
+            .send({ message: "User Found! Token is Returned", data: token });
         } else
           return res
             .status(400)
@@ -137,7 +142,7 @@ module.exports = {
       }
       console.log(query);
       if (Object.keys(query).length > 0) {
-        const existingUsers = await UserModel.find({ query }).select([
+        const existingUsers = await UserModel.find(query).select([
           "-password",
           "-country",
           "-isVerified",
@@ -221,6 +226,8 @@ module.exports = {
           fname: newDetails.fname,
         },
       });
-    } catch (e) {}
+    } catch (e) {
+      res.status(400).send(e.message);
+    }
   },
 };
