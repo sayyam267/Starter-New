@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema({
   touristID: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
-  amount: { type: Number, required: true },
+  rating: { type: Number, required: true, default: 1 },
   tourID: { type: mongoose.Schema.Types.ObjectId, ref: "Tours" },
-  seats: { type: Number, required: true },
+  message: { type: String },
 });
 
-module.exports = mongoose.model("ReservedTours", Schema);
+module.exports = mongoose.model("Ratings", Schema);

@@ -13,6 +13,11 @@ const string = process.env.CONNECTION_STRING;
 // const TourGuideRoute = require("./routes/TourGuideRoute");
 // const VendorRoute = require("./routes/VendorRoute");
 const UserRoute = require("./routes/UserRoute");
+const OrderRoute = require("./routes/OrderRoute");
+const PromoRoute = require("./routes/PromoRoute");
+const RatingRoute = require("./routes/RatingRoute");
+const ReserveTourRoute = require("./routes/ReserveTourRoute");
+const TourRoutes = require("./routes/TourRoutes");
 
 mongoose
   .connect(string)
@@ -28,6 +33,11 @@ mongoose
 // app.use("/guide", TourGuideRoute);
 // app.use("/vendor", VendorRoute);
 app.use("/user", UserRoute);
+app.use("/promo", PromoRoute);
+app.use("/order", OrderRoute);
+app.use("/rating", RatingRoute);
+app.use("/tour", TourRoutes);
+app.use("/request", ReserveTourRoute);
 
 app.use(express.static(path.join(__dirname, "public")));
 

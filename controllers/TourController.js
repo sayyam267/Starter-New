@@ -55,4 +55,21 @@ module.exports = {
       req.status(400).send(e.message);
     }
   },
+  deleteTours: async (req, res) => {
+    try {
+      const existignTours = await TourModel.findById(req.body.tourId);
+      if (existignTours?.vendorID === req.body.vendorID) {
+        let deletedTour = await TourModel.findByIdAndDelete(req.body.tourID);
+        return res
+          .status(200)
+          .send({ message: "TOUR DELETED", data: deletedTour });
+      } else {
+        return res
+          .status(400)
+          .send({ message: "YOU ARE NOT ALLOWED TO DO THAT" });
+      }
+    } catch (e) {
+      return res.status(400).send({ message: e.message });
+    }
+  },
 };

@@ -28,9 +28,13 @@ module.exports = {
             role: existingUser.userType,
           };
           const token = await jwt.sign(user, process.env.PRIVATE_KEY);
-          return res
-            .status(200)
-            .send({ message: "User Found! Token is Returned", data: token });
+          return res.status(200).send({
+            message: "User Found! Token is Returned",
+            token: token,
+            role: existingUser.userType,
+            fname: existingUser.fname,
+            email: existingUser.email,
+          });
         } else
           return res
             .status(400)
@@ -113,7 +117,7 @@ module.exports = {
         return res.status(200).send(user);
       }
     } catch (e) {
-      return res.status(400).send({ message: e.message, data: null });
+      return res.status().send({ message: e.message, data: null });
     }
   },
   getUser: async (req, res) => {
