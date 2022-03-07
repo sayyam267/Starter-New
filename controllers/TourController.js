@@ -49,6 +49,8 @@ module.exports = {
     try {
       const newTour = await TourModel({
         ...req.body,
+        vendorID: req.user._id,
+        tourpics: [...req.files],
       });
       await newTour.save();
     } catch (e) {

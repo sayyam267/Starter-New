@@ -1,4 +1,5 @@
 const Order = require("../models/Orders");
+let e = new Error();
 
 module.exports = {
   getOrders: async (req, res) => {
@@ -25,15 +26,19 @@ module.exports = {
             "validTill",
           ]);
         if (order) {
-          return res.status(200).send({ message: "FOUND", data: order });
+          return res.send({ message: "FOUND", data: order });
         } else {
-          return res.status(404).send({ message: "NOT FOUND", data: order });
+          e.message = "NOT_FOUND";
+          e.statusCode = 404;
+          throw e;
         }
       } else {
-        return res.status(400).send({ message: "BAD REQUEST" });
+        e.message = "BAD_REQUEST";
+        throw e;
+        //return res.status(400).send({ message: "BAD REQUEST" });
       }
     } catch (e) {
-      return res.status(400).send({ message: e.message });
+      return res.status(e?.statusCode || 400).send({ message: e?.message });
     }
   },
   deleteOrder: async (req, res) => {

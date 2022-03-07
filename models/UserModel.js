@@ -18,6 +18,10 @@ const Schema = mongoose.Schema({
   phoneNumber: { type: String, required: true },
   isRating: { type: Boolean },
   rating: { type: Number, default: 0 },
+  favouriteTours: {
+    type: Array,
+    default: [],
+  },
 });
 
 module.exports = mongoose.model("users", Schema);
