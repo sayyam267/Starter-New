@@ -13,6 +13,7 @@ const Schema = mongoose.Schema({
     type: String,
     default: "/images/profile-pictures/default.jpg",
   },
+  gender: { type: String, required: true },
   balance: { type: Number, default: 0 },
   address: { type: String },
   userType: { type: String, required: true },
