@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const UserModel = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 const multer = require("multer");
+const UserService = require("../services/UserService");
 require("dotenv").config();
 const storage = multer.diskStorage({
   destination: (req, res, cb) => {
@@ -231,6 +232,22 @@ module.exports = {
       });
     } catch (e) {
       res.status(400).send(e.message);
+    }
+  },
+  createUser: async (req, res) => {
+    try {
+      let user = await UserService.createUser(req.body);
+      return res.send({ data: user, message: "Created" });
+    } catch (e) {
+      return res.status(e.statusCode).send({ message: e.message, data: null });
+    }
+  },
+  loginUser: async (req, res) => {
+    try {
+      let user = await UserService.loginUser(req.body);
+      return res.send({ data: user, message: "Fetched" });
+    } catch (e) {
+      return res.status(e.statusCode).send({ message: e.message, data: null });
     }
   },
 };

@@ -34,7 +34,7 @@ mongoose
 // app.use("/vendor", VendorRoute);
 app.use("/user", UserRoute);
 app.use("/promo", PromoRoute);
-app.use("/order", OrderRoute);
+// app.use("/order", OrderRoute);
 app.use("/rating", RatingRoute);
 app.use("/tour", TourRoutes);
 app.use("/request", ReserveTourRoute);

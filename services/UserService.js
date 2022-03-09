@@ -141,6 +141,7 @@ module.exports = {
     }
   },
   createUser: async (data) => {
+    console.log(data);
     let existing = await UserModel.findOne({ email: data.email });
     if (existing) {
       let e = new Error();
