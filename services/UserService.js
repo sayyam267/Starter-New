@@ -4,14 +4,46 @@ require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const req = require("express/lib/request");
 module.exports = {
-  getUsers: async () => {
-    let users = await (await UserModel.find({})).select("-password");
-    if (Object.keys(users).length > 0) {
-      return users;
+  getUsers: async (query) => {
+    let queryParam = {};
+    if (query?.email) {
+      queryParam.email = query?.email;
+    }
+    if (query?.fname) {
+      queryParam.fname = query?.fname;
+    }
+    if (query?.lname) {
+      queryParam.lname = query?.lname;
+    }
+    if (query?.phone) {
+      queryParam.phoneNumber = query?.phone;
+    }
+    if (query?.role) {
+      queryParam.userType = query?.role;
+    }
+    if (query?.rating) {
+      queryParam.rating = query?.rating;
+    }
+    if (query?.active) {
+      queryParam.isActive = query?.active;
+    }
+    if (query?.verified) {
+      queryParam.isVerified = query?.verified;
+    }
+    if (Object.keys(queryParam).length > 0) {
+      let users = await UserModel.find(queryParam).select("-password");
+      if (Object.keys(users).length > 0) {
+        return users;
+      } else {
+        let e = new Error();
+        e.message = `Users NOT FOUND`;
+        e.statusCode = 404;
+        throw e;
+      }
     } else {
       let e = new Error();
-      e.message = `Users NOT FOUND`;
-      e.statusCode = 404;
+      e.message = "Please Add Query Params";
+      e.statusCode = 400;
       throw e;
     }
   },
