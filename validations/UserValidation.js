@@ -42,6 +42,10 @@ module.exports = {
         .withMessage(
           "Password should contain at least 8 character and at most 30"
         ),
+      // check("role").notEmpty().withMessage("User Role Missing"),
+      check("fname").notEmpty().withMessage("First Name Must be provided"),
+      check("city").notEmpty().withMessage("City Must be specified"),
+      check("gender").notEmpty().withMessage("Gender is required"),
     ];
   },
 };

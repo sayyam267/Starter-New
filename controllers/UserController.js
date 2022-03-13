@@ -244,10 +244,13 @@ module.exports = {
   },
   createUser: async (req, res) => {
     try {
+      console.log(req.body);
       let user = await UserService.createUser(req.body);
       return res.send({ data: user, message: "Created" });
     } catch (e) {
-      return res.status(e.statusCode).send({ message: e.message, data: null });
+      return res
+        .status(e?.statusCode || 400)
+        .send({ message: e.message, data: null });
     }
   },
   loginUser: async (req, res) => {
@@ -256,6 +259,16 @@ module.exports = {
       return res.send({ data: user, message: "Fetched" });
     } catch (e) {
       return res.status(e.statusCode).send({ message: e.message, data: null });
+    }
+  },
+  verifyUser: async (req, res) => {
+    try {
+      let user = await UserService.verifyUser(req.params.code);
+      return res.send(
+        `<div style="align-self:center;justify-content:center;display:flex;"><h1>User Verified you can Continue to Use ToorBook</h1></div>`
+      );
+    } catch (e) {
+      return res.status(400).send({ message: "NOT FOUND", data: null });
     }
   },
 };

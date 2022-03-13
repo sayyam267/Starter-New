@@ -19,6 +19,7 @@ router.post(
   UserController.createUser
   // UserController.signup
 );
+router.get("/validate/:code", UserController.verifyUser);
 router.get("/get", UserController.getUser);
 
 module.exports = router;

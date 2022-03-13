@@ -1,5 +1,8 @@
 const UserModel = require("../models/UserModel");
 const jwt = require("jsonwebtoken");
+const EmailVerification = require("./EmailVerification");
+const uuid = require("uuid").v4;
+
 require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const req = require("express/lib/request");
@@ -173,7 +176,7 @@ module.exports = {
     }
   },
   createUser: async (data) => {
-    console.log(data);
+    // console.log(data);
     let existing = await UserModel.findOne({ email: data.email });
     if (existing) {
       let e = new Error();
@@ -181,34 +184,46 @@ module.exports = {
       e.statusCode = 400;
       throw e;
     } else {
+      let user = {};
+      const uniqueCode = uuid();
+      // console.log("EMAIL: " + process.env.MAIL);
+      // console.log("PASS: " + process.env.PASS);
       if (data.role === "vendor" || data.role === "tourguide") {
         var salt = await bcrypt.genSalt(Number(process.env.SALT));
         var hashed = await bcrypt.hash(data.password, salt);
-        let vendor = await UserModel({
+        user = await UserModel({
           ...data,
           password: hashed,
           isVerified: false,
           isActive: false,
           userType: data.role,
           isRating: true,
+          code: uniqueCode,
         });
-        await vendor.save();
-        return vendor;
+        await user.save();
+        // return user;
       }
       if (data.role === "tourist") {
         var salt = await bcrypt.genSalt(Number(process.env.SALT));
         var hashed = await bcrypt.hash(data.password, salt);
-        let tourist = await UserModel({
+        user = await UserModel({
           ...data,
           password: hashed,
           isVerified: false,
           isActive: true,
           userType: data.role,
           isRating: false,
+          code: uniqueCode,
         });
-        await tourist.save();
-        return tourist;
+        await user.save();
+        // return tourist;
       }
+      await EmailVerification({
+        name: data.fname,
+        email: data.email,
+        confirmationCode: uniqueCode,
+      });
+      return user;
     }
   },
   loginUser: async (data) => {
@@ -219,6 +234,7 @@ module.exports = {
         email: existingUser.email,
         name: existingUser.fname + " " + existingUser.lname,
         role: existingUser.userType,
+        isVerified: existingUser.isVerified,
       };
       const token = jwt.sign(user, process.env.PRIVATE_KEY);
       return {
@@ -226,12 +242,22 @@ module.exports = {
         role: existingUser.userType,
         name: existingUser.fname + " " + existingUser.lname,
         email: existingUser.email,
+        isVerified: existingUser.isVerified,
       };
     } else {
       let e = new Error();
       e.message = `NOT FOUND`;
       e.statusCode = 404;
       throw e;
+    }
+  },
+  verifyUser: async (code) => {
+    let user = await UserModel.findOne({ code: code }).update(
+      { code: code },
+      { $set: { isVerified: true } }
+    );
+    if (!user) {
+      throw new Error("NOT FOUND");
     }
   },
 };
