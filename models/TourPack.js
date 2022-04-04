@@ -14,7 +14,7 @@ const Schema = mongoose.Schema({
   ValidTill: { type: Date, required: true },
   hasguide: { type: Boolean, required: true },
   tourGuide: { type: mongoose.Schema.Types.ObjectId, ref: "TourGuides" },
-  tourpics: { type: Array(String) },
+  tourpics: { type: [String] },
   location: {
     long: { type: String },
     lat: { type: String },

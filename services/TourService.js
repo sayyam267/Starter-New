@@ -95,7 +95,12 @@ module.exports = {
       throw e;
     }
   },
-  createTours: async (data) => {},
+  createTours: async (data) => {
+    let date = new Date();
+    let newTour = await TourModel({ ...data, addedOn: date });
+    await newTour.save();
+    return newTour;
+  },
   deleteTours: async (data) => {
     let tour = await TourModel.findById(data.id);
     if (!tour) {

@@ -143,6 +143,17 @@ module.exports = {
       throw e;
     }
   },
+  getOrdersByTouristID: async (data) => {
+    let orders = await OrderModel.find({ touristID: data });
+    if (Object.keys(orders) > 0) {
+      return orders;
+    } else {
+      let e = new Error();
+      e.message = `No Tours Found for Tourist ${data}`;
+      e.statusCode = 404;
+      throw e;
+    }
+  },
   refundTour: async (data) => {
     let existingOrder = await OrderModel.findOne({
       _id: data.id,

@@ -47,10 +47,22 @@ module.exports = {
   },
   createTours: async (req, res) => {
     try {
+      const files = req.files.multiImages;
+      const imageNames = [];
+      if (files.length > 0) {
+        files.map((file) => {
+          //SAVING IN DB
+
+          // console.log("public/images/" + file.filename);
+          imageNames.push("public/images/" + file.filename);
+        });
+      } else imageNames.push("public/images/" + file.filename);
+      // console.log(req.files.filename);
+      // console.log(req.file);
       const newTour = await TourModel({
         ...req.body,
         vendorID: req.user._id,
-        tourpics: [...req.files],
+        tourpics: imageNames,
       });
       await newTour.save();
     } catch (e) {

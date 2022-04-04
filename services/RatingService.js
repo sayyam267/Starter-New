@@ -64,11 +64,22 @@ module.exports = {
     if (existingRating) {
       return existingRating;
     } else {
-      let e = new Error();
-      e.message = `Not Found`;
-      e.statusCode = 404;
-      throw e;
+      let newRatings = await RatingModel({
+        ...data,
+      });
+      await newRatings.save;
+      this.updateVendorRatings(data.vendorID);
     }
+  },
+  updateVendorRatings: async (data) => {
+    let exitinguser = await UserModel.findById(data);
+    let ratings = await RatingModel.find({ vendorID: data });
+    let average = 0;
+    ratings.map((item) => {
+      average += item.rating;
+    });
+    average = average / ratings.length;
+    exitinguser.update({ rating: average });
   },
   editRatings: async (data) => {
     let existingRating = await this.getRatingsByID(data.id);
