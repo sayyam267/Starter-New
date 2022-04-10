@@ -49,24 +49,26 @@ module.exports = {
     try {
       const files = req.files.multiImages;
       const imageNames = [];
+      const addedOn = Date.now();
       if (files.length > 0) {
         files.map((file) => {
           //SAVING IN DB
-
           // console.log("public/images/" + file.filename);
-          imageNames.push("public/images/" + file.filename);
+          imageNames.push("public/images/tourpics" + file.filename);
         });
-      } else imageNames.push("public/images/" + file.filename);
+      } else imageNames.push("public/images/tourpics" + file.filename);
       // console.log(req.files.filename);
       // console.log(req.file);
+      // console.log(imageNames);
       const newTour = await TourModel({
         ...req.body,
         vendorID: req.user._id,
         tourpics: imageNames,
+        addedOn: addedOn,
       });
       await newTour.save();
     } catch (e) {
-      req.status(400).send(e.message);
+      res.status(e?.statusCode || 400).send(e.message);
     }
   },
   deleteTours: async (req, res) => {

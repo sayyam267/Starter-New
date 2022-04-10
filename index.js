@@ -16,7 +16,7 @@ const UserRoute = require("./routes/UserRoute");
 const OrderRoute = require("./routes/OrderRoute");
 const PromoRoute = require("./routes/PromoRoute");
 const RatingRoute = require("./routes/RatingRoute");
-const ReserveTourRoute = require("./routes/ReserveTourRoute");
+// const ReserveTourRoute = require("./routes/ReserveTourRoute");
 const TourRoutes = require("./routes/TourRoutes");
 
 mongoose
@@ -37,9 +37,9 @@ app.use("/promo", PromoRoute);
 // app.use("/order", OrderRoute);
 app.use("/rating", RatingRoute);
 app.use("/tour", TourRoutes);
-app.use("/request", ReserveTourRoute);
+// app.use("/request", ReserveTourRoute);
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join("public")));
 
 app.listen(port, (req, res) => {
   console.log(`Listening on Port ${port}`);

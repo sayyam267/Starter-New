@@ -11,13 +11,13 @@ const Schema = mongoose.Schema({
   // touristID: { type: mongoose.Schema.Types.ObjectId, ref: "Tourists" },
   vendorId: { type: mongoose.Schema.Types.ObjectId, ref: "Vendors" },
   seats: { type: Number, required: true },
-  ValidTill: { type: Date, required: true },
+  validTill: { type: Date, required: true },
   hasguide: { type: Boolean, required: true },
   tourGuide: { type: mongoose.Schema.Types.ObjectId, ref: "TourGuides" },
-  tourpics: { type: [String] },
+  tourpics: [{ type: String }],
   location: {
-    long: { type: String },
-    lat: { type: String },
+    long: { type: String, default: 0 },
+    lat: { type: String, default: 0 },
   },
 });
 
