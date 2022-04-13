@@ -3,6 +3,7 @@ const authVendor = require("../middlewares/vendorAuth");
 const path = require("path");
 
 const multer = require("multer");
+const handleAuth = require("../middlewares/auth");
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join("./public/images/tourpics"));
@@ -35,7 +36,8 @@ const router = require("express").Router();
 
 router.post(
   "/create",
-  // authVendor,
+  handleAuth,
+  authVendor,
   // upload.array("multi-files"),
   upload.fields([{ name: "multiImages", maxCount: 5 }]),
   TourController.createTours

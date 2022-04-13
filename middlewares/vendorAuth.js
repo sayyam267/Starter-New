@@ -1,8 +1,11 @@
 const authVendor = (req, res, next) => {
-  if (req.user.role != "vendor" || req.user.role != "tourguide") {
+  // console.log(req.user.role);
+  if (req.user.role == "vendor" || req.user.role == "tourguide") {
     // console.log("NOT AUTHORIZED");
+
+    next();
+  } else {
     return res.status(401).send("You are not allowed to do that!");
   }
-  next();
 };
 module.exports = authVendor;
