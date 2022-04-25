@@ -1,4 +1,5 @@
 const TourModel = require("../models/TourPack");
+const TourService = require("../services/TourService");
 module.exports = {
   getTour: async (req, res) => {
     try {
@@ -45,34 +46,50 @@ module.exports = {
       res.status(400).send(e.message);
     }
   },
-  createTours: async (req, res) => {
+  getmyTours: async (req, res) => {
     try {
-      const files = req.files.multiImages;
-      const imageNames = [];
-      const addedOn = Date.now();
-      if (files.length > 0) {
-        files.map((file) => {
-          //SAVING IN DB
-          // console.log("public/images/" + file.filename);
-          imageNames.push("images/tourpics/" + file.filename);
-        });
-      } else imageNames.push("images/tourpics/" + file.filename);
-      // console.log(req.files.filename);
-      // console.log(req.file);
-      console.log(req.body);
-      req.body.validTill = new Date(req.body.validTill);
-      //   console.log(imageNames);
-      const newTour = await TourModel({
-        ...req.body,
-        vendorID: req.user.id,
-        tourpics: imageNames,
-        addedOn: addedOn,
-      });
-      await newTour.save();
+      const tours = await TourService.getMyTours(req.user);
+      return res.status(200).send({ data: tours, message: "Fetched" });
     } catch (e) {
-      res.status(e?.statusCode || 400).send(e.message);
+      res.status(e?.statusCode || 400).send({ data: null, message: e.message });
     }
   },
+  createTour: async (req, res) => {
+    try {
+      let tours = await TourService.createTour(req);
+      res.status(200).send({ data: tours, message: "Created" });
+    } catch (e) {
+      res.status(e?.statusCode || 400).send({ data: null, message: e.message });
+    }
+  },
+  // createTours: async (req, res) => {
+  //   try {
+  //     const files = req.files.multiImages;
+  //     const imageNames = [];
+  //     const addedOn = Date.now();
+  //     if (files.length > 0) {
+  //       files.map((file) => {
+  //         //SAVING IN DB
+  //         // console.log("public/images/" + file.filename);
+  //         imageNames.push("images/tourpics/" + file.filename);
+  //       });
+  //     } else imageNames.push("images/tourpics/" + file.filename);
+  //     // console.log(req.files.filename);
+  //     // console.log(req.file);
+  //     console.log(req.body);
+  //     req.body.validTill = new Date(req.body.validTill);
+  //     //   console.log(imageNames);
+  //     const newTour = await TourModel({
+  //       ...req.body,
+  //       vendorID: req.user.id,
+  //       tourpics: imageNames,
+  //       addedOn: addedOn,
+  //     });
+  //     await newTour.save();
+  //   } catch (e) {
+  //     res.status(e?.statusCode || 400).send(e.message);
+  //   }
+  // },
   deleteTours: async (req, res) => {
     try {
       const existignTours = await TourModel.findById(req.body.tourId);

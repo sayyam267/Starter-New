@@ -12,6 +12,17 @@ module.exports = {
       throw e;
     }
   },
+  getMyOrders: async (user) => {
+    let orders = OrderModel.find({ _id: user.id });
+    if (orders) {
+      return orders;
+    } else {
+      let e = new Error();
+      e.message = "No Orders Found";
+      e.statusCode = 404;
+      throw e;
+    }
+  },
   getOrderByID: async (id) => {
     let existingOrder = await OrderModel.findById(id);
     if (existingOrder) {

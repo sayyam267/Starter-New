@@ -65,6 +65,16 @@ module.exports = {
       return res.status(e.statusCode).send(e.message);
     }
   },
+  getmyOrders: async (req, res) => {
+    try {
+      let orders = await OrderService.getMyOrders(req.user);
+      return res.status(200).send(orders);
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
   getOrdersByID: async (req, res) => {
     try {
       let orders = await OrderService.getOrderByID(req.params.id);

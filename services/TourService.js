@@ -23,6 +23,17 @@ module.exports = {
       throw e;
     }
   },
+  getMyTours: async (user) => {
+    let tours = await TourModel.find({ _id: user.id });
+    if (tours) {
+      return tours;
+    } else {
+      let e = new Error();
+      e.message = "Not Found";
+      e.statusCode = 404;
+      throw e;
+    }
+  },
   getToursByName: async (name) => {
     let tours = await TourModel.find({ name: name });
     if (Object.keys(tours).length > 0) return tours;
@@ -95,11 +106,40 @@ module.exports = {
       throw e;
     }
   },
-  createTours: async (data) => {
-    let date = new Date();
-    let newTour = await TourModel({ ...data, addedOn: date });
-    await newTour.save();
-    return newTour;
+  // createTours: async (data) => {
+  //   let date = new Date();
+  //   let newTour = await TourModel({ ...data, addedOn: date });
+  //   await newTour.save();
+  //   return newTour;
+  // },
+  createTour: async (req) => {
+    try {
+      const files = req.files.multiImages;
+      const imageNames = [];
+      const addedOn = Date.now();
+      if (files.length > 0) {
+        files.map((file) => {
+          //SAVING IN DB
+          // console.log("public/images/" + file.filename);
+          imageNames.push("images/tourpics/" + file.filename);
+        });
+      } else imageNames.push("images/tourpics/" + file.filename);
+      // console.log(req.files.filename);
+      // console.log(req.file);
+      // console.log(req.body);
+      req.body.validTill = new Date(req.body.validTill);
+      //   console.log(imageNames);
+      const newTour = await TourModel({
+        ...req.body,
+        vendorID: req.user.id,
+        tourpics: imageNames,
+        addedOn: addedOn,
+      });
+      await newTour.save();
+      return newTour;
+    } catch (e) {
+      throw e;
+    }
   },
   deleteTours: async (data) => {
     let tour = await TourModel.findById(data.id);

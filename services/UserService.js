@@ -229,24 +229,32 @@ module.exports = {
   loginUser: async (data) => {
     let existingUser = await UserModel.findOne({ email: data.email });
     if (existingUser) {
-      const user = {
-        id: existingUser._id,
-        email: existingUser.email,
-        name: existingUser.fname + " " + existingUser.lname,
-        role: existingUser.userType,
-        isVerified: existingUser.isVerified,
-      };
-      const token = jwt.sign(user, process.env.PRIVATE_KEY);
-      return {
-        token: token,
-        role: existingUser.userType,
-        name: existingUser.fname + " " + existingUser.lname,
-        email: existingUser.email,
-        isVerified: existingUser.isVerified,
-      };
+      let verify = await bcrypt.compare(data.password, existingUser.password);
+      if (!verify) {
+        let e = new Error();
+        e.statusCode = 400;
+        e.message = "Either the email or Password is Wrong!";
+        throw e;
+      } else {
+        const user = {
+          id: existingUser._id,
+          email: existingUser.email,
+          name: existingUser.fname + " " + existingUser.lname,
+          role: existingUser.userType,
+          isVerified: existingUser.isVerified,
+        };
+        const token = jwt.sign(user, process.env.PRIVATE_KEY);
+        return {
+          token: token,
+          role: existingUser.userType,
+          name: existingUser.fname + " " + existingUser.lname,
+          email: existingUser.email,
+          isVerified: existingUser.isVerified,
+        };
+      }
     } else {
       let e = new Error();
-      e.message = `NOT FOUND`;
+      e.message = `User not found against this email`;
       e.statusCode = 404;
       throw e;
     }

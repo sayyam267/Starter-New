@@ -16,6 +16,22 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
+
+const router = require("express").Router();
+
+router.post(
+  "/create",
+  handleAuth,
+  authVendor,
+  // upload.array("multi-files"),
+  upload.fields([{ name: "multiImages", maxCount: 5 }]),
+  TourController.createTour
+);
+router.post("/delete", authVendor, TourController.deleteTours);
+router.get("/get", TourController.getTour);
+router.get("/getmytours", auth(), authVendor(), TourController.getmyTours);
+module.exports = router;
+
 // app.use(express.json());
 
 // const storage = multer.diskStorage({
@@ -32,16 +48,3 @@ const upload = multer({ storage: storage });
 // });
 
 // var upload = multer({ storage: storage });
-const router = require("express").Router();
-
-router.post(
-  "/create",
-  handleAuth,
-  authVendor,
-  // upload.array("multi-files"),
-  upload.fields([{ name: "multiImages", maxCount: 5 }]),
-  TourController.createTours
-);
-router.post("/delete", authVendor, TourController.deleteTours);
-router.get("/get", TourController.getTour);
-module.exports = router;

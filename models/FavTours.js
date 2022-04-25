@@ -6,7 +6,11 @@ const Schema = mongoose.Schema({
     ref: "users",
     required: true,
   },
-  tours: { type: Array(mongoose.Schema.Types.ObjectId), default: [] },
+  tours: {
+    type: Array(mongoose.Schema.Types.ObjectId),
+    ref: "tours",
+    default: [],
+  },
 });
 
 module.exports = mongoose.model("FavTours", Schema);
