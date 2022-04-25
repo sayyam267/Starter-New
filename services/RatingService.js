@@ -75,11 +75,14 @@ module.exports = {
     let exitinguser = await UserModel.findById(data);
     let ratings = await RatingModel.find({ vendorID: data });
     let average = 0;
-    ratings.map((item) => {
-      average += item.rating;
-    });
-    average = average / ratings.length;
-    exitinguser.update({ rating: average });
+    if (ratings) {
+      ratings.map((item) => {
+        average += item.rating;
+      });
+      average = average / ratings.length;
+      exitinguser.update({ rating: average });
+    }
+    return;
   },
   editRatings: async (data) => {
     let existingRating = await this.getRatingsByID(data.id);
@@ -93,6 +96,7 @@ module.exports = {
           message: data.message,
         }
       );
+      this.updateVendorRatings(data.vendorID);
       return newDetails;
     } else {
       let e = new Error();
