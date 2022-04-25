@@ -29,7 +29,7 @@ router.post(
 );
 router.post("/delete", authVendor, TourController.deleteTours);
 router.get("/get", TourController.getTour);
-router.get("/getmytours", auth(), authVendor(), TourController.getmyTours);
+router.get("/getmytours", handleAuth, authVendor, TourController.getmyTours);
 module.exports = router;
 
 // app.use(express.json());
