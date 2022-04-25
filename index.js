@@ -40,7 +40,9 @@ app.use("/tour", TourRoutes);
 // app.use("/request", ReserveTourRoute);
 
 app.use(express.static(path.join("public")));
-
+app.get("/", (req, res) => {
+  res.send("<h1>TourBook backend</h1>");
+});
 app.listen(port, (req, res) => {
   console.log(`Listening on Port ${port}`);
 });
