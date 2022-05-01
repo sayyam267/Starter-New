@@ -19,7 +19,7 @@ const OrderService = require("./OrderService");
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 module.exports = {
-  rechargeAccount: async (data) => {
+  rechargeAccount: async (req) => {
     try {
       let { id } = req.user;
       let {
@@ -65,7 +65,7 @@ module.exports = {
       user.update({ balance: balance + Amount });
       return res.json(charges);
     } catch (e) {
-      return e;
+      throw e;
     }
   },
   refundPurchase: async (req) => {
@@ -86,11 +86,31 @@ module.exports = {
         let user = await UserModel.findById(req?.user?.id);
         user.balance = transcantion.New_Balance;
         await user.save();
-
         res.send(refund);
+      } else {
+        let e = new Error();
+        e.message = `No Transactions found agains TransactionID ${id}`;
+        e.statusCode = 404;
+        throw e;
       }
     } catch (e) {
-      res.status(500).send(e?.message);
+      throw e;
+      // res.status(500).send(e?.message);
+    }
+  },
+  getTransactionByID: async (id) => {
+    try {
+      let transcantion = await TransactionsModel.findById(id);
+      if (transcantion) {
+        return transcantion;
+      } else {
+        let e = new Error();
+        e.message = "Not Found";
+        e.statusCode = 404;
+        throw e;
+      }
+    } catch (e) {
+      throw e;
     }
   },
   // confirmPurchase: async (req) => {
