@@ -146,7 +146,7 @@ module.exports = {
   },
   refundTour: async (req, res) => {
     try {
-      let orders = await OrderService.refundTour(req.body);
+      let orders = await OrderService.refundOrder(req.body);
       return res.send(orders);
     } catch (e) {
       return res.status(e.statusCode).send(e.message);

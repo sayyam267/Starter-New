@@ -165,7 +165,7 @@ module.exports = {
       throw e;
     }
   },
-  refundTour: async (data) => {
+  refundOrder: async (data) => {
     let existingOrder = await OrderModel.findOne({
       _id: data.id,
       isRefunded: false,
@@ -174,16 +174,16 @@ module.exports = {
       let userToRefund = await UserModel.find({ _id: existingOrder.touristID });
       await UserModel.updateOne(
         { _id: existingOrder.touristID },
-        { $set: { balance: userToRefund.balance + existingOrder.amount } }
+        { $set: { balance: userToRefund.balance + data.refundAmount } }
       );
       let refunded = await OrderModel.updateOne(
         { _id: data.id },
-        { $set: { isRefunded: true } }
+        { $set: { isRefunded: true, refundAmount: data.refundAmount } }
       );
       return refunded;
     } else {
       let e = new Error();
-      e.message = `NOT FOUND`;
+      e.message = `Either the Order was already Refunded or Not Found`;
       e.statusCode = 404;
       throw e;
     }
