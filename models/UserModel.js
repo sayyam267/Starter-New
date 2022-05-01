@@ -5,7 +5,7 @@ const Schema = mongoose.Schema({
   lname: { type: String, trim: true },
   email: { type: String, required: true, unique: true, trim: true },
   password: { type: String, required: true },
-  city: { type: mongoose.SchemaType.ObjectId, ref: "cities", required: true },
+  city: { type: mongoose.Schema.Types.ObjectId, ref: "cities", required: true },
   country: { type: String, required: true },
   isVerified: { type: Boolean, default: false },
   isActive: { type: Boolean, default: false },

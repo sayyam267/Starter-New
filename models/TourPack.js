@@ -4,9 +4,13 @@ const Schema = mongoose.Schema({
   name: { type: String, required: true },
   price: { type: Number, required: true },
   // city: { type: Array(String), required: true },
-  source: { type: mongoose.SchemaType.ObjectId, ref: "cities", required: true },
+  source: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "cities",
+    required: true,
+  },
   destination: {
-    type: mongoose.SchemaType.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "cities",
     required: true,
   },
