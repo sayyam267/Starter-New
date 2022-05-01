@@ -8,7 +8,7 @@ const Schema = mongoose.Schema({
     ref: "users",
   },
   description: { type: String, required: true },
-  TourID: { type: mongoose.Schema.Types.ObjectId, ref: "tours" },
+  // TourID: { type: mongoose.Schema.Types.ObjectId, ref: "tours" },
   isrefund: { type: Boolean },
 });
 

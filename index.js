@@ -37,6 +37,9 @@ app.use("/promo", PromoRoute);
 // app.use("/order", OrderRoute);
 app.use("/rating", RatingRoute);
 app.use("/tour", TourRoutes);
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname + "/404.html"));
+});
 // app.use("/request", ReserveTourRoute);
 
 app.use(express.static(path.join("public")));

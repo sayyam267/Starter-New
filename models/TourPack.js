@@ -4,8 +4,12 @@ const Schema = mongoose.Schema({
   name: { type: String, required: true },
   price: { type: Number, required: true },
   // city: { type: Array(String), required: true },
-  source: { type: String, required: true },
-  destination: { type: String, required: true },
+  source: { type: mongoose.SchemaType.ObjectId, ref: "cities", required: true },
+  destination: {
+    type: mongoose.SchemaType.ObjectId,
+    ref: "cities",
+    required: true,
+  },
   addedOn: { type: Date, required: true },
   // duration: { type: String, required: true },
   // touristID: { type: mongoose.Schema.Types.ObjectId, ref: "Tourists" },
@@ -28,4 +32,4 @@ const Schema = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Tours", Schema);
+module.exports = mongoose.model("tours", Schema);
