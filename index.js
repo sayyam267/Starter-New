@@ -17,6 +17,7 @@ const OrderRoute = require("./routes/OrderRoute");
 const PromoRoute = require("./routes/PromoRoute");
 const RatingRoute = require("./routes/RatingRoute");
 // const ReserveTourRoute = require("./routes/ReserveTourRoute");
+const CityRoute = require("./routes/CityRoute");
 const TourRoutes = require("./routes/TourRoutes");
 
 mongoose
@@ -37,6 +38,7 @@ app.use("/promo", PromoRoute);
 // app.use("/order", OrderRoute);
 app.use("/rating", RatingRoute);
 app.use("/tour", TourRoutes);
+app.use("/city", CityRoute);
 
 // app.use("/request", ReserveTourRoute);
 

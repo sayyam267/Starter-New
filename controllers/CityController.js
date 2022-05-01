@@ -6,7 +6,7 @@ module.exports = {
       let cities = await CityService.getCities();
       return res.status(200).send({ data: cities, message: "Fetched" });
     } catch (e) {
-      return req
+      return res
         .status(e?.statusCode || 400)
         .send({ data: null, messagee: e.message });
     }
