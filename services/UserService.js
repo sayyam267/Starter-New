@@ -250,6 +250,7 @@ module.exports = {
           name: existingUser.fname + " " + existingUser.lname,
           email: existingUser.email,
           isVerified: existingUser.isVerified,
+          balance: existingUser.balance,
         };
       }
     } else {

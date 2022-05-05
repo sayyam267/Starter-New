@@ -19,7 +19,7 @@ const RatingRoute = require("./routes/RatingRoute");
 // const ReserveTourRoute = require("./routes/ReserveTourRoute");
 const CityRoute = require("./routes/CityRoute");
 const TourRoutes = require("./routes/TourRoutes");
-
+const TransactionRoute = require("./routes/TransactionRoute");
 mongoose
   .connect(string)
   .then((res) => {
@@ -39,6 +39,7 @@ app.use("/promo", PromoRoute);
 app.use("/rating", RatingRoute);
 app.use("/tour", TourRoutes);
 app.use("/city", CityRoute);
+app.use("/transaction", TransactionRoute);
 
 // app.use("/request", ReserveTourRoute);
 
