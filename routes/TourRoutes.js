@@ -1,6 +1,7 @@
 const TourController = require("../controllers/TourController");
 const authVendor = require("../middlewares/vendorAuth");
 const path = require("path");
+const router = require("express").Router();
 
 const multer = require("multer");
 const handleAuth = require("../middlewares/auth");
@@ -17,8 +18,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-const router = require("express").Router();
-
 router.post(
   "/create",
   handleAuth,
@@ -29,7 +28,12 @@ router.post(
 );
 router.post("/delete", authVendor, TourController.deleteTours);
 router.get("/get", TourController.getTour);
+router.get("/get/:id", TourController.getTourByID);
 router.get("/getmytours", handleAuth, authVendor, TourController.getmyTours);
+router.get("/get/all", TourController.getAll);
+//EDIT ROUTE
+// router.post("/edit", TourController.edit);
+
 module.exports = router;
 
 // app.use(express.json());

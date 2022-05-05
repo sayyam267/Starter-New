@@ -33,9 +33,9 @@ module.exports = {
       }
 
       if (Object.keys(query).length > 0) {
-        const existignTours = await TourModel.find(query).select(["-duration"]);
-        if (existignTours.length > 0) {
-          res.status(200).send({ message: "FOUND", data: existignTours });
+        const existingTours = await TourModel.find(query).select(["-duration"]);
+        if (existingTours.length > 0) {
+          res.status(200).send({ message: "FOUND", data: existingTours });
         } else {
           res.status(404).send("NOT FOUND");
         }
@@ -105,6 +105,24 @@ module.exports = {
       }
     } catch (e) {
       return res.status(400).send({ message: e.message });
+    }
+  },
+  getAll: async (req, res) => {
+    try {
+      let tours = await TourService.getTours();
+      return res.status(200).send({ data: tours, message: "Fetched" });
+    } catch (e) {
+      res.status(e?.statusCode || 400).send({ data: null, message: e.message });
+    }
+  },
+  getTourByID: async (req, res) => {
+    try {
+      let tour = await TourModel.findById(req.params.id);
+      return res.status(200).send({ data: tour, message: "Fetched" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
     }
   },
 };

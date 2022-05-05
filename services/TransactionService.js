@@ -62,7 +62,7 @@ module.exports = {
         Previous_Balance: user.balance,
         New_Balance: user.balance + Amount,
       });
-      user.update({ balance: balance + Amount });
+      await user.update({ balance: balance + Amount });
       return res.json(charges);
     } catch (e) {
       throw e;

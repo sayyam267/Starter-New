@@ -24,7 +24,7 @@ module.exports = {
     }
   },
   getMyTours: async (user) => {
-    let tours = await TourModel.find({ _id: user.id });
+    let tours = await TourModel.find({ vendorID: user.id });
     if (tours) {
       return tours;
     } else {

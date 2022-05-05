@@ -16,15 +16,19 @@ const Schema = mongoose.Schema({
   gender: { type: String, required: true },
   balance: { type: Number, default: 0 },
   address: { type: String },
+  //table:
   userType: { type: String, required: true },
+  //
   phoneNumber: { type: String, required: true },
   isRating: { type: Boolean, default: false },
+  //virtual mongo attr
   rating: { type: Number, default: 0 },
-  favouriteTours: {
-    type: Array,
-    default: [],
-  },
+  //
+  cnic: { type: Number, required: true },
+  isDeleted: { type: Boolean, default: false },
+  //daate and expiry in array
   code: { type: String, required: true },
+  //
 });
 
 module.exports = mongoose.model("users", Schema);

@@ -8,7 +8,9 @@ const Schema = mongoose.Schema({
   touristID: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
   isApproved: { type: Boolean, default: false },
   isRefunded: { type: Boolean, default: false },
+  //delete
   refundAmount: { type: Number, default: 0 },
+  //
 });
 
 module.exports = mongoose.model("Orders", Schema);

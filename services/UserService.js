@@ -5,9 +5,12 @@ const uuid = require("uuid").v4;
 
 require("dotenv").config();
 const bcrypt = require("bcryptjs");
-const req = require("express/lib/request");
+// const req = require("express/lib/request");
+
 module.exports = {
   getUsers: async (query) => {
+    let e = new Error();
+
     let queryParam = {};
     if (query?.email) {
       queryParam.email = query?.email;
@@ -38,13 +41,11 @@ module.exports = {
       if (Object.keys(users).length > 0) {
         return users;
       } else {
-        let e = new Error();
         e.message = `Users NOT FOUND`;
         e.statusCode = 404;
         throw e;
       }
     } else {
-      let e = new Error();
       e.message = "Please Add Query Params";
       e.statusCode = 400;
       throw e;
@@ -61,23 +62,27 @@ module.exports = {
       throw e;
     }
   },
-  getUserByBalance: async (balance) => {
-    let users = UserModel.find({ balance: { $gte: balance } }).select([
-      "-password",
-      "phoneNumber",
-      "-role",
-    ]);
-    if (Object.keys(users).length > 0) {
-      return users;
-    } else {
-      let e = new Error();
-      e.message = `NOT FOUND`;
-      e.statusCode = 404;
-      throw e;
-    }
-  },
+  // getUserByBalance: async (balance) => {
+  //   let users = UserModel.find({ balance: { $gte: balance } }).select([
+  //     "-password",
+  //     "phoneNumber",
+  //     "-role",
+  //   ]);
+  //   if (Object.keys(users).length > 0) {
+  //     return users;
+  //   } else {
+  //     let e = new Error();
+  //     e.message = `NOT FOUND`;
+  //     e.statusCode = 404;
+  //     throw e;
+  //   }
+  // },
   getUserByEmail: async (email) => {
-    let user = await UserModel.findOne({ email: email }).select("-password");
+    let user = await UserModel.findOne({
+      email: email,
+      isActive: true,
+      isDeleted: false,
+    }).select("-password");
     if (user) {
       return user;
     } else {
@@ -88,11 +93,11 @@ module.exports = {
     }
   },
   getUserByPhone: async (phone) => {
-    let users = await UserModel.find({ phoneNumber: phone }).select([
-      "-password",
-      "-phoneNumber",
-      "-role",
-    ]);
+    let users = await UserModel.find({
+      phoneNumber: phone,
+      isActive: true,
+      isDeleted: false,
+    }).select(["-password", "-phoneNumber", "-role"]);
     if (Object.keys(users).length > 0) {
       return users;
     } else {
@@ -103,11 +108,11 @@ module.exports = {
     }
   },
   getTourists: async () => {
-    let tourists = await UserModel.find({ role: "tourist" }).select([
-      "-password",
-      "-phoneNumber",
-      "-role",
-    ]);
+    let tourists = await UserModel.find({
+      role: "tourist",
+      isActive: true,
+      isDeleted: false,
+    }).select(["-password", "-phoneNumber", "-role"]);
     if (Object.keys(tourists).length > 0) {
       return tourists;
     } else {
@@ -118,11 +123,11 @@ module.exports = {
     }
   },
   getVendors: async () => {
-    let vendors = await UserModel.find({ role: "vendor" }).select([
-      "-password",
-      "-phoneNumber",
-      "-role",
-    ]);
+    let vendors = await UserModel.find({
+      role: "vendor",
+      isActive: true,
+      isDeleted: false,
+    }).select(["-password", "-phoneNumber", "-role"]);
     if (Object.keys(vendors).length > 0) {
       return vendors;
     } else {
@@ -135,6 +140,8 @@ module.exports = {
   getVendorsByRating: async (rating) => {
     let vendors = await UserModel.find({
       role: "vendor",
+      isActive: true,
+      isDeleted: false,
       rating: { $lte: rating },
     }).select(["-password", "-phoneNumber", "-role"]);
     if (Object.keys(vendors).length > 0) {
@@ -147,23 +154,34 @@ module.exports = {
     }
   },
   setVendorVerificationStaus: async (data) => {
-    let vendor = await UserModel.findById(data.vendorID);
-    if (vendor) {
-      let updatedvendor = await UserModel.updateOne(
-        { _id: data.vendorID },
-        { $set: { isActive: true } }
-      );
-      return vendor;
-    } else {
-      let e = new Error();
-      e.message = `NOT FOUND`;
-      e.statusCode = 404;
+    try {
+      let vendor = await UserModel.findById(data.vendorID);
+      if (vendor) {
+        if (vendor.isActive === true && vendor.isDeleted === false) {
+          let updatedvendor = await UserModel.updateOne(
+            { _id: data.vendorID },
+            { $set: { isActive: true } }
+          );
+          return vendor;
+        } else {
+          let e = new Error();
+          e.message = "Not Found";
+          e.statusCode = 404;
+          throw e;
+        }
+      } else {
+        let e = new Error();
+        e.message = `NOT FOUND`;
+        e.statusCode = 404;
+        throw e;
+      }
+    } catch (e) {
       throw e;
     }
   },
   blockUser: async (data) => {
     let user = await UserModel.findOneAndUpdate(
-      { _id: data.id },
+      { _id: data.id, isActive: true, isDeleted: false },
       { $set: { isActive: false } }
     );
     if (user) {
@@ -177,7 +195,10 @@ module.exports = {
   },
   createUser: async (data) => {
     // console.log(data);
-    let existing = await UserModel.findOne({ email: data.email });
+    let existing = await UserModel.findOne({
+      email: data.email,
+      isDeleted: true,
+    });
     if (existing) {
       let e = new Error();
       e.message = `User with email ${data.email} Already Exist`;
@@ -227,7 +248,12 @@ module.exports = {
     }
   },
   loginUser: async (data) => {
-    let existingUser = await UserModel.findOne({ email: data.email });
+    let existingUser = await UserModel.findOne({
+      email: data.email,
+      isActive: true,
+      isVerified: true,
+      isDeleted: false,
+    });
     if (existingUser) {
       let verify = await bcrypt.compare(data.password, existingUser.password);
       if (!verify) {

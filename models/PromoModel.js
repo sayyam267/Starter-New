@@ -11,4 +11,6 @@ const Schema = mongoose.Schema({
   isPercent: { type: Boolean, required: true, default: true },
 });
 
+//virtual expiry
+
 module.exports = mongoose.model("PromoCodes", Schema);
