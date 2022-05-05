@@ -57,7 +57,7 @@ module.exports = {
         CardNumber: CardNumber,
         userID: id,
         TransID: token.id,
-        TransDate: new Date.now(),
+        // TransDate: new Date.now(),
         RechargedAmount: Amount,
         Previous_Balance: user.balance,
         New_Balance: user.balance + Amount,

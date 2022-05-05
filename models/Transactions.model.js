@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { DateNow } = require("../utils/Moment_TimeZone.date");
 
 const UserTransactionsSchema = new mongoose.Schema({
   CardNumber: { type: Number, required: true },
@@ -17,7 +16,7 @@ const UserTransactionsSchema = new mongoose.Schema({
   },
   TransDate: {
     type: Date,
-    default: DateNow,
+    default: Date.now,
   },
   RefundRequest: { type: Boolean, default: false },
   refunded: { type: Boolean, default: false },
