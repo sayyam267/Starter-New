@@ -5,9 +5,36 @@ const uuid = require("uuid").v4;
 
 require("dotenv").config();
 const bcrypt = require("bcryptjs");
+// const UserTypeController = require("../controllers/UserTypeController");
+// const UserTypeService = require("./UserTypeService");
+// const UserType = require("../models/UserType");
 // const req = require("express/lib/request");
 
 module.exports = {
+  getProfileInfo: async (user) => {
+    let details = await UserModel.findById(user.id)
+      .select([
+        "fname",
+        "lname",
+        "city",
+        "balance",
+        "profilePicture",
+        "gender",
+        "phoneNumber",
+        "email",
+        "isRating",
+        "rating",
+      ])
+      .populate("city");
+    if (details) {
+      return details;
+    } else {
+      let e = new Error();
+      e.message = "NOT FOUND";
+      e.statusCode = 404;
+      throw e;
+    }
+  },
   getUsers: async (query) => {
     let e = new Error();
 
@@ -109,7 +136,7 @@ module.exports = {
   },
   getTourists: async () => {
     let tourists = await UserModel.find({
-      role: "tourist",
+      userType: "6274bff67e124664e16ead9f",
       isActive: true,
       isDeleted: false,
     }).select(["-password", "-phoneNumber", "-role"]);
@@ -122,9 +149,37 @@ module.exports = {
       throw e;
     }
   },
+  getPendingVendors: async () => {
+    let vendors = await UserModel.find({
+      $or: [{ userType: "vendor" }, { userType: "tourguide" }],
+      isActive: false,
+      isDeleted: false,
+    })
+      .select([
+        "fname",
+        "lname",
+        "isActive",
+        "isVerified",
+        "isDeleted",
+        "city",
+        "userType",
+      ])
+      .populate("city");
+    // .select(["-password", "-phoneNumber", "-role", "-cnic"]);
+    // if (Object.keys(vendors).length > 0) {
+    if (vendors) {
+      console.log(vendors);
+      return vendors;
+    } else {
+      let e = new Error();
+      e.message = `NOT FOUND`;
+      e.statusCode = 404;
+      throw e;
+    }
+  },
   getVendors: async () => {
     let vendors = await UserModel.find({
-      role: "vendor",
+      $or: [{ userType: "vendor" }, { userType: "tourguide" }],
       isActive: true,
       isDeleted: false,
     }).select(["-password", "-phoneNumber", "-role"]);
@@ -139,7 +194,7 @@ module.exports = {
   },
   getVendorsByRating: async (rating) => {
     let vendors = await UserModel.find({
-      role: "vendor",
+      $or: [{ userType: "vendor" }, { userType: "tourguide" }],
       isActive: true,
       isDeleted: false,
       rating: { $lte: rating },
@@ -180,12 +235,24 @@ module.exports = {
     }
   },
   blockUser: async (data) => {
-    let user = await UserModel.findOneAndUpdate(
-      { _id: data.id, isActive: true, isDeleted: false },
-      { $set: { isActive: false } }
-    );
+    // let user = await UserModel.findOneAndUpdate(
+    //   { _id: data, isActive: true, isDeleted: false, isVerified: true },
+    //   { $set: { isActive: false } }
+    // );
+    let user = await UserModel.findOneAndUpdate({
+      _id: data,
+      isActive: true,
+      isDeleted: false,
+      isVerified: true,
+    });
     if (user) {
-      return user;
+      // console.log(user);
+      return true;
+    } else if (!user?.isActive) {
+      let e = new Error();
+      e.message = "This User is already Blocked";
+      e.statusCode = 400;
+      throw e;
     } else {
       let e = new Error();
       e.message = `NOT FOUND`;
@@ -193,91 +260,199 @@ module.exports = {
       throw e;
     }
   },
-  createUser: async (data) => {
-    // console.log(data);
-    let existing = await UserModel.findOne({
-      email: data.email,
-      isDeleted: true,
-    });
-    if (existing) {
-      let e = new Error();
-      e.message = `User with email ${data.email} Already Exist`;
-      e.statusCode = 400;
-      throw e;
-    } else {
-      let user = {};
-      const uniqueCode = uuid();
-      // console.log("EMAIL: " + process.env.MAIL);
-      // console.log("PASS: " + process.env.PASS);
-      if (data.role === "vendor" || data.role === "tourguide") {
-        var salt = await bcrypt.genSalt(Number(process.env.SALT));
-        var hashed = await bcrypt.hash(data.password, salt);
-        user = await UserModel({
-          ...data,
-          password: hashed,
-          isVerified: false,
-          isActive: false,
-          userType: data.role,
-          isRating: true,
-          code: uniqueCode,
-        });
-        await user.save();
-        // return user;
-      }
-      if (data.role === "tourist") {
-        var salt = await bcrypt.genSalt(Number(process.env.SALT));
-        var hashed = await bcrypt.hash(data.password, salt);
-        user = await UserModel({
-          ...data,
-          password: hashed,
-          isVerified: false,
-          isActive: true,
-          userType: data.role,
-          isRating: false,
-          code: uniqueCode,
-        });
-        await user.save();
-        // return tourist;
-      }
+  createUserService: async (data) => {
+    let user = {};
+    const uniqueCode = uuid();
+    try {
       await EmailVerification({
         name: data.fname,
         email: data.email,
         confirmationCode: uniqueCode,
       });
-      return user;
+    } catch (e) {
+      throw e;
+    }
+    // console.log("EMAIL: " + process.env.MAIL);
+    // console.log("PASS: " + process.env.PASS);
+    // let userType = await UserTypeService.findById(data.usertype);
+    // let userType = await UserType.findOne({ userType: data.role });
+    // console.log(userType);
+    if (data.role === "vendor" || data.role === "tourguide") {
+      var salt = await bcrypt.genSalt(Number(process.env.SALT));
+      var hashed = await bcrypt.hash(data.password, salt);
+      user = await UserModel({
+        ...data,
+        password: hashed,
+        isVerified: false,
+        isActive: false,
+        userType: data.role,
+        isRating: true,
+        code: uniqueCode,
+      });
+      await user.save();
+      // return user;
+    }
+    if (data.role === "tourist") {
+      var salt = await bcrypt.genSalt(Number(process.env.SALT));
+      var hashed = await bcrypt.hash(data.password, salt);
+      user = await UserModel({
+        ...data,
+        password: hashed,
+        isVerified: false,
+        isActive: false,
+        userType: "tourist",
+        isRating: false,
+        code: uniqueCode,
+      });
+      await user.save();
+      // return tourist;
+    }
+
+    return user;
+  },
+  createAdmin: async (data) => {
+    const uniqueCode = uuid();
+    var salt = await bcrypt.genSalt(Number(process.env.SALT));
+    var hashed = await bcrypt.hash(data.password, salt);
+    let user = await UserModel({
+      ...data,
+      password: hashed,
+      isVerified: true,
+      isActive: true,
+      userType: "admin",
+      isRating: false,
+      code: uniqueCode,
+    });
+    await user.save();
+    // return user;
+    return user;
+  },
+  createUser: async (data) => {
+    let e = new Error();
+    // console.log(data);
+    let existing = await UserModel.findOne({
+      email: data.email,
+      // isDeleted: true,
+    });
+    if (existing) {
+      if (!existing?.isDeleted) {
+        if (existing?.isActive && existing?.isVerified) {
+          // let e = new Error();
+          e.message = `User with email ${data.email} Already Exist`;
+          e.statusCode = 400;
+          throw e;
+        } else if (!existing?.isActive && existing?.isVerified) {
+          // let e = new Error();
+          e.message =
+            "The User is Banned from using TourBook Services. Contact Support";
+          e.statusCode = 400;
+          throw e;
+        } else {
+          e.message = "Please Verify Your Account from Email";
+          e.statusCode = 400;
+          throw e;
+        }
+      } else {
+        try {
+          let user = await module.exports.createUserService(data);
+          return user;
+        } catch (e) {
+          throw e;
+        }
+      }
+    } else {
+      try {
+        let user = await module.exports.createUserService(data);
+        return user;
+      } catch (e) {
+        throw e;
+      }
     }
   },
+
   loginUser: async (data) => {
     let existingUser = await UserModel.findOne({
       email: data.email,
-      isActive: true,
-      isVerified: true,
+      // isActive: true,
+      // isVerified: true,
       isDeleted: false,
     });
     if (existingUser) {
-      let verify = await bcrypt.compare(data.password, existingUser.password);
-      if (!verify) {
+      // if (existingUser?.isActive && existingUser?.isVerified) {
+      //   let verify = await bcrypt.compare(data.password, existingUser.password);
+      //   if (!verify) {
+      //     let e = new Error();
+      //     e.statusCode = 400;
+      //     e.message = "Either the email or Password is Wrong!";
+      //     throw e;
+      //   } else {
+      //     const user = {
+      //       id: existingUser._id,
+      //       email: existingUser.email,
+      //       name: existingUser.fname + " " + existingUser.lname,
+      //       role: existingUser.userType,
+      //       // isActive: existingUser.isActive,
+      //     };
+      //     const token = jwt.sign(user, process.env.PRIVATE_KEY);
+      //     return {
+      //       token: token,
+      //       role: existingUser.userType,
+      //       name: existingUser.fname + " " + existingUser.lname,
+      //       email: existingUser.email,
+      //       // isVerified: existingUser.isVerified,
+      //       balance: existingUser.balance,
+      //     };
+      //   }
+      // }
+      // if (!existingUser?.isActive || !existingUser?.isVerified) {
+      if (existingUser?.isVerified) {
+        if (!existingUser?.isActive) {
+          let e = new Error();
+          e.message = "You are Blocked from TourBook. Please Contact Support";
+          e.statusCode = 400;
+          throw e;
+        }
+        if (existingUser?.isActive) {
+          let verify = await bcrypt.compare(
+            data.password,
+            existingUser.password
+          );
+          if (!verify) {
+            let e = new Error();
+            e.statusCode = 400;
+            e.message = "Either the email or Password is Wrong!";
+            throw e;
+          } else {
+            const user = {
+              id: existingUser._id,
+              email: existingUser.email,
+              name: existingUser.fname + " " + existingUser.lname,
+              role: existingUser.userType,
+              // isActive: existingUser.isActive,
+            };
+            const token = jwt.sign(user, process.env.PRIVATE_KEY);
+            return {
+              token: token,
+              role: existingUser.userType,
+              name: existingUser.fname + " " + existingUser.lname,
+              email: existingUser.email,
+              // isVerified: existingUser.isVerified,
+              balance: existingUser.balance,
+            };
+          }
+        }
+      }
+      if (!existingUser?.isActive && !existingUser?.isVerified) {
         let e = new Error();
+        e.message = "Please Verify Your Account through Email first";
         e.statusCode = 400;
-        e.message = "Either the email or Password is Wrong!";
         throw e;
-      } else {
-        const user = {
-          id: existingUser._id,
-          email: existingUser.email,
-          name: existingUser.fname + " " + existingUser.lname,
-          role: existingUser.userType,
-          isVerified: existingUser.isVerified,
-        };
-        const token = jwt.sign(user, process.env.PRIVATE_KEY);
-        return {
-          token: token,
-          role: existingUser.userType,
-          name: existingUser.fname + " " + existingUser.lname,
-          email: existingUser.email,
-          isVerified: existingUser.isVerified,
-          balance: existingUser.balance,
-        };
+      }
+      if (existingUser?.isActive && !existingUser?.isVerified) {
+        let e = new Error();
+        e.message = "Internal Logic Error";
+        e.statusCode = 500;
+        throw e;
       }
     } else {
       let e = new Error();
@@ -289,10 +464,13 @@ module.exports = {
   verifyUser: async (code) => {
     let user = await UserModel.findOne({ code: code }).update(
       { code: code },
-      { $set: { isVerified: true } }
+      { $set: { isVerified: true, isActive: true } }
     );
     if (!user) {
       throw new Error("NOT FOUND");
     }
+  },
+  deleteUser: async (id) => {
+    let user = await UserModel.findById().update();
   },
 };

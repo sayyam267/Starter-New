@@ -7,7 +7,7 @@ const Schema = mongoose.Schema({
     required: true,
   },
   tours: {
-    type: Array(mongoose.Schema.Types.ObjectId),
+    type: [mongoose.Schema.Types.ObjectId],
     ref: "tours",
     default: [],
   },

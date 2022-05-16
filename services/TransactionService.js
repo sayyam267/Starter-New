@@ -62,7 +62,11 @@ module.exports = {
         Previous_Balance: user.balance,
         New_Balance: user.balance + Amount,
       });
-      await user.update({ balance: balance + Amount });
+      await UserModel.updateOne(
+        { _id: req.user.id },
+        { balance: balance + Amount }
+      );
+      // await user.update({ balance: balance + Amount });
       return res.json(charges);
     } catch (e) {
       throw e;

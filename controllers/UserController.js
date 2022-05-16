@@ -271,4 +271,18 @@ module.exports = {
       return res.status(400).send({ message: "NOT FOUND", data: null });
     }
   },
+  blockUser: async (req, res) => {
+    try {
+      let user = await UserService.blockUser(req.body.userID);
+      if (user)
+        return res
+          .status(200)
+          .send({ data: true, message: "User Blocked Successfully" });
+      else throw Error();
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
 };

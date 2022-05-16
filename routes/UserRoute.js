@@ -3,6 +3,8 @@ const userRules = require("../validations/UserValidation");
 const UserController = require("../controllers/UserController");
 const router = require("express").Router();
 const handleSingupAuth = require("../middlewares/signUpauth");
+const authAdmin = require("../middlewares/adminAuth");
+const handleAuth = require("../middlewares/auth");
 router.post(
   "/login",
   handleSingupAuth,
@@ -21,5 +23,6 @@ router.post(
 );
 router.get("/validate/:code", UserController.verifyUser);
 router.get("/get", UserController.getUser);
+// router.post("/block/", handleAuth, authAdmin, UserController.blockUser);
 
 module.exports = router;

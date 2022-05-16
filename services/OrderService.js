@@ -13,7 +13,7 @@ module.exports = {
     }
   },
   getMyOrders: async (user) => {
-    let orders = OrderModel.find({ _id: user.id });
+    let orders = OrderModel.find({ touristID: user.id });
     if (orders) {
       return orders;
     } else {
@@ -184,6 +184,17 @@ module.exports = {
     } else {
       let e = new Error();
       e.message = `Either the Order was already Refunded or Not Found`;
+      e.statusCode = 404;
+      throw e;
+    }
+  },
+  getOrdersByTourID: async (id) => {
+    const orders = await OrderModel.find({ tourID: id });
+    if (orders) {
+      return orders;
+    } else {
+      let e = new Error();
+      e.message = "not FOund";
       e.statusCode = 404;
       throw e;
     }
