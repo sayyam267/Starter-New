@@ -1,5 +1,6 @@
 const TourModel = require("../models/TourPack");
 const UserModel = require("../models/UserModel");
+const OrderModel = require("../models/Orders");
 module.exports = {
   getTours: async () => {
     let tours = await TourModel.find({});
@@ -12,10 +13,25 @@ module.exports = {
       throw e;
     }
   },
-  getToursByID: async (id) => {
+  getToursByID: async (id, user) => {
+    let author = false;
+    let touristApproved = false;
+
     let tours = await TourModel.findById(id);
     if (tours) {
-      return tours;
+      if (user) {
+        if (user.role == "vendor") {
+          author = true;
+        } else if (user.role == "tourist") {
+          let order = await OrderModel.find({ touristID: user.id });
+          if (order) {
+            if (order?.isApproved) {
+              touristApproved = true;
+            }
+          }
+        }
+      }
+      return { tours, author: author, touristApproved: touristApproved };
     } else {
       let e = new Error();
       e.message = `Tour Not Found by id ${id}`;
