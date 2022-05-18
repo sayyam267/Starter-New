@@ -7,7 +7,7 @@ const FavToursService = require("./FavToursService");
 const TransactionsModel = require("../models/Transactions.model");
 const FavTours = require("../models/FavTours");
 const RatingService = require("./RatingService");
-
+const OrderModel = require("../models/Orders");
 module.exports = {
   getProfileInfo: async (user) => {
     let details = await UserModel.findById(user.id)
@@ -129,6 +129,18 @@ module.exports = {
     else {
       let e = new Error();
       e.message = "NOT FOUND";
+      e.statusCode = 404;
+      throw e;
+    }
+  },
+  requestRefund: async (orderID) => {
+    let order = await OrderModel.findOneAndUpdate(
+      { _id: orderID },
+      { $set: { requestRefund: true } }
+    );
+    if (order) return true;
+    else {
+      let e = new Error("Not Found");
       e.statusCode = 404;
       throw e;
     }

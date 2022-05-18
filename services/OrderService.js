@@ -115,13 +115,23 @@ module.exports = {
       throw e;
     }
   },
-  createOrder: async (data) => {
+  createOrder: async (data, user) => {
+    // console.log(user);
+    if (!data?.touristID && !user) {
+      let e = new Error(
+        "touristID not found in body or the user is not logged in"
+      );
+      e.statusCode = 400;
+      throw e;
+    }
+    // console.log(user.id);
     let existingOrder = await OrderModel.findOne({
       tourID: data.tourID,
       seats: data.seats,
       promo: data.promo,
       amount: data.amount,
-      touristID: data.touristID,
+      // touristID: data.touristID,
+      touristID: user.id,
     });
     if (!existingOrder) {
       let newOrder = await OrderModel({
@@ -129,7 +139,8 @@ module.exports = {
         seats: data.seats,
         promo: data.promo,
         amount: data.amount,
-        touristID: data.touristID,
+        // touristID: data.touristID,
+        touristID: user.id,
       });
       await newOrder.save();
       return newOrder;
@@ -195,6 +206,18 @@ module.exports = {
     } else {
       let e = new Error();
       e.message = "not FOund";
+      e.statusCode = 404;
+      throw e;
+    }
+  },
+  requestRefund: async (body) => {
+    let order = await OrderModel.findOneAndUpdate(
+      { _id: body.orderID },
+      { $set: { requestRefund: true } }
+    );
+    if (order) return true;
+    else {
+      let e = new Error("Not Found");
       e.statusCode = 404;
       throw e;
     }

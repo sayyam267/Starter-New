@@ -23,6 +23,7 @@ const TransactionRoute = require("./routes/TransactionRoute");
 const FavTourRoute = require("./routes/FavTourRoute");
 const AdminRoute = require("./routes/AdminRoute");
 const TouristRoute = require("./routes/TouristRoute");
+const VendorRoute = require("./routes/VendorRoute");
 mongoose
   .connect(string)
   .then((res) => {
@@ -38,7 +39,7 @@ mongoose
 // app.use("/vendor", VendorRoute);
 app.use("/user", UserRoute);
 app.use("/promo", PromoRoute);
-// app.use("/order", OrderRoute);
+app.use("/order", OrderRoute);
 app.use("/rating", RatingRoute);
 app.use("/tour", TourRoutes);
 app.use("/city", CityRoute);
@@ -47,6 +48,7 @@ app.use("/usertype", UserTypeRoute);
 app.use("/favtours/", FavTourRoute);
 app.use("/admin/", AdminRoute);
 app.use("/tourist", TouristRoute);
+app.use("/vendor", VendorRoute);
 // app.use("/request", ReserveTourRoute);
 
 app.use(express.static(path.join("public")));

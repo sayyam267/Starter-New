@@ -29,7 +29,7 @@ let e = new Error();
 //           return res.send({ message: "FOUND", data: order });
 //         } else {
 //           e.message = "NOT_FOUND";
-//           e.statusCode = 404;
+//           e?.statusCode || 400 = 404;
 //           throw e;
 //         }
 //       } else {
@@ -62,7 +62,7 @@ module.exports = {
       let orders = await OrderService.getOrders();
       return res.status(200).send(orders);
     } catch (e) {
-      return res.status(e.statusCode).send(e.message);
+      return res.status(e?.statusCode || 400).send(e.message);
     }
   },
   getmyOrders: async (req, res) => {
@@ -75,12 +75,12 @@ module.exports = {
         .send({ data: null, message: e.message });
     }
   },
-  getOrdersByID: async (req, res) => {
+  getOrderByID: async (req, res) => {
     try {
       let orders = await OrderService.getOrderByID(req.params.id);
       return res.send(orders);
     } catch (e) {
-      return res.status(e.statusCode).send(e.message);
+      return res.status(e?.statusCode || 400).send(e.message);
     }
   },
   getOrdersByAmount: async (req, res) => {
@@ -88,7 +88,7 @@ module.exports = {
       let orders = await OrderService.getOrdersByAmount(req.query?.amount);
       return res.send(orders);
     } catch (e) {
-      return res.status(e.statusCode).send(e.message);
+      return res.status(e?.statusCode || 400).send(e.message);
     }
   },
   getOrdersByApporval: async (req, res) => {
@@ -96,7 +96,7 @@ module.exports = {
       let orders = await OrderService.getOrdersByApporval(req.query?.approved);
       return res.send(orders);
     } catch (e) {
-      return res.status(e.statusCode).send(e.message);
+      return res.status(e?.statusCode || 400).send(e.message);
     }
   },
   getOrdersByApporvalByTouristID: async (req, res) => {
@@ -107,7 +107,7 @@ module.exports = {
       });
       return res.send(orders);
     } catch (e) {
-      return res.status(e.statusCode).send(e.message);
+      return res.status(e?.statusCode || 400).send(e.message);
     }
   },
   getRefundedOrders: async (req, res) => {
@@ -115,7 +115,7 @@ module.exports = {
       let orders = await OrderService.getRefundedOrders();
       return res.send(orders);
     } catch (e) {
-      return res.status(e.statusCode).send(e.message);
+      return res.status(e?.statusCode || 400).send(e.message);
     }
   },
   getRefundedOrdersByTouristID: async (req, res) => {
@@ -125,7 +125,7 @@ module.exports = {
       );
       return res.send(orders);
     } catch (e) {
-      return res.status(e.statusCode).send(e.message);
+      return res.status(e?.statusCode || 400).send(e.message);
     }
   },
   approveTour: async (req, res) => {
@@ -133,15 +133,16 @@ module.exports = {
       let orders = await OrderService.approveTour(req.body);
       return res.send(orders);
     } catch (e) {
-      return res.status(e.statusCode).send(e.message);
+      return res.status(e?.statusCode || 400).send(e.message);
     }
   },
   createOrder: async (req, res) => {
     try {
-      let orders = await OrderService.createOrder(req.body);
+      let user = req.user;
+      let orders = await OrderService.createOrder(req.body, user);
       return res.send(orders);
     } catch (e) {
-      return res.status(e.statusCode).send(e.message);
+      return res.status(e?.statusCode || 400).send(e.message);
     }
   },
   refundTour: async (req, res) => {
@@ -149,7 +150,15 @@ module.exports = {
       let orders = await OrderService.refundOrder(req.body);
       return res.send(orders);
     } catch (e) {
-      return res.status(e.statusCode).send(e.message);
+      return res.status(e?.statusCode || 400).send(e.message);
+    }
+  },
+  requestRefund: async (req, res) => {
+    try {
+      let request = await OrderService.requestRefund(req.body);
+      res.send({ data: true, message: "Requested" });
+    } catch (e) {
+      res.status(e?.statusCode || 400).send({ data: null, message: e.message });
     }
   },
 };

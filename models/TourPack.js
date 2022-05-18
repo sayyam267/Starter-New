@@ -4,6 +4,7 @@ const Schema = mongoose.Schema(
   {
     name: { type: String, required: true },
     price: { type: Number, required: true },
+    isCompleted: { type: Boolean, required: true },
     // city: { type: Array(String), required: true },
     source: {
       type: mongoose.Schema.Types.ObjectId,

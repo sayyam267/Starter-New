@@ -65,6 +65,45 @@ const Orders = require("../models/Orders");
 // };
 
 module.exports = {
+  addRating: async (req, res) => {
+    try {
+      let user = req.user;
+      let newRating = await RatingService.addRatings(req.body, user);
+      return res.send({ data: newRating, message: "Created" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: e.data || null, message: e.message });
+    }
+  },
+  getRatingByID: async (req, res) => {
+    try {
+      let rating = await RatingService.getRatingsByID(req.params.id);
+      return res.send({ data: rating, message: "Fetched" });
+    } catch (e) {
+      res.status(e?.statusCode || 400).send({ data: null, message: e.message });
+    }
+  },
+  getRating: async (req, res) => {
+    try {
+      let query = req.query;
+      // console.log(query);
+      let rating = await RatingService.getRatings(query);
+      res.send({ data: rating, message: "Fetched" });
+    } catch (e) {
+      res.status(e?.statusCode || 400).send({ data: null, message: e.message });
+    }
+  },
+  deleteRating: async (req, res) => {
+    try {
+      let rating = await RatingService.deleteRating(req.body);
+      return res.send({ data: rating, message: "deleted" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
   a: async (req, res) => {
     try {
     } catch (e) {}
