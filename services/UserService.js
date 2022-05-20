@@ -262,7 +262,7 @@ module.exports = {
     }
   },
   createUserService: async (data) => {
-    let user = {};
+    // let user = {};
     const uniqueCode = uuid();
     try {
       await EmailVerification({
@@ -273,41 +273,71 @@ module.exports = {
     } catch (e) {
       throw e;
     }
+    let profilePicture = "";
+    if (String(data.gender).toLowerCase == "male") {
+      profilePicture = "/images/profile-pictures/default-male.jpg";
+    } else profilePicture = "/images/profile-pictures/default-female.jpg";
     // console.log("EMAIL: " + process.env.MAIL);
     // console.log("PASS: " + process.env.PASS);
     // let userType = await UserTypeService.findById(data.usertype);
     // let userType = await UserType.findOne({ userType: data.role });
     // console.log(userType);
+    let role = "";
+    let isActive = false;
+    let isRating = false;
     if (data.role === "vendor" || data.role === "tourguide") {
-      var salt = await bcrypt.genSalt(Number(process.env.SALT));
-      var hashed = await bcrypt.hash(data.password, salt);
-      user = await UserModel({
-        ...data,
-        password: hashed,
-        isVerified: false,
-        isActive: false,
-        userType: data.role,
-        isRating: true,
-        code: uniqueCode,
-      });
-      await user.save();
+      //new Comment
+      // var salt = await bcrypt.genSalt(Number(process.env.SALT));
+      // var hashed = await bcrypt.hash(data.password, salt);
+      // user = await UserModel({
+      //   ...data,
+      //   password: hashed,
+      //   isVerified: false,
+      //   isActive: false,
+      //   userType: data.role,
+      //   isRating: true,
+      //   code: uniqueCode,
+      // });
+      // await user.save();
+      //end of new
       // return user;
+      isRating = true;
+      data.role === "vendor" ? (role = "vendor") : (role = "tourguide");
     }
     if (data.role === "tourist") {
-      var salt = await bcrypt.genSalt(Number(process.env.SALT));
-      var hashed = await bcrypt.hash(data.password, salt);
-      user = await UserModel({
-        ...data,
-        password: hashed,
-        isVerified: false,
-        isActive: false,
-        userType: "tourist",
-        isRating: false,
-        code: uniqueCode,
-      });
-      await user.save();
+      // var salt = await bcrypt.genSalt(Number(process.env.SALT));
+      // var hashed = await bcrypt.hash(data.password, salt);
+      // user = await UserModel({
+      //   ...data,
+      //   password: hashed,
+      //   isVerified: false,
+      //   isActive: false,
+      //   userType: "tourist",
+      //   isRating: false,
+      //   code: uniqueCode,
+      // });
+      // await user.save();
       // return tourist;
+      isRating = false;
+      role = "tourist";
     }
+    if (data.role == "admin") {
+      isActive = true;
+      role = "admin";
+    }
+    var salt = await bcrypt.genSalt(Number(process.env.SALT));
+    var hashed = await bcrypt.hash(data.password, salt);
+    let user = await UserModel({
+      ...data,
+      password: hashed,
+      profilePicture: profilePicture,
+      isVerified: false,
+      isActive: isActive,
+      userType: role,
+      isRating: isRating,
+      code: uniqueCode,
+    });
+    await user.save();
 
     return user;
   },

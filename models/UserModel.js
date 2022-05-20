@@ -16,7 +16,8 @@ const Schema = mongoose.Schema(
     isActive: { type: Boolean, default: false },
     profilePicture: {
       type: String,
-      default: "/images/profile-pictures/default.jpg",
+      default: "",
+      // default: "/images/profile-pictures/default.jpg",
     },
     gender: { type: String, required: true },
     balance: { type: Number, default: 0 },
@@ -37,12 +38,12 @@ const Schema = mongoose.Schema(
     cnic: { type: String, required: true },
     isDeleted: { type: Boolean, default: false },
     //daate and expiry in array
-    // code: { type: String, required: true },
-    code: {
-      type: Array,
-      required: true,
-      // default: [{ type: "", code: "", expiresOn: "", isExpired: false }],
-    },
+    code: { type: String, required: true },
+    // code: {
+    //   type: Array,
+    //   required: true,
+    //   // default: [{ type: "", code: "", expiresOn: "", isExpired: false }],
+    // },
     //
   },
   { timestamp: true }
@@ -50,4 +51,5 @@ const Schema = mongoose.Schema(
 // Schema.virtual('balance').get(()=>{
 //   return
 // })
+
 module.exports = mongoose.model("users", Schema);
