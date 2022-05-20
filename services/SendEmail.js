@@ -22,7 +22,7 @@ const sendVerificationEmail = async ({ name, email, confirmationCode }) => {
       html: `<h1>Email Confirmation</h1>
       <h2>Hello ${name}. Thanks for signing up for TourBook.</h2>
       <p>Please confirm your email by clicking on the following link</p>
-      <a href=http://tourbook-backend.herokuapp.com/user/validate/${confirmationCode}> Click here</a>
+      <a href=http://tourbook-backend.herokuapp.com/user/validate/?email=${email}&code=${confirmationCode}> Click here</a>
       </div>`,
     })
     .catch((e) => console.log(e));

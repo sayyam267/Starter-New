@@ -263,7 +263,10 @@ module.exports = {
   },
   verifyUser: async (req, res) => {
     try {
-      let user = await UserService.verifyUser(req.params.code);
+      let user = await UserService.verifyUser({
+        email: req.query.email,
+        code: req.query.code,
+      });
       return res.send(
         `<div style="align-self:center;justify-content:center;display:flex;"><h1>User Verified you can Continue to Use ToorBook</h1></div>`
       );

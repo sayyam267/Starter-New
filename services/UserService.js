@@ -1,6 +1,6 @@
 const UserModel = require("../models/UserModel");
 const jwt = require("jsonwebtoken");
-const EmailVerification = require("./EmailVerification");
+const { sendVerificationEmail } = require("./SendEmail");
 const uuid = require("uuid").v4;
 
 require("dotenv").config();
@@ -265,7 +265,7 @@ module.exports = {
     // let user = {};
     const uniqueCode = uuid();
     try {
-      await EmailVerification({
+      await sendVerificationEmail({
         name: data.fname,
         email: data.email,
         confirmationCode: uniqueCode,
@@ -274,7 +274,7 @@ module.exports = {
       throw e;
     }
     let profilePicture = "";
-    if (String(data.gender).toLowerCase == "male") {
+    if (String(data.gender).toLowerCase() == "male") {
       profilePicture = "/images/profile-pictures/default-male.jpg";
     } else profilePicture = "/images/profile-pictures/default-female.jpg";
     // console.log("EMAIL: " + process.env.MAIL);
@@ -492,13 +492,13 @@ module.exports = {
       throw e;
     }
   },
-  verifyUser: async (code) => {
-    let user = await UserModel.findOne({ code: code }).update(
-      { code: code },
-      { $set: { isVerified: true, isActive: true } }
-    );
+  verifyUser: async (data) => {
+    let user = await UserModel.findOne({
+      email: data.email,
+      code: data.code,
+    }).update({ $set: { isVerified: true, isActive: true } });
     if (!user) {
-      throw new Error("NOT FOUND");
+      throw (new Error("NOT FOUND").statusCode = 404);
     }
   },
   deleteUser: async (id) => {

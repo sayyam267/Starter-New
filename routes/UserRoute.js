@@ -21,7 +21,7 @@ router.post(
   UserController.createUser
   // UserController.signup
 );
-router.get("/validate/:code", UserController.verifyUser);
+router.get("/validate", UserController.verifyUser);
 router.get("/get", UserController.getUser);
 router.post("/forgot", UserController.forgotPassword);
 router.put("/update/password", UserController.updatePassword);
