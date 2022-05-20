@@ -467,6 +467,7 @@ module.exports = {
               role: existingUser.userType,
               name: existingUser.fname + " " + existingUser.lname,
               email: existingUser.email,
+              profilePicture: existingUser.profilePicture,
               // isVerified: existingUser.isVerified,
               balance: existingUser.balance,
             };
@@ -496,9 +497,15 @@ module.exports = {
     let user = await UserModel.findOne({
       email: data.email,
       code: data.code,
-    }).update({ $set: { isVerified: true, isActive: true } });
+      isVerified: false,
+    });
     if (!user) {
-      throw (new Error("NOT FOUND").statusCode = 404);
+      let e = new Error("Either The User is Not Found or Already Verified");
+      e.statusCode = 404;
+      throw e;
+    } else {
+      await user.update({ $set: { isVerified: true, isActive: true } });
+      return true;
     }
   },
   deleteUser: async (id) => {

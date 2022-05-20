@@ -263,15 +263,28 @@ module.exports = {
   },
   verifyUser: async (req, res) => {
     try {
-      let user = await UserService.verifyUser({
-        email: req.query.email,
-        code: req.query.code,
-      });
-      return res.send(
-        `<div style="align-self:center;justify-content:center;display:flex;"><h1>User Verified you can Continue to Use ToorBook</h1></div>`
-      );
+      if (Object.keys(req?.query).length > 0) {
+        let user = await UserService.verifyUser({
+          email: req.query.email,
+          code: req.query.code,
+        });
+        return res.send(
+          `<div style="align-self:center;justify-content:center;display:flex;"><h1>User Verified you can Continue to Use ToorBook</h1></div>`
+        );
+      } else {
+        let e = new Error();
+        e.message = "Missing Validation Code and Email";
+        e.statusCode = 400;
+        throw e;
+      }
     } catch (e) {
-      return res.status(400).send({ message: "NOT FOUND", data: null });
+      return res
+        .status(400)
+        .send(
+          `<div style="align-self:center;justify-content:center;display:flex;"><h1>${e.message}</h1></div>`
+        );
+
+      // return res.status(400).send({ message: "NOT FOUND", data: null });
     }
   },
   blockUser: async (req, res) => {
