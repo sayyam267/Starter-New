@@ -5,6 +5,7 @@ const uuid = require("uuid").v4;
 
 require("dotenv").config();
 const bcrypt = require("bcryptjs");
+const { sendForgotPassword } = require("./SendEmail");
 // const UserTypeController = require("../controllers/UserTypeController");
 // const UserTypeService = require("./UserTypeService");
 // const UserType = require("../models/UserType");
@@ -472,5 +473,39 @@ module.exports = {
   },
   deleteUser: async (id) => {
     let user = await UserModel.findById().update();
+  },
+  forgotPassword: async (email) => {
+    let user = await UserModel.findOne({ email: email, isDeleted: false });
+    if (user) {
+      let fullname = user.fname + " " + user.lname;
+      let code = Math.floor(Math.random() * 90000 + 10000);
+
+      await sendForgotPassword({
+        name: fullname,
+        email: user.email,
+        confirmationCode: code,
+      });
+      return code;
+    } else {
+      let e = new Error("Not Found");
+      e.statusCode = 404;
+      throw e;
+    }
+  },
+  updatePassword: async (email, password) => {
+    var salt = await bcrypt.genSalt(Number(process.env.SALT));
+    var hashed = await bcrypt.hash(password, salt);
+    let user = await UserModel.updateOne(
+      {
+        email: email,
+        isDeleted: false,
+      },
+      { password: hashed, isVerified: true }
+    );
+    // let user = await UserModel.findOneAndUpdate({
+    //   email: email,
+    //   isDeleted: false,
+    // }).update({ password: hashed, isVerified: true });
+    return true;
   },
 };

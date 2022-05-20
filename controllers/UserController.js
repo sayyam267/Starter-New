@@ -285,4 +285,30 @@ module.exports = {
         .send({ data: null, message: e.message });
     }
   },
+  forgotPassword: async (req, res) => {
+    try {
+      let { email } = req.body;
+      let code = await UserService.forgotPassword(email);
+      return res.send({
+        data: code,
+        message: "Verification Code Sent to Email",
+      });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
+  updatePassword: async (req, res) => {
+    try {
+      let { email, password } = req.body;
+      let changes = await UserService.updatePassword(email, password);
+      return res.send({
+        data: changes,
+        message: "Password Changed Successfully",
+      });
+    } catch (e) {
+      res.status(e?.statusCode || 400).send({ data: null, message: e.message });
+    }
+  },
 };

@@ -23,6 +23,8 @@ router.post(
 );
 router.get("/validate/:code", UserController.verifyUser);
 router.get("/get", UserController.getUser);
+router.post("/forgot", UserController.forgotPassword);
+router.put("/update/password", UserController.updatePassword);
 // router.post("/block/", handleAuth, authAdmin, UserController.blockUser);
 
 module.exports = router;
