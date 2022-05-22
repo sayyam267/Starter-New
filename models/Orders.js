@@ -8,7 +8,7 @@ const Schema = mongoose.Schema(
     promo: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "PromoCodes",
-      default: {},
+      default: null,
     },
     amount: { type: Number, required: true },
     touristID: {
