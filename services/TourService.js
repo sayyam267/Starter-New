@@ -199,4 +199,15 @@ module.exports = {
       }
     }
   },
+  TripFilterSearch: async (data) => {
+    let tours = await TourModel.find({ data });
+    if (tours) {
+      return tours;
+    } else {
+      let e = new Error();
+      e.message = "Not Found";
+      e.statusCode = 404;
+      throw e;
+    }
+  },
 };

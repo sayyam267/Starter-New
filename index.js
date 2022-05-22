@@ -24,6 +24,8 @@ const FavTourRoute = require("./routes/FavTourRoute");
 const AdminRoute = require("./routes/AdminRoute");
 const TouristRoute = require("./routes/TouristRoute");
 const VendorRoute = require("./routes/VendorRoute");
+const CustomTourRoute = require("./routes/CustomTourRoute");
+
 mongoose
   .connect(string)
   .then((res) => {
@@ -49,6 +51,7 @@ app.use("/favtours/", FavTourRoute);
 app.use("/admin/", AdminRoute);
 app.use("/tourist", TouristRoute);
 app.use("/vendor", VendorRoute);
+app.use("/customtour", CustomTourRoute);
 // app.use("/request", ReserveTourRoute);
 
 app.use(express.static(path.join("public")));

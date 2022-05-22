@@ -125,16 +125,9 @@ module.exports = {
       throw e;
     }
     // console.log(user.id);
-    let existingOrder = await OrderModel.findOne({
-      tourID: data.tourID,
-      seats: data.seats,
-      promo: data.promo,
-      amount: data.amount,
-      // touristID: data.touristID,
-      touristID: user.id,
-    });
-    if (!existingOrder) {
-      let newOrder = await OrderModel({
+    let existinguser = await UserModel.findById(user.id).select("balance");
+    if (existinguser.balance >= data.amount) {
+      let existingOrder = await OrderModel.findOne({
         tourID: data.tourID,
         seats: data.seats,
         promo: data.promo,
@@ -142,11 +135,25 @@ module.exports = {
         // touristID: data.touristID,
         touristID: user.id,
       });
-      await newOrder.save();
-      return newOrder;
+      if (!existingOrder) {
+        let newOrder = await OrderModel({
+          tourID: data.tourID,
+          seats: data.seats,
+          promo: data.promo,
+          amount: data.amount,
+          // touristID: data.touristID,
+          touristID: user.id,
+        });
+        await newOrder.save();
+        return newOrder;
+      } else {
+        let e = new Error();
+        e.message = `Already Exists`;
+        e.statusCode = 400;
+        throw e;
+      }
     } else {
-      let e = new Error();
-      e.message = `Already Exists`;
+      let e = new Error("Not Enough Credits to Reserve Tour");
       e.statusCode = 400;
       throw e;
     }
@@ -180,18 +187,35 @@ module.exports = {
     let existingOrder = await OrderModel.findOne({
       _id: data.id,
       isRefunded: false,
+      requestRefund: true,
     });
+    // console.log(existingOrder);
     if (existingOrder) {
-      let userToRefund = await UserModel.find({ _id: existingOrder.touristID });
+      let userToRefund = await UserModel.findById(existingOrder.touristID);
+      // let refundamount =
+      //   Number(userToRefund.balance) + Number(existingOrder.amount);
+      // console.log(refundamount, "Balance " + userToRefund.balance);
       await UserModel.updateOne(
         { _id: existingOrder.touristID },
-        { $set: { balance: userToRefund.balance + data.refundAmount } }
+        {
+          $set: {
+            balance:
+              Number(userToRefund.balance) + Number(existingOrder.amount),
+          },
+        }
+
+        // { $set: { balance: userToRefund.balance + order.refundAmount } }
       );
       let refunded = await OrderModel.updateOne(
         { _id: data.id },
-        { $set: { isRefunded: true, refundAmount: data.refundAmount } }
+        {
+          $set: {
+            isRefunded: true,
+            refundAmount: Number(existingOrder.amount),
+          },
+        }
       );
-      return refunded;
+      return refunded.acknowledged ? true : false;
     } else {
       let e = new Error();
       e.message = `Either the Order was already Refunded or Not Found`;

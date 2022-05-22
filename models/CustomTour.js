@@ -5,15 +5,21 @@ const Schema = mongoose.Schema(
     by: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "users" },
     to: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
+      // type: String,
+      default: null,
+      // required: true,
       ref: "users",
-      default: {},
     },
     requirements: {
       maxBudget: { type: Number, required: true },
       seats: { type: Number, required: true },
       description: { type: String, required: true },
-      city: {
+      source: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "cities",
+      },
+      destination: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: "cities",
@@ -22,12 +28,13 @@ const Schema = mongoose.Schema(
       isGuide: { type: Boolean, default: false },
     },
     fulfilledBy: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: [mongoose.Schema.Types.ObjectId],
+      // type: [String],
       required: true,
       ref: "users",
-      default: {},
+      default: null,
     },
-    amount: { type: Number, default: 0 },
+    amountTaken: { type: Number, default: 0 },
   },
   { timestamp: true }
 );

@@ -125,4 +125,32 @@ module.exports = {
         .send({ data: null, message: e.message });
     }
   },
+  FilterTourSearch: async (req, res) => {
+    try {
+      let query = {};
+      if (req?.query?.source) {
+        query.source = req?.query?.source;
+      }
+      if (req?.query?.destination) {
+        query.destination = req?.query?.destination;
+      }
+      if (req?.query?.price) {
+        query.price = req?.query?.price;
+      }
+      if (req?.query?.seats) {
+        query.seats = req?.query?.seats;
+      }
+      if (req?.query?.source) {
+        query.source = req?.query?.source;
+      }
+      if (req?.query?.source) {
+        query.source = req?.query?.source;
+      }
+      let tours = await TourService.TripFilterSearch(query);
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
 };
