@@ -16,7 +16,7 @@ module.exports = {
   },
   refundPurchase: async (req, res) => {
     try {
-      let refund = await TransactionService.rechargeAccount(req);
+      let refund = await TransactionService.refundPurchase(req);
       return res
         .status(200)
         .send({ data: refund, message: "Refund Successfully" });

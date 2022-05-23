@@ -22,6 +22,7 @@ module.exports = {
   rechargeAccount: async (req) => {
     try {
       let { id } = req.user;
+      // console.log(req.body.payment);
       let {
         CardNumber: n,
         Month: expmonth,
@@ -53,47 +54,51 @@ module.exports = {
         customer: customer.id,
       });
       let user = await UserModel.findById(req.user.id);
+      // console.log(user);
       await new TransactionsModel({
-        CardNumber: CardNumber,
-        userID: id,
-        TransID: token.id,
+        CardNumber: n,
+        userID: user._id,
+        TransID: charges.id,
         // TransDate: new Date.now(),
-        RechargedAmount: Amount,
+        RechargedAmount: req.body.payment.Amount,
         Previous_Balance: user.balance,
-        New_Balance: user.balance + Amount,
-      });
+        New_Balance: Number(user.balance) + Number(req.body.payment.Amount),
+      }).save();
       await UserModel.updateOne(
         { _id: req.user.id },
-        { balance: balance + Amount }
+        { balance: Number(user.balance) + Number(req.body.payment.Amount) }
       );
       // await user.update({ balance: balance + Amount });
-      return res.json(charges);
+      return charges;
     } catch (e) {
       throw e;
     }
   },
   refundPurchase: async (req) => {
     try {
-      let { id } = req.body;
+      let { userID, TransID } = req.body;
       let transcantion = await TransactionsModel.findOne({
-        TransID: req.body.TransID,
+        TransID: TransID,
       });
       if (transcantion) {
         let refund = await stripe.refunds.create({
-          charge: id,
+          charge: TransID,
         });
+        // await TransactionsModel.updateOne({_id:TransID},{$set:{refunded = true,Previous_Balance : transcantion.New_Balance}})
         transcantion.refunded = true;
-        transcantion.Previous_Balance = transcantion.New_Balance;
+        transcantion.Previous_Balance = Number(transcantion.New_Balance);
         transcantion.New_Balance =
-          transcantion.New_Balance - transcantion.rechargeAccount;
+          Number(transcantion.New_Balance) -
+          Number(transcantion.RechargedAmount);
         await transcantion.save();
-        let user = await UserModel.findById(req?.user?.id);
+        // let user = await UserModel.findById(req?.user?.id);
+        let user = await UserModel.findById(userID);
         user.balance = transcantion.New_Balance;
         await user.save();
-        res.send(refund);
+        return refund;
       } else {
         let e = new Error();
-        e.message = `No Transactions found agains TransactionID ${id}`;
+        e.message = `No Transactions found agains TransactionID ${TransID}`;
         e.statusCode = 404;
         throw e;
       }

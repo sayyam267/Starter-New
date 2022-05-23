@@ -31,6 +31,7 @@ router.put(
   validation,
   UserController.updatePassword
 );
+router.put("/update/profile", handleAuth, UserController.updateProfile);
 // router.post("/block/", handleAuth, authAdmin, UserController.blockUser);
 
 module.exports = router;

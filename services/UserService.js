@@ -545,4 +545,58 @@ module.exports = {
     // }).update({ password: hashed, isVerified: true });
     return true;
   },
+  updateProfile: async (data, user) => {
+    let existing = await UserModel.findById(user.id).select("email");
+    let email = "";
+    let isVerified = "";
+    let isPasswordChange = false;
+    var hashed = "";
+
+    if (existing) {
+      if (data?.password) {
+        var salt = await bcrypt.genSalt(Number(process.env.SALT));
+        hashed = await bcrypt.hash(data.password, salt);
+        isPasswordChange = true;
+      } else {
+        hashed = existing.password;
+      }
+      if (data?.email) {
+        if (existing.email != data.email) {
+          email = data.email;
+          isVerified = false;
+          let code = uuid();
+          await sendVerificationEmail({
+            name: existing.fname,
+            email: data.email,
+            confirmationCode: code,
+          });
+        } else {
+          email = existing.email;
+          isVerified: existing.isVerified;
+        }
+      }
+      let updatedProfile = await UserModel.updateOne(
+        { _id: data.id },
+        {
+          $set: {
+            cnic: data.cnic,
+            phoneNumber: data.phoneNumber,
+            password: hashed,
+            fname: data.fname,
+            lname: data.lname,
+            email: email,
+            isVerified: isVerified,
+            gender: String(data.gender).toLowerCase(),
+            address: data.address,
+          },
+        }
+      );
+      return updatedProfile;
+    } else {
+      let e = new Error();
+      e.message = "Not Found";
+      e.statusCode = 404;
+      throw e;
+    }
+  },
 };

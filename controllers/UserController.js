@@ -327,4 +327,14 @@ module.exports = {
       res.status(e?.statusCode || 400).send({ data: null, message: e.message });
     }
   },
+  updateProfile: async (req, res) => {
+    try {
+      let user = req.user;
+      let newDetails = await UserService.updateProfile(req.body, user);
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
 };
