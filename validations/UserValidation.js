@@ -48,4 +48,24 @@ module.exports = {
       check("gender").notEmpty().withMessage("Gender is required"),
     ];
   },
+  updatePassword: () => {
+    return [
+      check("password")
+        .notEmpty()
+        .isLength({ min: 8, max: 30 })
+        .withMessage(
+          "Password should contain at least 8 character and at most 30"
+        ),
+      check("email")
+        .notEmpty()
+        .isEmail()
+        .withMessage("INVALID EMAIL")
+        .custom((value, { req }) => {
+          let user = User.findOne({ email: value });
+          return user.exec().then((v) => {
+            return v ? Promise.reject("EMAIL Already Exists") : {};
+          });
+        }),
+    ];
+  },
 };

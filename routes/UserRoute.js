@@ -24,7 +24,13 @@ router.post(
 router.get("/validate", UserController.verifyUser);
 router.get("/get", UserController.getUser);
 router.post("/forgot", UserController.forgotPassword);
-router.put("/update/password", UserController.updatePassword);
+router.put(
+  "/update/password",
+  handleSingupAuth,
+  userRules.updatePassword(),
+  validation,
+  UserController.updatePassword
+);
 // router.post("/block/", handleAuth, authAdmin, UserController.blockUser);
 
 module.exports = router;
