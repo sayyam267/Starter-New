@@ -17,7 +17,7 @@ module.exports = {
     let reservationRequests = await OrderService.getPendingReservationRequests(
       user
     );
-    let refundRequests = await module.exports.getRefundTourRequests();
+    let refundRequests = await module.exports.getRefundTourRequests(user);
     dahsboard.reservationRequests = reservationRequests;
     dahsboard.refundRequests = refundRequests;
     return dahsboard;
