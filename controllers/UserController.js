@@ -244,7 +244,7 @@ module.exports = {
   },
   createUser: async (req, res) => {
     try {
-      console.log(req.body);
+      // console.log(req.body);
       let user = await UserService.createUser(req.body);
       return res.send({ data: user, message: "Created" });
     } catch (e) {
@@ -289,7 +289,8 @@ module.exports = {
   },
   blockUser: async (req, res) => {
     try {
-      let user = await UserService.blockUser(req.body.userID);
+      let { id } = req.body;
+      let user = await UserService.blockUser(id);
       if (user)
         return res
           .status(200)
@@ -331,6 +332,17 @@ module.exports = {
     try {
       let user = req.user;
       let newDetails = await UserService.updateProfile(req.body, user);
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
+  deleteUser: async (req, res) => {
+    try {
+      let { id } = req.user;
+      let isDeleted = await UserService.deleteUser(id);
+      return res.send({ data: isDeleted, message: "Deleted" });
     } catch (e) {
       return res
         .status(e?.statusCode || 400)

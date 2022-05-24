@@ -6,21 +6,28 @@ const VendorController = require("../services/VendorController");
 const router = require("express").Router();
 
 router.get(
-  "/get/refunds",
+  "/requests/refunds",
   handleAuth,
   authVendor,
   VendorController.getRefundTourRequests
 );
-router.post(
-  "/accept/refund/:id",
+router.put(
+  "/refund/accept/",
   handleAuth,
   authVendor,
   VendorController.acceptRefundRequest
 );
-router.post(
-  "/accept/order/:id",
+router.put(
+  "/refund/reject/",
+  handleAuth,
+  authVendor,
+  VendorController.rejectRefundTourRequest
+);
+router.put(
+  "/accept/order/",
   handleAuth,
   authVendor,
   OrderController.approveTour
 );
+router.get("/dashboard", handleAuth, authVendor, VendorController.getDashboard);
 module.exports = router;

@@ -150,6 +150,29 @@ module.exports = {
       throw e;
     }
   },
+  getPendingAdmins: async () => {
+    let admins = await UserModel.find({
+      userType: "admin",
+      isActive: false,
+      isDeleted: false,
+    })
+      .select([
+        "fname",
+        "lname",
+        "isActive",
+        "isVerified",
+        "isDeleted",
+        "city",
+        "userType",
+      ])
+      .populate("city");
+    if (admins) return admins;
+    else {
+      let e = new Error("Not Found");
+      e.statusCode = 404;
+      throw e;
+    }
+  },
   getPendingVendors: async () => {
     let vendors = await UserModel.find({
       $or: [{ userType: "vendor" }, { userType: "tourguide" }],
@@ -240,21 +263,39 @@ module.exports = {
     //   { _id: data, isActive: true, isDeleted: false, isVerified: true },
     //   { $set: { isActive: false } }
     // );
-    let user = await UserModel.findOneAndUpdate({
+    let user = await UserModel.findOne({
       _id: data,
-      isActive: true,
-      isDeleted: false,
-      isVerified: true,
+      // isDeleted: false,
+      // isVerified: true,
     });
+    // console.log(user);
     if (user) {
-      // console.log(user);
-      return true;
-    } else if (!user?.isActive) {
-      let e = new Error();
-      e.message = "This User is already Blocked";
-      e.statusCode = 400;
-      throw e;
-    } else {
+      if (user.isDeleted) {
+        let e = new Error("User is Deleted and Blocked");
+        user.isActive = false;
+        await user.save();
+        e.statusCode = 400;
+        throw e;
+      } else {
+        if (!user.isActive) {
+          let e = new Error("Already Blocked");
+          e.statusCode = 400;
+          throw e;
+        } else {
+          user.isActive = false;
+          await user.save();
+          // console.log(user);
+          return true;
+        }
+      }
+    }
+    // else if (!user?.isActive) {
+    //   let e = new Error();
+    //   e.message = "This User is already Blocked";
+    //   e.statusCode = 400;
+    //   throw e;
+    // }
+    else {
       let e = new Error();
       e.message = `NOT FOUND`;
       e.statusCode = 404;
@@ -439,7 +480,8 @@ module.exports = {
       if (existingUser?.isVerified) {
         if (!existingUser?.isActive) {
           let e = new Error();
-          e.message = "You are Blocked from TourBook. Please Contact Support";
+          e.message =
+            "Either You are Blocked from TourBook Or Signup Request is in Pending Status. Please Contact Support";
           e.statusCode = 400;
           throw e;
         }
@@ -504,12 +546,22 @@ module.exports = {
       e.statusCode = 404;
       throw e;
     } else {
-      await user.update({ $set: { isVerified: true, isActive: true } });
+      if (
+        user.userType == "vendor" ||
+        user.userType == "tourguide" ||
+        user.userType == "admin"
+      )
+        await user.update({ $set: { isVerified: true } });
+      else await user({ $set: { isVerified: true, isActive: true } });
       return true;
     }
   },
   deleteUser: async (id) => {
-    let user = await UserModel.findById().update();
+    let user = await UserModel.findById(id).updateOne(
+      { _id: id },
+      { $set: { isDeleted: true } }
+    );
+    return true;
   },
   forgotPassword: async (email) => {
     let user = await UserModel.findOne({ email: email, isDeleted: false });

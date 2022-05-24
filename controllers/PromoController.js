@@ -1,51 +1,36 @@
 const PromoModel = require("../models/PromoModel");
+const PromoService = require("../services/PromoService");
 
 module.exports = {
   createPromo: async (req, res) => {
     try {
-      const existingPromo = await PromoModel.findOne({ code: req.body.code });
-      if (!existingPromo) {
-        let newPromo = await PromoModel({
-          code: req.body.code,
-          vendorID: req.body.vendor,
-          dateAdded: req.body.date,
-          validTill: req.body.validTill,
-          amount: req.body.amount,
-          isPercent: req.body.isPercent,
-        });
-        await newPromo.save();
-        return res.status(200).send({ message: "CREATED", data: newPromo });
-      } else {
-        return res
-          .status(200)
-          .send({ message: "ALREADY EXIST", data: existingPromo });
-      }
+      let data = req.body;
+      let user = req?.user;
+      let newPromo = await PromoService.createPromo(data, user);
+      return res.status(200).send({ message: "Created", data: newPromo });
     } catch (e) {
       return res.status(400).send({ message: e.message });
     }
   },
   editPromo: async (req, res) => {
     try {
-      const existingPromo = await PromoModel.findById(req.body.id);
-      if (existingPromo) {
-        let newPromo = await PromoModel.findOneAndUpdate(
-          { _id: req.body.id },
-          {
-            $set: {
-              code: req.body.code,
-              amount: req.body.amount,
-              isPercent: req.body.isPercent,
-              dateAdded: req.body.dateAdded,
-              validTill: req.body.validTill,
-            },
-          }
-        );
-        return res.send({ message: "UPDATED", data: newPromo });
-      } else {
-        return res.status(404).send({ message: "NOT FOUND", data: null });
-      }
+      const promo = await PromoService.editPromo(req.body);
+      return res.send({ message: "UPDATED", data: promo });
     } catch (e) {
-      return res.status(400).send({ message: e.message });
+      return res
+        .status(e?.statusCode || 400)
+        .send({ message: e.message, data: null });
+    }
+  },
+  getPromoByID: async (req, res) => {
+    try {
+      let { id } = req.params;
+      let promo = await PromoService.getPromoByID(id);
+      return res.send({ data: promo, message: "Fetched" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
     }
   },
   getPromo: async (req, res) => {
@@ -72,6 +57,16 @@ module.exports = {
       }
     } catch (e) {
       return res.status(400).send({ message: e.message });
+    }
+  },
+  deletePromo: async (req, res) => {
+    try {
+      let promo = await PromoService.deletePromo(req.body.id);
+      return res.send({ data: true, message: "Deleted" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
     }
   },
 };

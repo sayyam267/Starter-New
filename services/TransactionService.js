@@ -61,39 +61,43 @@ module.exports = {
         TransID: charges.id,
         // TransDate: new Date.now(),
         RechargedAmount: req.body.payment.Amount,
-        Previous_Balance: user.balance,
-        New_Balance: Number(user.balance) + Number(req.body.payment.Amount),
+        // Previous_Balance: user.balance,
+        // New_Balance: Number(user.balance) + Number(req.body.payment.Amount),
       }).save();
       await UserModel.updateOne(
         { _id: req.user.id },
         { balance: Number(user.balance) + Number(req.body.payment.Amount) }
       );
       // await user.update({ balance: balance + Amount });
-      return charges;
+      return {
+        charges: charges,
+        balance: Number(user.balance) + Number(req.body.payment.Amount),
+      };
     } catch (e) {
       throw e;
     }
   },
   refundPurchase: async (req) => {
     try {
-      let { userID, TransID } = req.body;
+      let { id } = req.body;
       let transcantion = await TransactionsModel.findOne({
-        TransID: TransID,
+        _id: id,
       });
       if (transcantion) {
         let refund = await stripe.refunds.create({
-          charge: TransID,
+          charge: transcantion.TransID,
         });
         // await TransactionsModel.updateOne({_id:TransID},{$set:{refunded = true,Previous_Balance : transcantion.New_Balance}})
         transcantion.refunded = true;
-        transcantion.Previous_Balance = Number(transcantion.New_Balance);
-        transcantion.New_Balance =
-          Number(transcantion.New_Balance) -
-          Number(transcantion.RechargedAmount);
+        // transcantion.Previous_Balance = Number(transcantion.New_Balance);
+        // transcantion.New_Balance =
+        //   Number(transcantion.New_Balance) -
+        //   Number(transcantion.RechargedAmount);
         await transcantion.save();
         // let user = await UserModel.findById(req?.user?.id);
-        let user = await UserModel.findById(userID);
-        user.balance = transcantion.New_Balance;
+        let user = await UserModel.findById(transcantion.userID);
+        // user.balance = transcantion.New_Balance;
+        user.balance = user.balance - transcantion.RechargedAmount;
         await user.save();
         return refund;
       } else {

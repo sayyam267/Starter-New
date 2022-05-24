@@ -3,14 +3,14 @@ const mongoose = require("mongoose");
 const UserTransactionsSchema = new mongoose.Schema(
   {
     CardNumber: { type: Number, required: true },
-    New_Balance: {
-      type: Number,
-      required: true,
-    },
-    Previous_Balance: {
-      type: Number,
-      required: true,
-    },
+    // New_Balance: {
+    //   type: Number,
+    //   required: true,
+    // },
+    // Previous_Balance: {
+    //   type: Number,
+    //   required: true,
+    // },
     RechargedAmount: {
       type: Number,
       required: true,
@@ -19,7 +19,7 @@ const UserTransactionsSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    RefundRequest: { type: Boolean, default: false },
+    // RefundRequest: { type: Boolean, default: false },
     refunded: { type: Boolean, default: false },
     TransID: { type: String },
     userID: {

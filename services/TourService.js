@@ -20,18 +20,14 @@ module.exports = {
     let tours = await TourModel.findById(id);
     if (tours) {
       if (user) {
-        if (user.role == "vendor") {
-          author = true;
-        } else if (user.role == "tourist") {
-          let order = await OrderModel.find({ touristID: user.id });
-          if (order) {
-            if (order?.isApproved) {
-              touristApproved = true;
-            }
+        let order = await OrderModel.find({ touristID: user.id });
+        if (order) {
+          if (order?.isApproved) {
+            touristApproved = true;
           }
         }
       }
-      return { tours, author: author, touristApproved: touristApproved };
+      return { tours, touristApproved: touristApproved };
     } else {
       let e = new Error();
       e.message = `Tour Not Found by id ${id}`;
@@ -157,15 +153,15 @@ module.exports = {
       throw e;
     }
   },
-  deleteTours: async (data) => {
-    let tour = await TourModel.findById(data.id);
+  deleteTours: async (id) => {
+    let tour = await TourModel.findById(id);
     if (!tour) {
       let e = new Error();
       e.message = `Tour Not Found`;
       e.statusCode = 404;
       throw e;
     } else {
-      if (tour.vendorID === data.vendorID) {
+      if (tour.vendorID === data.vendorID && tour.isCompleted == false) {
         await TourModel.deleteOne(tour);
         return true;
       } else {

@@ -34,9 +34,28 @@ module.exports = {
       throw e;
     }
   },
-  getOrderByVendorID: async (id) => {
+  getRefundRequestsByVendorID: async (user) => {
+    let existingOrder = await OrderModel.find({
+      $where: () => {
+        this.tourID.vendorID == user.id && this.requestRefund == true;
+      },
+    }).populate("tourID");
+    if (existingOrder) {
+      return existingOrder;
+    } else {
+      let e = new Error();
+      e.message = `Orders Not Found`;
+      e.statusCode = 404;
+      throw e;
+    }
+  },
+  getOrderByVendorID: async (user) => {
     //Asad HELP
-    let existingOrder = await OrderModel.find({});
+    let existingOrder = await OrderModel.find({
+      $where: () => {
+        this.tourID.vendorID == user.id;
+      },
+    }).populate("tourID");
     if (existingOrder) {
       return existingOrder;
     } else {
@@ -119,7 +138,7 @@ module.exports = {
     // console.log(user);
     if (!data?.touristID && !user) {
       let e = new Error(
-        "touristID not found in body or the user is not logged in"
+        "TouristID not found in body or the user is not logged in"
       );
       e.statusCode = 400;
       throw e;
@@ -128,12 +147,12 @@ module.exports = {
     let existinguser = await UserModel.findById(user.id).select("balance");
     if (existinguser.balance >= data.amount) {
       let existingOrder = await OrderModel.findOne({
-        tourID: data.tourID,
-        seats: data.seats,
-        promo: data.promo,
-        amount: data.amount,
+        tourID: data?.tourID,
+        seats: data?.seats,
+        promo: data?.promo,
+        amount: data?.amount,
         // touristID: data.touristID,
-        touristID: user.id,
+        touristID: user?.id,
       });
       if (!existingOrder) {
         let newOrder = await OrderModel({
@@ -158,13 +177,27 @@ module.exports = {
       throw e;
     }
   },
+  rejectTour: async (data) => {
+    let existingOrder = await OrderModel.findOneAndUpdate(
+      { _id: data.id },
+      { $set: { isApproved: false } }
+    );
+    if (existingOrder) {
+      return await module.exports.refundOrder(data.id);
+    } else {
+      let e = new Error();
+      e.message = `NOT FOUND`;
+      e.statusCode = 404;
+      throw e;
+    }
+  },
   approveTour: async (data) => {
     let existingOrder = await OrderModel.findOneAndUpdate(
       { _id: data.id },
       { $set: { isApproved: true } }
     );
     if (existingOrder) {
-      return existingOrder;
+      return true;
     } else {
       let e = new Error();
       e.message = `NOT FOUND`;
@@ -181,6 +214,22 @@ module.exports = {
       e.message = `No Tours Found for Tourist ${data}`;
       e.statusCode = 404;
       throw e;
+    }
+  },
+  rejectRefundRequest: async (data) => {
+    let approval = await OrderModel.find({ _id: data.id, requestRefund: true });
+    let tour = await TourModel.findById(order.tourID);
+    if (Date.now() > tour.validTill) {
+      let e = new Error();
+      e.message = "Cannot Refund Order as it has Already Been Past the Date";
+      e.statusCode = 404;
+      approval.requestRefund = false;
+      await approval.save();
+      throw e;
+    } else {
+      approval.requestRefund = false;
+      await approval.save();
+      return true;
     }
   },
   refundOrder: async (data) => {
@@ -215,7 +264,7 @@ module.exports = {
           },
         }
       );
-      return refunded.acknowledged ? true : false;
+      return true;
     } else {
       let e = new Error();
       e.message = `Either the Order was already Refunded or Not Found`;
@@ -240,6 +289,19 @@ module.exports = {
       { $set: { requestRefund: true } }
     );
     if (order) return true;
+    else {
+      let e = new Error("Not Found");
+      e.statusCode = 404;
+      throw e;
+    }
+  },
+  getPendingReservationRequests: async (user) => {
+    let requests = await OrderModel.find({
+      $where: () => {
+        this.tourID.vendorID == user.id && this.isApproved == false;
+      },
+    }).populate("tourID");
+    if (requests) return requests;
     else {
       let e = new Error("Not Found");
       e.statusCode = 404;

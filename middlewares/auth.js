@@ -6,7 +6,7 @@ const handleAuth = (req, res, next) => {
   let token = req.header("x-auth-token");
   if (!token) {
     console.log("TOKEN NOT FOUND");
-    return res.status(400).send("Token Not Provided");
+    return res.status(400).send("Token Not Provided. Please Login ");
   }
   try {
     let user = jwt.verify(token, process.env.PRIVATE_KEY);

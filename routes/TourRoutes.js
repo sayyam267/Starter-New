@@ -26,13 +26,13 @@ router.post(
   upload.fields([{ name: "multiImages", maxCount: 5 }]),
   TourController.createTour
 );
-router.post("/delete", authVendor, TourController.deleteTours);
+router.post("/delete", handleAuth, authVendor, TourController.deleteTours);
 router.get("/get", TourController.getTour);
 router.get("/get/:id", TourController.getTourByID);
 router.get("/getmytours", handleAuth, authVendor, TourController.getmyTours);
 router.get("/get/all", TourController.getAll);
 //EDIT ROUTE
-// router.post("/edit", TourController.edit);
+// router.put("/edit", TourController.edit);
 
 module.exports = router;
 

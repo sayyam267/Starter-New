@@ -7,7 +7,11 @@ const Schema = mongoose.Schema(
     dateAdded: { type: Date, requried: true },
     validTill: { type: Date, required: true },
     // expired: { type: Boolean, default: false },
-    onTours: { type: Array(mongoose.Schema.Types.ObjectId), ref: "tours" },
+    onTours: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "tours",
+      default: null,
+    },
     amount: { type: Number, required: true },
     isPercent: { type: Boolean, required: true, default: true },
   },
@@ -15,5 +19,10 @@ const Schema = mongoose.Schema(
 );
 
 //virtual expiry
+Schema.virtual("expired").set(() => {
+  if (Date.now() > this.validTill) {
+    return true;
+  }
+});
 
 module.exports = mongoose.model("PromoCodes", Schema);

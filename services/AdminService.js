@@ -44,9 +44,9 @@ module.exports = {
     const vendor = await UserModel.findOne({ _id: id, isDeleted: false });
     if (vendor) {
       if (!vendor.isActive) {
-        await UserModel.updateOne({ _id: id }, { isActive: true });
-        // vendor.isActive = true;
-        // await vendor.save();
+        // await UserModel.updateOne({ _id: id }, { isActive: true });
+        vendor.isActive = true;
+        await vendor.save();
         return true;
       } else {
         e.message = "Vendor Already Active";
@@ -60,12 +60,42 @@ module.exports = {
       throw e;
     }
   },
+  rejectVendorRequest: async (id) => {
+    let e = new Error();
+    const vendor = await UserModel.findOne({ _id: id, isDeleted: false });
+
+    if (vendor) {
+      // await UserModel.updateOne({ _id: id }, { isActive: true });
+      await vendor.delete();
+      return true;
+    } else {
+      e.message = "Vendor Already Deleted or Rejected";
+      e.statusCode = 404;
+      throw e;
+    }
+    //  else {
+    //     // let e = new Error();
+    //     e.message = "Vendor not found";
+    //     e.statusCode = 404;
+    //     throw e;
+    //   }
+  },
   acceptAllPendingRequests: async () => {
     let requests = await module.exports.getpendingVendorsRequests();
     requests.forEach(async (request) => {
       await UserModel.updateOne({ _id: request._id }, { isActive: true });
     });
     return true;
+  },
+  pendingAdminRequests: async () => {
+    let admins = await UserService.getPendingAdmins();
+    if (admins) {
+      return admins;
+    } else {
+      let e = new Error("Not Found");
+      e.statusCode = 404;
+      throw e;
+    }
   },
   getpendingVendorsRequests: async () => {
     let vendors = await UserService.getPendingVendors();
@@ -131,14 +161,22 @@ module.exports = {
     }
   },
   getDashboard: async () => {
+    // let dashboard = {};
+    // if (req.user) {
+    //   const pendingRequests = await module.exports.getpendingVendorsRequests();
+    //   dashboard.pendingVendors = pendingRequests;
+    //   const refundrequests = await module.exports.refundPackageByID();
+    //   dashboard.refundRequests = refundrequests;
+    //   return dashboard;
+    // }
     let dashboard = {};
-    if (req.user) {
-      const pendingRequests = await module.exports.getpendingVendorsRequests();
-      dashboard.pendingVendors = pendingRequests;
-      const refundrequests = await module.exports.refundPackageByID();
-      dashboard.refundRequests = refundrequests;
-      return dashboard;
-    }
+    let pendingVendorRequests = await AdminService.getpendingVendorsRequests();
+    let pendingAdminRequests = await UserService.getPendingAdmins();
+    let totalNoOfUsers = await UserModel.find({}).count();
+    dashboard.totalNoOfUsers = totalNoOfUsers;
+    dashboard.pendingAdminRequests = pendingAdminRequests;
+    dashboard.pendingVendorRequests = pendingVendorRequests;
+    return dashboard;
   },
   deleteUser: async (id) => {
     let existingUser = await UserService.getUserByID(id);
@@ -166,7 +204,12 @@ module.exports = {
   },
   refundPackageByID: async (id) => {
     let package = await OrderService.refundOrder(id);
-    return true;
+    if (package) return true;
+    else {
+      let e = new Error("Not Found");
+      e.statusCode = 404;
+      throw e;
+    }
   },
   refundallTouristbyPackageID: async (id) => {
     let orders = await OrderService.getOrdersByTourID(id);

@@ -92,17 +92,23 @@ module.exports = {
   // },
   deleteTours: async (req, res) => {
     try {
-      const existignTours = await TourModel.findById(req.body.tourId);
-      if (existignTours?.vendorID === req.body.vendorID) {
-        let deletedTour = await TourModel.findByIdAndDelete(req.body.tourID);
-        return res
-          .status(200)
-          .send({ message: "TOUR DELETED", data: deletedTour });
-      } else {
-        return res
-          .status(400)
-          .send({ message: "YOU ARE NOT ALLOWED TO DO THAT" });
-      }
+      let { id } = req.body;
+      const tourToDelete = await TourService.deleteTours(id);
+      return res.send({ data: tourToDelete, message: "Deleted" });
+      //   const existignTours = await TourModel.findById(id);
+      //   if (
+      //     existignTours?.vendorID === req.body.vendorID &&
+      //     existignTours.isCompleted == false
+      //   ) {
+      //     let deletedTour = await TourModel.findByIdAndDelete(id);
+      //     return res
+      //       .status(200)
+      //       .send({ message: "TOUR DELETED", data: deletedTour });
+      //   } else {
+      //     return res
+      //       .status(400)
+      //       .send({ message: "YOU ARE NOT ALLOWED TO DO THAT" });
+      //   }
     } catch (e) {
       return res.status(400).send({ message: e.message });
     }
@@ -117,7 +123,9 @@ module.exports = {
   },
   getTourByID: async (req, res) => {
     try {
-      let tour = await TourModel.findById(req.params.id);
+      let { id } = req.params;
+      let user = req?.user;
+      let tour = await TourService.getToursByID(id, user);
       return res.status(200).send({ data: tour, message: "Fetched" });
     } catch (e) {
       return res

@@ -1,4 +1,6 @@
+const UserModel = require("../models/UserModel");
 const AdminService = require("../services/AdminService");
+const UserService = require("../services/UserService");
 
 module.exports = {
   blockUser: async (req, res) => {
@@ -33,6 +35,16 @@ module.exports = {
         .send({ data: null, message: e.message });
     }
   },
+  rejectVendorRequest: async (req, res) => {
+    try {
+      let request = await AdminService.rejectVendorRequest(req.body.vendorID);
+      return res.status(200).send({ data: request, message: "Rejected" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
   acceptVendorRequest: async (req, res) => {
     try {
       let request = await AdminService.acceptVendorRequest(req.body.vendorID);
@@ -55,10 +67,19 @@ module.exports = {
   },
   getDashBoard: async (req, res) => {
     try {
-      let dashboard = {};
-      let pendingVendorRequests =
-        await AdminService.getpendingVendorsRequests();
-      let;
+      let dashboard = await AdminService.getDashboard();
+      return res.send({ data: dashboard, message: "Fetched" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
+  refundOrderbyID: async (req, res) => {
+    try {
+      let refund = await AdminService.refundPackageByID(req.body.orderID);
+
+      return res.send({ data: refund, message: "Done" });
     } catch (e) {
       return res
         .status(e?.statusCode || 400)

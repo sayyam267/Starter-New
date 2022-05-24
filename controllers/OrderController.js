@@ -1,4 +1,5 @@
 const OrderService = require("../services/OrderService");
+const UserService = require("../services/UserService");
 let e = new Error();
 
 // module.exports = {
@@ -128,10 +129,21 @@ module.exports = {
       return res.status(e?.statusCode || 400).send(e.message);
     }
   },
+  rejectTour: async (req, res) => {
+    try {
+      let data = req.body;
+      let order = await OrderService.rejectTour(data);
+    } catch (e) {
+      return res.status(e?.statusCode || 400).send(e.message);
+    }
+  },
   approveTour: async (req, res) => {
     try {
       let orders = await OrderService.approveTour(req.body);
-      return res.send(orders);
+      return res.send({
+        data: orders,
+        message: orders ? "Refunded" : "Rejected",
+      });
     } catch (e) {
       return res.status(e?.statusCode || 400).send(e.message);
     }
@@ -140,7 +152,7 @@ module.exports = {
     try {
       let user = req.user;
       let orders = await OrderService.createOrder(req.body, user);
-      return res.send(orders);
+      return res.send({ data: orders, message: "Created" });
     } catch (e) {
       return res.status(e?.statusCode || 400).send(e.message);
     }
@@ -153,10 +165,23 @@ module.exports = {
       return res.status(e?.statusCode || 400).send(e.message);
     }
   },
+  rejectRefundRequest: async (req, res) => {
+    try {
+      let data = req.body;
+      let approval = await OrderService.rejectRefundRequest(data);
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
   requestRefund: async (req, res) => {
     try {
-      let request = await OrderService.requestRefund(req.body);
-      res.send({ data: true, message: "Requested" });
+      let user = await UserService.getUserByID(req.user.id);
+      if (user) {
+        let request = await OrderService.requestRefund(req.body);
+        res.send({ data: true, message: "Requested" });
+      }
     } catch (e) {
       res.status(e?.statusCode || 400).send({ data: null, message: e.message });
     }
