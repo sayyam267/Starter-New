@@ -170,12 +170,22 @@ module.exports = {
     //   return dashboard;
     // }
     let dashboard = {};
-    let pendingVendorRequests = await AdminService.getpendingVendorsRequests();
+    let pendingVendorRequests =
+      await module.exports.getpendingVendorsRequests();
     let pendingAdminRequests = await UserService.getPendingAdmins();
     let totalNoOfUsers = await UserModel.find({}).count();
+    let totalNoOfActiveUsers = await UserModel.find({
+      isActive: true,
+      isDeleted: false,
+    }).count();
+    let totalNoOfDeletedUsers = await UserModel.find({
+      isDeleted: true,
+    }).count();
     dashboard.totalNoOfUsers = totalNoOfUsers;
     dashboard.pendingAdminRequests = pendingAdminRequests;
     dashboard.pendingVendorRequests = pendingVendorRequests;
+    dashboard.totalNoOfActiveUsers = totalNoOfActiveUsers;
+    dashboard.totalNoOfDeletedUsers = totalNoOfDeletedUsers;
     return dashboard;
   },
   deleteUser: async (id) => {
