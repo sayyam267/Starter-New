@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const lodash = require("lodash");
-const handleAuth = (req, res, next) => {
+const UserModel = require("../models/UserModel");
+const handleAuth = async (req, res, next) => {
   // console.log("INSIDE");
   let token = req.header("x-auth-token");
   if (!token) {
@@ -10,6 +11,11 @@ const handleAuth = (req, res, next) => {
   }
   try {
     let user = jwt.verify(token, process.env.PRIVATE_KEY);
+    let userInDB = await UserModel.findById(user.id);
+    if (!userInDB) {
+      let e = new Error("User Not In DB. Altered TOKEN");
+      throw e;
+    }
     req.user = user;
   } catch (e) {
     console.log("INVALID TOKEN");

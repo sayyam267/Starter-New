@@ -84,22 +84,29 @@ module.exports = {
         _id: id,
       });
       if (transcantion) {
-        let refund = await stripe.refunds.create({
-          charge: transcantion.TransID,
-        });
-        // await TransactionsModel.updateOne({_id:TransID},{$set:{refunded = true,Previous_Balance : transcantion.New_Balance}})
-        transcantion.refunded = true;
-        // transcantion.Previous_Balance = Number(transcantion.New_Balance);
-        // transcantion.New_Balance =
-        //   Number(transcantion.New_Balance) -
-        //   Number(transcantion.RechargedAmount);
-        await transcantion.save();
-        // let user = await UserModel.findById(req?.user?.id);
         let user = await UserModel.findById(transcantion.userID);
-        // user.balance = transcantion.New_Balance;
-        user.balance = user.balance - transcantion.RechargedAmount;
-        await user.save();
-        return refund;
+        if (user.balance >= transcantion.RechargedAmount) {
+          let refund = await stripe.refunds.create({
+            charge: transcantion.TransID,
+          });
+          // await TransactionsModel.updateOne({_id:TransID},{$set:{refunded = true,Previous_Balance : transcantion.New_Balance}})
+          transcantion.refunded = true;
+          // transcantion.Previous_Balance = Number(transcantion.New_Balance);
+          // transcantion.New_Balance =
+          //   Number(transcantion.New_Balance) -
+          //   Number(transcantion.RechargedAmount);
+          await transcantion.save();
+          // let user = await UserModel.findById(req?.user?.id);
+          // let user = await UserModel.findById(transcantion.userID);
+          // user.balance = transcantion.New_Balance;
+          user.balance = user.balance - transcantion.RechargedAmount;
+          await user.save();
+          return refund;
+        } else {
+          let e = new Error("Not Sufficient Balance to Process Refund");
+          e.statusCode = 400;
+          throw e;
+        }
       } else {
         let e = new Error();
         e.message = `No Transactions found agains TransactionID ${TransID}`;
