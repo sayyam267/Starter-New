@@ -126,6 +126,8 @@ module.exports = {
   // },
   createTour: async (req) => {
     try {
+      console.log(req.body);
+      // console.log(req.files.multiImages);
       const files = req.files.multiImages;
       const imageNames = [];
       const addedOn = Date.now();

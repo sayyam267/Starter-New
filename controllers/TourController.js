@@ -35,15 +35,17 @@ module.exports = {
       if (Object.keys(query).length > 0) {
         const existingTours = await TourModel.find(query).select(["-duration"]);
         if (existingTours.length > 0) {
-          res.status(200).send({ message: "FOUND", data: existingTours });
+          return res
+            .status(200)
+            .send({ message: "FOUND", data: existingTours });
         } else {
-          res.status(404).send("NOT FOUND");
+          return res.status(404).send("NOT FOUND");
         }
       } else {
         throw Error("Please Enter Query Params");
       }
     } catch (e) {
-      res.status(400).send(e.message);
+      return res.status(400).send(e.message);
     }
   },
   getmyTours: async (req, res) => {
@@ -51,15 +53,19 @@ module.exports = {
       const tours = await TourService.getMyTours(req.user);
       return res.status(200).send({ data: tours, message: "Fetched" });
     } catch (e) {
-      res.status(e?.statusCode || 400).send({ data: null, message: e.message });
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
     }
   },
   createTour: async (req, res) => {
     try {
       let tours = await TourService.createTour(req);
-      res.status(200).send({ data: tours, message: "Created" });
+      return res.status(200).send({ data: tours, message: "Created" });
     } catch (e) {
-      res.status(e?.statusCode || 400).send({ data: null, message: e.message });
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
     }
   },
   // createTours: async (req, res) => {

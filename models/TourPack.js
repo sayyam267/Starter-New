@@ -4,7 +4,7 @@ const Schema = mongoose.Schema(
   {
     name: { type: String, required: true },
     price: { type: Number, required: true },
-    isCompleted: { type: Boolean, required: true },
+    isCompleted: { type: Boolean, default: false },
     // city: { type: Array(String), required: true },
     source: {
       type: mongoose.Schema.Types.ObjectId,
@@ -17,7 +17,7 @@ const Schema = mongoose.Schema(
       required: true,
     },
     //remove
-    addedOn: { type: Date, required: true },
+    addedOn: { type: Date, required: true, default: Date.now },
     //
     // duration: { type: String, required: true },
     // touristID: { type: mongoose.Schema.Types.ObjectId, ref: "Tourists" },
@@ -37,7 +37,7 @@ const Schema = mongoose.Schema(
     //default empty str
     // tourGuide: { type: mongoose.Schema.Types.ObjectId, ref: "TourGuides" },
     tourpics: { type: Array, default: [] },
-    //
+    description: { type: String, default: null, required: true },
     //stops locations
     location: {
       long: { type: String, default: 0 },
