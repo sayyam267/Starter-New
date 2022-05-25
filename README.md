@@ -11,3 +11,9 @@
 - Powerful Admin Rights.
 - Providing a Platform for Vendors, Tourists, Tour Guides To Interact with each other.
 - CustomTour Facility for those who can't find their desired tours.
+
+### **A Project by COMSATS University Students of FA18 Batch **
+
+- Syed Komail
+- Sayyam Ali
+- Zain Haroon
