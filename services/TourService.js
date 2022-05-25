@@ -3,7 +3,7 @@ const UserModel = require("../models/UserModel");
 const OrderModel = require("../models/Orders");
 module.exports = {
   getTours: async () => {
-    let tours = await TourModel.find({});
+    let tours = await TourModel.find({}).populate(["source", "destination"]);
     if (Object.keys(tours).length > 0) {
       return tours;
     } else {
@@ -13,8 +13,29 @@ module.exports = {
       throw e;
     }
   },
+  home: async (body, user) => {
+    try {
+      let user1 = await UserModel.findById(user.id).select("city");
+      // console.log(user1.city);
+      let cityTours = await TourModel.find({ source: user1.city }).populate([
+        "source",
+        "destination",
+      ]);
+      let popularTours = await TourModel.find({
+        rating: { $gt: 3 },
+        source: user1.city,
+      }).populate(["source", "destination"]);
+      // let trendingTours = await OrderModel.find({})
+      let tours = {
+        cityTours: cityTours,
+        popularTours: popularTours,
+      };
+      return tours;
+    } catch (e) {
+      throw e;
+    }
+  },
   getToursByID: async (id, user) => {
-    let author = false;
     let touristApproved = false;
 
     let tours = await TourModel.findById(id);

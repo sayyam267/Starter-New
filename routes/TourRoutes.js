@@ -34,7 +34,8 @@ router.post("/delete", handleAuth, authVendor, TourController.deleteTours);
 router.get("/get", TourController.getTour);
 router.get("/get/:id", TourController.getTourByID);
 router.get("/getmytours", handleAuth, authVendor, TourController.getmyTours);
-router.get("/get/all", TourController.getAll);
+router.get("/all", TourController.getAll);
+router.get("/home/", handleAuth, TourController.home);
 //EDIT ROUTE
 // router.put("/edit", TourController.edit);
 

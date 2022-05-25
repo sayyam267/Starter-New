@@ -163,11 +163,15 @@ module.exports = {
           let newOrder = await OrderModel({
             tourID: data.tourID,
             seats: data.seats,
-            promo: data.promo,
+            promo: data?.promo,
             amount: data.amount,
+            // amount: Number(data.seats) * Number(tour.amount),
             // touristID: data.touristID,
             touristID: user.id,
           });
+          existinguser.balance =
+            Number(existinguser.balance) - Number(newOrder.amount);
+          await existinguser.save();
           await newOrder.save();
           return newOrder;
         } else {

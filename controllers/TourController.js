@@ -167,4 +167,15 @@ module.exports = {
         .send({ data: null, message: e.message });
     }
   },
+  home: async (req, res) => {
+    try {
+      let user = req.user;
+      let tours = await TourService.home(req.body, user);
+      return res.send({ data: tours, message: "Fetched" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
 };
