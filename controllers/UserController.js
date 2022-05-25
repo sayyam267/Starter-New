@@ -349,4 +349,14 @@ module.exports = {
         .send({ data: null, message: e.message });
     }
   },
+  verifyOTP: async (req, res) => {
+    try {
+      let otpmatched = await UserService.verifyOTP(req.body);
+      return res.send({ data: otpmatched, message: "Matched" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: false, message: e.message });
+    }
+  },
 };

@@ -574,11 +574,37 @@ module.exports = {
         email: user.email,
         confirmationCode: code,
       });
-      return code;
+      user.passwordResetCode = code;
+      user.passwordResetExpiry = new Date(Date.now() + 3600000);
+      await user.save();
+      return true;
     } else {
       let e = new Error("Not Found");
       e.statusCode = 404;
       throw e;
+    }
+  },
+  verifyOTP: async (data) => {
+    let user = await UserModel.findOne({ email: data.email }).select([
+      "passwordResetCode",
+      "passwordResetExpiry",
+    ]);
+    if (user) {
+      if (user.passwordResetCode == data.code) {
+        if (user.passwordResetExpiry < Date.now()) {
+          let e = new Error("Expired");
+          e.statusCode = 400;
+          throw e;
+        } else {
+          user.isVerified = true;
+          await user.save();
+          return true;
+        }
+      } else {
+        let e = new Error("Code Didnt match");
+        e.statusCode = 400;
+        throw e;
+      }
     }
   },
   updatePassword: async (email, password) => {

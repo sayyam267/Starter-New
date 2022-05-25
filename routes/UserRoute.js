@@ -31,6 +31,7 @@ router.put(
   validation,
   UserController.updatePassword
 );
+router.put("/verify/otp", UserController.verifyOTP);
 router.put("/block", handleAuth, authAdmin, UserController.blockUser);
 router.put("/delete", handleAuth, UserController.deleteUser);
 router.put("/update/profile", handleAuth, UserController.updateProfile);
