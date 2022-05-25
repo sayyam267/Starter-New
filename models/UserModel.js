@@ -38,11 +38,11 @@ const Schema = mongoose.Schema(
     cnic: { type: String, required: true },
     isDeleted: { type: Boolean, default: false },
     //daate and expiry in array
-    code: { type: String, required: true },
-    // emailVerificationcode: { type: String, required: true },
+    // code: { type: String, required: true },
+    emailVerificationCode: { type: String, required: true },
     // emailVerificationExpiry:{type:Date,required:false},
-    // passwordResetCode:{type:String,required:false,default:""},
-    // passwordResetExpiry:{type:Date,required:false}
+    passwordResetCode: { type: String, required: false, default: null },
+    passwordResetExpiry: { type: Date, required: false, default: null },
     // code: {
     //   type: Array,
     //   required: true,

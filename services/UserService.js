@@ -376,7 +376,7 @@ module.exports = {
       isActive: isActive,
       userType: role,
       isRating: isRating,
-      code: uniqueCode,
+      emailVerificationCode: uniqueCode,
     });
     await user.save();
 
@@ -538,7 +538,7 @@ module.exports = {
   verifyUser: async (data) => {
     let user = await UserModel.findOne({
       email: data.email,
-      code: data.code,
+      emailVerificationCode: data.code,
       isVerified: false,
     });
     if (!user) {
