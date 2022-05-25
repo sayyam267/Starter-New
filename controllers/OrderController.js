@@ -160,7 +160,7 @@ module.exports = {
   refundTour: async (req, res) => {
     try {
       let orders = await OrderService.refundOrder(req.body);
-      return res.send(orders);
+      return res.send({ orders, message: "Refunded" });
     } catch (e) {
       return res.status(e?.statusCode || 400).send(e.message);
     }

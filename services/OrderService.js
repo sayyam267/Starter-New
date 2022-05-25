@@ -173,7 +173,7 @@ module.exports = {
             Number(existinguser.balance) - Number(newOrder.amount);
           await existinguser.save();
           await newOrder.save();
-          return newOrder;
+          return { order: newOrder, balance: existinguser.balance };
         } else {
           let e = new Error("Not Enough Seats Left");
           e.statusCode = 400;
@@ -281,7 +281,8 @@ module.exports = {
       let tour = await TourModel.findByID(existingOrder.tourID);
       tour.seats = tour.seats + existingOrder.seats;
       await tour.save();
-      return true;
+      userToRefund = await UserModel.findById(existingOrder.touristID);
+      return { data: true, balance: userToRefund.balance };
     } else {
       let e = new Error();
       e.message = `Either the Order was already Refunded or Not Found`;
