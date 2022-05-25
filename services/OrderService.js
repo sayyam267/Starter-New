@@ -1,4 +1,5 @@
 const OrderModel = require("../models/Orders");
+const TourModel = require("../models/TourPack");
 const UserModel = require("../models/UserModel");
 module.exports = {
   getOrders: async () => {
@@ -155,16 +156,25 @@ module.exports = {
         touristID: user?.id,
       });
       if (!existingOrder) {
-        let newOrder = await OrderModel({
-          tourID: data.tourID,
-          seats: data.seats,
-          promo: data.promo,
-          amount: data.amount,
-          // touristID: data.touristID,
-          touristID: user.id,
-        });
-        await newOrder.save();
-        return newOrder;
+        let tour = await TourModel.findById(data.tourID);
+        if (tour?.seats >= data.seats) {
+          tour.seats = tour.seats - data.seats;
+          await tour.save();
+          let newOrder = await OrderModel({
+            tourID: data.tourID,
+            seats: data.seats,
+            promo: data.promo,
+            amount: data.amount,
+            // touristID: data.touristID,
+            touristID: user.id,
+          });
+          await newOrder.save();
+          return newOrder;
+        } else {
+          let e = new Error("Not Enough Seats Left");
+          e.statusCode = 400;
+          throw e;
+        }
       } else {
         let e = new Error();
         e.message = `Already Exists`;
@@ -264,6 +274,9 @@ module.exports = {
           },
         }
       );
+      let tour = await TourModel.findByID(existingOrder.tourID);
+      tour.seats = tour.seats + existingOrder.seats;
+      await tour.save();
       return true;
     } else {
       let e = new Error();
