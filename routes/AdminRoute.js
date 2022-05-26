@@ -5,6 +5,7 @@ const handleAuth = require("../middlewares/auth");
 const router = require("express").Router();
 
 router.put("/user/block", handleAuth, authAdmin, UserController.blockUser);
+router.put("/user/unblock", handleAuth, authAdmin, AdminController.unBlockUser);
 // router.post("/create", handleAuth, authAdmin, AdminController.createAdmins);
 router.put("/user/delete", handleAuth, authAdmin, AdminController.deleteUser);
 router.get(

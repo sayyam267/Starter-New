@@ -187,6 +187,7 @@ module.exports = {
         "isDeleted",
         "city",
         "userType",
+        "cnic",
       ])
       .populate("city");
     // .select(["-password", "-phoneNumber", "-role", "-cnic"]);
@@ -286,6 +287,49 @@ module.exports = {
           await user.save();
           // console.log(user);
           return true;
+        }
+      }
+    }
+    // else if (!user?.isActive) {
+    //   let e = new Error();
+    //   e.message = "This User is already Blocked";
+    //   e.statusCode = 400;
+    //   throw e;
+    // }
+    else {
+      let e = new Error();
+      e.message = `NOT FOUND`;
+      e.statusCode = 404;
+      throw e;
+    }
+  },
+  unBlockUser: async (data) => {
+    // let user = await UserModel.findOneAndUpdate(
+    //   { _id: data, isActive: true, isDeleted: false, isVerified: true },
+    //   { $set: { isActive: false } }
+    // );
+    let user = await UserModel.findOne({
+      _id: data,
+      // isDeleted: false,
+      // isVerified: true,
+    });
+    // console.log(user);
+    if (user) {
+      if (user.isDeleted) {
+        let e = new Error("User is Deleted");
+        user.isActive = false;
+        await user.save();
+        e.statusCode = 400;
+        throw e;
+      } else {
+        if (!user.isActive) {
+          user.isActive = false;
+          await user.save();
+          return true;
+        } else {
+          let e = new Error("Already UnBlocked");
+          e.statusCode = 400;
+          throw e;
         }
       }
     }

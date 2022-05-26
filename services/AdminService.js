@@ -134,6 +134,29 @@ module.exports = {
       return true;
     } else throw user;
   },
+  unBlockUser: async (userID) => {
+    let user = UserService.unBlockUser(userID);
+    let e = new Error();
+
+    // if (user) {
+    //   if (user.isActive) {
+    //     user.isActive = false;
+    //     await user.save();
+    //   }
+    //   if (!user.isActive) {
+    //     e.message = "Already Blocked";
+    //     e.statusCode = 400;
+    //     throw e;
+    //   }
+    // } else {
+    //   e.message = "Not Found";
+    //   e.statusCode = 404;
+    //   throw e;
+    // }
+    if (user) {
+      return true;
+    } else throw user;
+  },
   createAdmins: async (data) => {
     let user = await UserModel.findOne({ email: data.email });
     console.log(user);
@@ -181,11 +204,13 @@ module.exports = {
     let totalNoOfDeletedUsers = await UserModel.find({
       isDeleted: true,
     }).count();
+    let allUsers = await UserService.getAll();
     dashboard.totalNoOfUsers = totalNoOfUsers;
     dashboard.pendingAdminRequests = pendingAdminRequests;
     dashboard.pendingVendorRequests = pendingVendorRequests;
     dashboard.totalNoOfActiveUsers = totalNoOfActiveUsers;
     dashboard.totalNoOfDeletedUsers = totalNoOfDeletedUsers;
+    dashboard.allUsers = allUsers;
     return dashboard;
   },
   deleteUser: async (id) => {

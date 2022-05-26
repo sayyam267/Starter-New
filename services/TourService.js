@@ -4,6 +4,7 @@ const OrderModel = require("../models/Orders");
 module.exports = {
   getTours: async () => {
     let tours = await TourModel.find({}).populate(["source", "destination"]);
+    console.log(tours);
     if (Object.keys(tours).length > 0) {
       return tours;
     } else {

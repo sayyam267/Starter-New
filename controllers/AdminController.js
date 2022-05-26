@@ -15,6 +15,18 @@ module.exports = {
         .send({ data: null, message: e.message });
     }
   },
+  unBlockUser: async (req, res) => {
+    try {
+      let blocked = await AdminService.unBlockUser(req.body.userID);
+      return res
+        .status(200)
+        .send({ data: true, message: "User Blocked Successfully" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
   createAdmins: async (req, res) => {
     try {
       let newAdmin = await AdminService.createAdmins(req.body);
