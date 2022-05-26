@@ -188,6 +188,8 @@ module.exports = {
         "city",
         "userType",
         "cnic",
+        "email",
+        "phoneNumber",
       ])
       .populate("city");
     // .select(["-password", "-phoneNumber", "-role", "-cnic"]);
@@ -332,14 +334,7 @@ module.exports = {
           throw e;
         }
       }
-    }
-    // else if (!user?.isActive) {
-    //   let e = new Error();
-    //   e.message = "This User is already Blocked";
-    //   e.statusCode = 400;
-    //   throw e;
-    // }
-    else {
+    } else {
       let e = new Error();
       e.message = `NOT FOUND`;
       e.statusCode = 404;
