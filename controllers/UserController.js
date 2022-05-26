@@ -379,4 +379,15 @@ module.exports = {
         .send({ data: null, message: e.message });
     }
   },
+  getUserByID: async (req, res) => {
+    try {
+      let user = req.user;
+      let userFetched = await UserService.getUserByID(req.user.id);
+      return res.send({ data: userFetched, message: "Fetched" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
 };
