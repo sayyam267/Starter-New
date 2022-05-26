@@ -687,4 +687,13 @@ module.exports = {
       throw e;
     }
   },
+  getAll: async () => {
+    let users = await UserModel.find({});
+    if (users) return users;
+    else {
+      let e = new Error("NOT FOUND");
+      e.statusCode = 404;
+      throw e;
+    }
+  },
 };

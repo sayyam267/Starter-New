@@ -369,4 +369,14 @@ module.exports = {
         .send({ data: null, message: e.message });
     }
   },
+  getAll: async (req, res) => {
+    try {
+      let users = await UserService.getAll();
+      return res.send({ data: users, message: "Fetched" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
 };
