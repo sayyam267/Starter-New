@@ -205,12 +205,16 @@ module.exports = {
       isDeleted: true,
     }).count();
     let allUsers = await UserService.getAll();
+    let activeUsers = await UserModel.find({ isActive: true })
+      .populate("city")
+      .select("-password");
     dashboard.totalNoOfUsers = totalNoOfUsers;
     dashboard.pendingAdminRequests = pendingAdminRequests;
     dashboard.pendingVendorRequests = pendingVendorRequests;
     dashboard.totalNoOfActiveUsers = totalNoOfActiveUsers;
     dashboard.totalNoOfDeletedUsers = totalNoOfDeletedUsers;
     dashboard.allUsers = allUsers;
+    dashboard.activeUsers = activeUsers;
     return dashboard;
   },
   deleteUser: async (id) => {

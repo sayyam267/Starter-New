@@ -732,7 +732,7 @@ module.exports = {
     }
   },
   getAll: async () => {
-    let users = await UserModel.find({});
+    let users = await UserModel.find({}).select("-password").populate("city");
     if (users) return users;
     else {
       let e = new Error("NOT FOUND");

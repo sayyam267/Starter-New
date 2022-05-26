@@ -9,7 +9,7 @@ const Schema = mongoose.Schema(
     city: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "cities",
-      required: true,
+      // required: true,
     },
     country: { type: String, required: true },
     isVerified: { type: Boolean, default: false },

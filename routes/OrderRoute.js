@@ -10,7 +10,7 @@ router.get("/get/:id", OrderController.getOrderByID);
 router.get(
   "/refund/get",
   handleAuth,
-  authAdmin,
+  // authAdmin,
   OrderController.getRefundedOrders
 );
 router.put("/request/refund", handleAuth, OrderController.requestRefund);
