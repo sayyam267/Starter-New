@@ -677,4 +677,14 @@ module.exports = {
       throw e;
     }
   },
+  getBalance: async (usertoken) => {
+    let user = await UserModel.findById(usertoken.id).select("balance");
+    if (user) {
+      return { balance: user.balance };
+    } else {
+      let e = new Error("User Not Found");
+      e.statusCode = 404;
+      throw e;
+    }
+  },
 };

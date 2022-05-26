@@ -35,5 +35,6 @@ router.put("/verify/otp", UserController.verifyOTP);
 router.put("/block", handleAuth, authAdmin, UserController.blockUser);
 router.put("/delete", handleAuth, UserController.deleteUser);
 router.put("/update/profile", handleAuth, UserController.updateProfile);
+router.get("/balance", handleAuth, UserController.getBalance);
 // router.post("/block/", handleAuth, authAdmin, UserController.blockUser);
 module.exports = router;

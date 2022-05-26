@@ -278,7 +278,7 @@ module.exports = {
           },
         }
       );
-      let tour = await TourModel.findByID(existingOrder.tourID);
+      let tour = await TourModel.findById(existingOrder.tourID);
       tour.seats = tour.seats + existingOrder.seats;
       await tour.save();
       userToRefund = await UserModel.findById(existingOrder.touristID);

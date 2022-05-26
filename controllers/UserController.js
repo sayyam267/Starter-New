@@ -359,4 +359,14 @@ module.exports = {
         .send({ data: false, message: e.message });
     }
   },
+  getBalance: async (req, res) => {
+    try {
+      let balance = await UserService.getBalance(req?.user);
+      return res.send({ data: balance, message: "Fetched" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
 };
