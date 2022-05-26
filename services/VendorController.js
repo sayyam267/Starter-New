@@ -37,7 +37,7 @@ module.exports = {
     try {
       let user = req.user;
       let dahsboard = await VendorService.getDashboard(user);
-      return req.send({ data: dahsboard, message: "Fetched" });
+      return res.send({ data: dahsboard, message: "Fetched" });
     } catch (e) {
       return res
         .status(e?.statusCode || 400)

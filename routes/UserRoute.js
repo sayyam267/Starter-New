@@ -33,6 +33,7 @@ router.put(
   validation,
   UserController.updatePassword
 );
+router.get("/mydetails", handleAuth, UserController.getUserByID);
 router.put("/verify/otp", UserController.verifyOTP);
 router.put("/block", handleAuth, authAdmin, UserController.blockUser);
 router.put("/delete", handleAuth, UserController.deleteUser);

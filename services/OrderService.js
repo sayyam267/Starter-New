@@ -36,11 +36,16 @@ module.exports = {
     }
   },
   getRefundRequestsByVendorID: async (user) => {
+    // let existingOrder = await OrderModel.find({
+    //   $where: () => {
+    //     this.tourID.vendorID == user.id && this.requestRefund == true;
+    //   },
+    // }).populate("tourID");
     let existingOrder = await OrderModel.find({
-      $where: () => {
-        this.tourID.vendorID == user.id && this.requestRefund == true;
-      },
-    }).populate("tourID");
+      "tourID.vendorID": user.id,
+    })
+      .populate(["tourID", "userID"])
+      .select("-password");
     if (existingOrder) {
       return existingOrder;
     } else {
@@ -314,11 +319,17 @@ module.exports = {
     }
   },
   getPendingReservationRequests: async (user) => {
+    // let requests = await OrderModel.find({
+    //   $where: () => {
+    //     this.tourID.vendorID == user.id && this.isApproved == false;
+    //   },
+    // }).populate("tourID");
+    // let requests = await OrderModel.find({'tour.vendorID:user.id})
     let requests = await OrderModel.find({
-      $where: () => {
-        this.tourID.vendorID == user.id && this.isApproved == false;
-      },
-    }).populate("tourID");
+      "tourID.vendorID": user.id,
+    })
+      .populate(["tourID", "userID"])
+      .select("-password");
     if (requests) return requests;
     else {
       let e = new Error("Not Found");
