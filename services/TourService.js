@@ -176,6 +176,37 @@ module.exports = {
       throw e;
     }
   },
+  createTour: async (req) => {
+    try {
+      console.log(req.body);
+      console.log(req.files.multiImages);
+      const files = req.files.multiImages;
+      const imageNames = [];
+      const addedOn = Date.now();
+      if (files.length > 0) {
+        files.map((file) => {
+          //SAVING IN DB
+          // console.log("public/images/" + file.filename);
+          imageNames.push("images/tourpics/" + file.filename);
+        });
+      } else imageNames.push("images/tourpics/" + file.filename);
+      // console.log(req.files.filename);
+      // console.log(req.file);
+      // console.log(req.body);
+      req.body.validTill = new Date(req.body.validTill);
+      //   console.log(imageNames);
+      const newTour = await TourModel({
+        ...req.body,
+        vendorID: req.user.id,
+        tourpics: imageNames,
+        addedOn: addedOn,
+      });
+      await newTour.save();
+      return newTour;
+    } catch (e) {
+      throw e;
+    }
+  },
   deleteTours: async (id) => {
     let tour = await TourModel.findById(id);
     if (!tour) {
