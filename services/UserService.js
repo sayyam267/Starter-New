@@ -190,6 +190,7 @@ module.exports = {
         "cnic",
         "email",
         "phoneNumber",
+        "profilePicture",
       ])
       .populate("city");
     // .select(["-password", "-phoneNumber", "-role", "-cnic"]);

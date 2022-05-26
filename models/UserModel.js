@@ -16,8 +16,8 @@ const Schema = mongoose.Schema(
     isActive: { type: Boolean, default: false },
     profilePicture: {
       type: String,
-      default: "",
-      // default: "/images/profile-pictures/default.jpg",
+      // default: "",
+      default: "/images/profile-pictures/default.jpg",
     },
     gender: { type: String, required: true },
     balance: { type: Number, default: 0 },
