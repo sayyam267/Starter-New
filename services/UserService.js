@@ -552,7 +552,7 @@ module.exports = {
         user.userType == "admin"
       )
         await user.update({ $set: { isVerified: true } });
-      else await user({ $set: { isVerified: true, isActive: true } });
+      else await user.update({ $set: { isVerified: true, isActive: true } });
       return true;
     }
   },
