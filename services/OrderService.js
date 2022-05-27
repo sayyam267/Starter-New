@@ -203,7 +203,14 @@ module.exports = {
       { $set: { isApproved: false } }
     );
     if (existingOrder) {
-      return await module.exports.refundOrder(data.id);
+      let user = await UserModel.findById(existingOrder.touristID);
+      user.balance = user.balance + existingOrder.amount;
+      let tour = await TourModel.findById(existingOrder.tourID);
+      tour.seats = tour.seats + existingOrder.seats;
+      await user.save();
+      await tour.save();
+      return true;
+      // return await module.exports.refundOrder(data.id);
     } else {
       let e = new Error();
       e.message = `NOT FOUND`;
