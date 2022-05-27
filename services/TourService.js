@@ -16,7 +16,10 @@ module.exports = {
   },
   home: async (body, user) => {
     try {
-      let user1 = await UserModel.findById(user.id).select("city");
+      let user1 = await UserModel.findById(user.id).select([
+        "source",
+        "destination",
+      ]);
       // console.log(user1.city);
       let cityTours = await TourModel.find({ source: user1.city }).populate([
         "source",
@@ -39,7 +42,10 @@ module.exports = {
   getToursByID: async (id, user) => {
     let touristApproved = false;
 
-    let tours = await TourModel.findById(id);
+    let tours = await TourModel.findById(id).populate([
+      "source",
+      "destination",
+    ]);
     if (tours) {
       if (user) {
         let order = await OrderModel.find({ touristID: user.id });
@@ -58,7 +64,10 @@ module.exports = {
     }
   },
   getMyTours: async (user) => {
-    let tours = await TourModel.find({ vendorID: user.id });
+    let tours = await TourModel.find({ vendorID: user.id }).populate([
+      "source",
+      "destination",
+    ]);
     if (tours) {
       return tours;
     } else {
@@ -228,7 +237,7 @@ module.exports = {
     }
   },
   editTour: async (data) => {
-    let existingTour = this.getToursByID(data.id);
+    let existingTour = module.exports.getToursByID(data.id);
     if (!existingTour) {
       let e = new Error();
       e.message = `Tour Not Found to Edit`;
@@ -251,7 +260,10 @@ module.exports = {
     }
   },
   TripFilterSearch: async (data) => {
-    let tours = await TourModel.find({ data });
+    let tours = await TourModel.find({ data }).populate([
+      "source",
+      "destination",
+    ]);
     if (tours) {
       return tours;
     } else {
