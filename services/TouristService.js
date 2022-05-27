@@ -8,6 +8,7 @@ const TransactionsModel = require("../models/Transactions.model");
 const FavTours = require("../models/FavTours");
 const RatingService = require("./RatingService");
 const OrderModel = require("../models/Orders");
+const RatingModel = require("../models/Rating");
 module.exports = {
   getProfileInfo: async (user) => {
     let details = await UserModel.findById(user.id)
@@ -46,16 +47,21 @@ module.exports = {
   },
   getDashboard: async (user) => {
     let dashboard = {};
-    let myOrders = await module.exports.getMyOrders(user);
+    let myOrders = await OrderModel.find({ touristID: user.id });
+    // await module.exports.getMyOrders(user);
     let myTransactions = await module.exports.getMyTransactions(user);
     let favTours = await FavTours.find({ touristID: user.id });
     favTours = favTours.tours;
     let moneySpent = 0;
-    let myRatings = await RatingService.getRatingsByTouristID(user.id);
-    let tempMoney = await OrderService.getMyOrders(user);
-    tempMoney.forEach((order) => {
-      moneySpent += order.amount;
-    });
+    let myRatings = await RatingModel.find({ touristID: user.id });
+    // .getRatingsByTouristID(user.id);
+    let tempMoney = await OrderModel.find({ touristID: user.id });
+    // .getMyOrders(user);
+    if (tempMoney) {
+      tempMoney.forEach((order) => {
+        moneySpent += order.amount;
+      });
+    }
     dashboard.myOrders = myOrders;
     dashboard.myTransactions = myTransactions;
     dashboard.favTours = favTours;

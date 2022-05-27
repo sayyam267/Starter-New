@@ -331,7 +331,7 @@ module.exports = {
       isApproved: false,
       isRefunded: false,
     })
-      .populate(["tourID", "userID"])
+      .populate(["tourID", "touristID"])
       .select("-password");
     if (requests) return requests;
     else {
