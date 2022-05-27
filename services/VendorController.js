@@ -45,4 +45,23 @@ module.exports = {
     }
   },
   refundByTourID: async () => {},
+  rejectReservationRequest: async (req, res) => {
+    try {
+      let user = req.user;
+      let requests = await VendorService.rejectReservationRequest(
+        req.body.id,
+        user
+      );
+      return res.send({ data: requests, message: "Rejected" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
+  acceptReservationRequest: async (req, res) => {
+    try {
+      let user = req.user;
+    } catch (e) {}
+  },
 };

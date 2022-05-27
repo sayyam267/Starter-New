@@ -1,4 +1,5 @@
 const OrderService = require("./OrderService");
+const OrderModel = require("../models/Orders");
 const TourModel = require("../models/TourPack");
 module.exports = {
   getRefundTourRequests: async (user) => {
@@ -18,9 +19,15 @@ module.exports = {
       "source",
       "destination",
     ]);
-    let reservationRequests = await OrderService.getPendingReservationRequests(
-      user
-    );
+    let reservationRequests = await OrderModel.find({
+      "tourID.vendorID": user.id,
+      isApproved: false,
+    })
+      .populate(["touristID", "tourID"])
+      .select("-password");
+    // OrderService.getPendingReservationRequests(
+    //   user
+    // );
     let refundRequests = await module.exports.getRefundTourRequests(user);
     dahsboard.reservationRequests = reservationRequests;
     dahsboard.refundRequests = refundRequests;
@@ -30,4 +37,13 @@ module.exports = {
   acceptRefundRequest: async () => {},
   rejectRefundTourRequest: async () => {},
   refundByTourID: async () => {},
+  rejectReservationRequest: async (id, user) => {
+    let requests = await OrderService.rejectTour(id);
+    if (reqquests) return requests;
+    else {
+      let e = new Error("NOT FOUND");
+      e.statusCode = 404;
+      throw e;
+    }
+  },
 };
