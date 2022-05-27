@@ -14,12 +14,17 @@ module.exports = {
   },
   getDashboard: async (user) => {
     let dahsboard = {};
+    let tours = await TourModel.find({ vendorID: user.id }).populate([
+      "source",
+      "destination",
+    ]);
     let reservationRequests = await OrderService.getPendingReservationRequests(
       user
     );
     let refundRequests = await module.exports.getRefundTourRequests(user);
     dahsboard.reservationRequests = reservationRequests;
     dahsboard.refundRequests = refundRequests;
+    dahsboard.myTours = tours;
     return dahsboard;
   },
   acceptRefundRequest: async () => {},
