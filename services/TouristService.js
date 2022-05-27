@@ -55,7 +55,11 @@ module.exports = {
     let moneySpent = 0;
     let myRatings = await RatingModel.find({ touristID: user.id });
     // .getRatingsByTouristID(user.id);
-    let tempMoney = await OrderModel.find({ touristID: user.id });
+    let tempMoney = await OrderModel.find({
+      touristID: user.id,
+      isApproved: true,
+      isRefunded: false,
+    });
     // .getMyOrders(user);
     if (tempMoney) {
       tempMoney.forEach((order) => {

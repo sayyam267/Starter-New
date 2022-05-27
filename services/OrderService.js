@@ -209,6 +209,7 @@ module.exports = {
       tour.seats = tour.seats + existingOrder.seats;
       await user.save();
       await tour.save();
+      await existingOrder.delete();
       return true;
       // return await module.exports.refundOrder(data.id);
     } else {
