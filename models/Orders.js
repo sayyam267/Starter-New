@@ -2,7 +2,11 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema(
   {
-    tourID: { type: mongoose.Schema.Types.ObjectId, ref: "tours" },
+    tourID: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "tours",
+      required: true,
+    },
     // tourID: { type: String, required: true },
     seats: { type: Number, requierd: true },
     promo: {

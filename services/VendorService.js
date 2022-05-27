@@ -1,6 +1,7 @@
 const OrderService = require("./OrderService");
 const OrderModel = require("../models/Orders");
 const TourModel = require("../models/TourPack");
+const { default: mongoose } = require("mongoose");
 module.exports = {
   getRefundTourRequests: async (user) => {
     let refundRequests = await OrderService.getRefundRequestsByVendorID(user);
@@ -15,19 +16,25 @@ module.exports = {
   },
   getDashboard: async (user) => {
     let dahsboard = {};
+    // console.log(user.id);
     let tours = await TourModel.find({ vendorID: user.id }).populate([
       "source",
       "destination",
     ]);
     let reservationRequests = await OrderModel.find({
-      "tourID.vendorID": user.id,
       isApproved: false,
+      // "tourID.vendorID": user.id,
     })
       .populate(["touristID", "tourID"])
-      .select("-password");
+      .select(["-password"]);
     // OrderService.getPendingReservationRequests(
     //   user
     // );
+    // console.log(reservationRequests);
+    // console.log(reservationRequests[0].tourID.vendorID);
+    reservationRequests = reservationRequests.filter((item) => {
+      return String(item.tourID.vendorID) == String(user.id);
+    });
     let refundRequests = await module.exports.getRefundTourRequests(user);
     dahsboard.reservationRequests = reservationRequests;
     dahsboard.refundRequests = refundRequests;
