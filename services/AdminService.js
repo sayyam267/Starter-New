@@ -112,50 +112,58 @@ module.exports = {
     }
   },
   blockUser: async (userID) => {
-    let user = UserService.blockUser(userID);
-    let e = new Error();
+    try {
+      let user = UserService.blockUser(userID);
+      let e = new Error();
 
-    // if (user) {
-    //   if (user.isActive) {
-    //     user.isActive = false;
-    //     await user.save();
-    //   }
-    //   if (!user.isActive) {
-    //     e.message = "Already Blocked";
-    //     e.statusCode = 400;
-    //     throw e;
-    //   }
-    // } else {
-    //   e.message = "Not Found";
-    //   e.statusCode = 404;
-    //   throw e;
-    // }
-    if (user) {
-      return true;
-    } else throw user;
+      // if (user) {
+      //   if (user.isActive) {
+      //     user.isActive = false;
+      //     await user.save();
+      //   }
+      //   if (!user.isActive) {
+      //     e.message = "Already Blocked";
+      //     e.statusCode = 400;
+      //     throw e;
+      //   }
+      // } else {
+      //   e.message = "Not Found";
+      //   e.statusCode = 404;
+      //   throw e;
+      // }
+      if (user) {
+        return true;
+      } else throw e;
+    } catch (e) {
+      throw e;
+    }
   },
   unBlockUser: async (userID) => {
-    let user = UserService.unBlockUser(userID);
-    let e = new Error();
+    try {
+      let user = UserService.unBlockUser(userID);
+      let e = new Error();
 
-    // if (user) {
-    //   if (user.isActive) {
-    //     user.isActive = false;
-    //     await user.save();
-    //   }
-    //   if (!user.isActive) {
-    //     e.message = "Already Blocked";
-    //     e.statusCode = 400;
-    //     throw e;
-    //   }
-    // } else {
-    //   e.message = "Not Found";
-    //   e.statusCode = 404;
-    //   throw e;
-    // }
-    if (user) {
-      return true;
-    } else throw user;
+      // if (user) {
+      //   if (user.isActive) {
+      //     user.isActive = false;
+      //     await user.save();
+      //   }
+      //   if (!user.isActive) {
+      //     e.message = "Already Blocked";
+      //     e.statusCode = 400;
+      //     throw e;
+      //   }
+      // } else {
+      //   e.message = "Not Found";
+      //   e.statusCode = 404;
+      //   throw e;
+      // }
+      if (user) {
+        return true;
+      } else throw e;
+    } catch (e) {
+      throw e;
+    }
   },
   createAdmins: async (data) => {
     let user = await UserModel.findOne({ email: data.email });

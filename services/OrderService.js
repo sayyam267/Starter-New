@@ -329,6 +329,7 @@ module.exports = {
     let requests = await OrderModel.find({
       "tourID.vendorID": user.id,
       isApproved: false,
+      isRefunded: false,
     })
       .populate(["tourID", "userID"])
       .select("-password");

@@ -14,18 +14,7 @@ const { sendForgotPassword } = require("./SendEmail");
 module.exports = {
   getProfileInfo: async (user) => {
     let details = await UserModel.findById(user.id)
-      .select([
-        "fname",
-        "lname",
-        "city",
-        "balance",
-        "profilePicture",
-        "gender",
-        "phoneNumber",
-        "email",
-        "isRating",
-        "rating",
-      ])
+      .select(["-password"])
       .populate("city");
     if (details) {
       return details;
@@ -80,7 +69,9 @@ module.exports = {
     }
   },
   getUserByID: async (id) => {
-    let user = await UserModel.findById(id).select("-password");
+    let user = await UserModel.findById(id)
+      .select(["-password", "-cnic"])
+      .populate("city");
     if (user) {
       return user;
     } else {

@@ -15,6 +15,17 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 module.exports = {
+  getmyDetails: async (req, res) => {
+    try {
+      let user1 = req.user;
+      let user = await UserService.getmyDetails(user1.id);
+      return res.send({ data: user, message: "Fetched" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
   // login: async (req, res) => {
   //   try {
   //     const { email, password } = req.body;

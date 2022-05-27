@@ -23,7 +23,7 @@ router.post(
 );
 router.get("/validate", UserController.verifyUser);
 router.get("/get", UserController.getUser);
-router.get("/get/:id", handleAuth, UserController.getUserByID);
+router.get("/get/:id", UserController.getUserByID);
 router.get("/all", handleAuth, authAdmin, UserController.getAll);
 router.post("/forgot", UserController.forgotPassword);
 router.put(
