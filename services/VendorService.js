@@ -32,11 +32,23 @@ module.exports = {
     // );
     // console.log(reservationRequests);
     // console.log(reservationRequests[0].tourID.vendorID);
-    reservationRequests = reservationRequests.filter((item) => {
-      return String(item.tourID.vendorID) == String(user.id);
+    let resreq = [];
+    reservationRequests = reservationRequests.map((item) => {
+      if (String(item.tourID.vendorID) == String(user.id)) {
+        resreq.push({
+          _id: item._id,
+          vendorID: item.tourID.vendorID,
+          amount: item.amount,
+          seats: item.seats,
+          date: item.date,
+          email: item.touristID.email,
+          name: item.touristID.fname,
+        });
+      }
+      // return String(item.tourID.vendorID) == String(user.id);
     });
     let refundRequests = await module.exports.getRefundTourRequests(user);
-    dahsboard.reservationRequests = reservationRequests;
+    dahsboard.reservationRequests = resreq;
     dahsboard.refundRequests = refundRequests;
     dahsboard.myTours = tours;
     return dahsboard;
