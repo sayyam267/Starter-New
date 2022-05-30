@@ -20,7 +20,7 @@ router.get(
 );
 
 router.get("/success", async (req, res) => {
-  if (user) console.log(user);
+  // if (user) console.log(user);
   // console.log(req);
   // console.log(res);
   // let newUser = await UserModel({
