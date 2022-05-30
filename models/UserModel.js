@@ -23,6 +23,7 @@ const Schema = mongoose.Schema(
     balance: { type: Number, default: 0 },
     address: { type: String },
     //table:
+    source: { type: String, required: true },
     userType: { type: String, required: true },
     // userType: {
     //   type: mongoose.Schema.Types.ObjectId,

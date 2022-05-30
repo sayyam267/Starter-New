@@ -4,8 +4,11 @@ const app = express();
 const path = require("path");
 require("dotenv").config();
 const port = process.env.PORT;
+require("./helpers/GoogleAuth");
+require("./helpers/passport");
 app.use(express.json());
 app.use(require("cors")());
+const passport = require("passport");
 const string = process.env.CONNECTION_STRING;
 // const AdminRoute = require("./routes/AdminRoute");
 // const TouristRoute = require("./routes/TouristRoute");
@@ -53,8 +56,28 @@ app.use("/tourist", TouristRoute);
 app.use("/vendor", VendorRoute);
 app.use("/customtour", CustomTourRoute);
 // app.use("/request", ReserveTourRoute);
-
 app.use(express.static(path.join("public")));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/",
+    successRedirect: "/profile",
+    failureFlash: true,
+    successFlash: "Successfully logged in!",
+  })
+);
+
 app.get("/", (req, res) => {
   res.send("<h1>TourBook backend</h1>");
 });
