@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(require("cors")());
 const passport = require("passport");
 const string = process.env.CONNECTION_STRING;
+const cookieSession = require("express-session");
 // const AdminRoute = require("./routes/AdminRoute");
 // const TouristRoute = require("./routes/TouristRoute");
 // const TourGuideRoute = require("./routes/TourGuideRoute");
@@ -28,7 +29,18 @@ const AdminRoute = require("./routes/AdminRoute");
 const TouristRoute = require("./routes/TouristRoute");
 const VendorRoute = require("./routes/VendorRoute");
 const CustomTourRoute = require("./routes/CustomTourRoute");
+const OAuth2 = require("./routes/OAuth2");
+const flash = require("express-flash");
 
+app.use(
+  cookieSession({
+    name: "session",
+    secret: "tourbook",
+    keys: ["google", "facebook", "github", "auth", "by", "passportjs"],
+    maxAge: 24 * 60 * 60 * 1000,
+  })
+);
+app.use(flash());
 mongoose
   .connect(string)
   .then((res) => {
@@ -42,6 +54,10 @@ mongoose
 // app.use("/tourist", TouristRoute);
 // app.use("/guide", TourGuideRoute);
 // app.use("/vendor", VendorRoute);
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use("/auth", OAuth2);
 app.use("/user", UserRoute);
 app.use("/promo", PromoRoute);
 app.use("/order", OrderRoute);
@@ -58,25 +74,22 @@ app.use("/customtour", CustomTourRoute);
 // app.use("/request", ReserveTourRoute);
 app.use(express.static(path.join("public")));
 
-app.use(passport.initialize());
-app.use(passport.session());
+// app.get(
+//   "/auth/google",
+//   passport.authenticate("google", {
+//     scope: ["profile", "email"],
+//   })
+// );
 
-app.get(
-  "/auth/google",
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
-  })
-);
-
-app.get(
-  "/auth/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/",
-    successRedirect: "/profile",
-    failureFlash: true,
-    successFlash: "Successfully logged in!",
-  })
-);
+// app.get(
+//   "/auth/google/callback",
+//   passport.authenticate("google", {
+//     failureRedirect: "/",
+//     successRedirect: "/profile",
+//     failureFlash: true,
+//     successFlash: "Successfully logged in!",
+//   })
+// );
 
 app.get("/", (req, res) => {
   res.send("<h1>TourBook backend</h1>");

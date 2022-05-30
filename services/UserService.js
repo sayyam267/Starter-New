@@ -347,8 +347,11 @@ const userService = {
     }
     let profilePicture = "";
     if (String(data.gender).toLowerCase() == "male") {
-      profilePicture = "/images/profile-pictures/default-male.jpg";
-    } else profilePicture = "/images/profile-pictures/default-female.jpg";
+      profilePicture =
+        "http://tourbook-backend.herokuapp.com/images/profile-pictures/default-male.jpg";
+    } else
+      profilePicture =
+        "http://tourbook-backend.herokuapp.com/images/profile-pictures/default-female.jpg";
     // console.log("EMAIL: " + process.env.MAIL);
     // console.log("PASS: " + process.env.PASS);
     // let userType = await UserTypeService.findById(data.usertype);

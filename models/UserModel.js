@@ -4,14 +4,14 @@ const Schema = mongoose.Schema(
   {
     fname: { type: String, required: true, trim: true },
     lname: { type: String, trim: true },
-    email: { type: String, required: true, unique: true, trim: true },
-    password: { type: String, required: true },
+    email: { type: String, required: true, trim: true },
+    password: { type: String, required: false },
     city: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "cities",
       // required: true,
     },
-    country: { type: String, required: true },
+    country: { type: String, required: false },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: false },
     profilePicture: {
@@ -19,28 +19,28 @@ const Schema = mongoose.Schema(
       default: "",
       // default: "/images/profile-pictures/default.jpg",
     },
-    gender: { type: String, required: true },
-    balance: { type: Number, default: 0 },
-    address: { type: String },
+    gender: { type: String, required: false },
+    balance: { type: Number, default: 0, required: false },
+    // address: { type: String },
     //table:
-    source: { type: String, required: true },
-    userType: { type: String, required: true },
+    source: { type: String, required: false },
+    userType: { type: String, required: false },
     // userType: {
     //   type: mongoose.Schema.Types.ObjectId,
     //   ref: "usertype",
     //   required: true,
     // },
     //
-    phoneNumber: { type: String, required: true },
-    isRating: { type: Boolean, default: false },
+    phoneNumber: { type: String, default: "", required: false },
+    isRating: { type: Boolean, default: false, required: false },
     //virtual mongo attr
-    rating: { type: Number, default: 0 },
+    rating: { type: Number, default: 0, required: false },
     //
-    cnic: { type: String, required: true },
+    cnic: { type: String, default: "" },
     isDeleted: { type: Boolean, default: false },
     //daate and expiry in array
     // code: { type: String, required: true },
-    emailVerificationCode: { type: String, required: true },
+    emailVerificationCode: { type: String, required: false },
     // emailVerificationExpiry:{type:Date,required:false},
     passwordResetCode: { type: String, required: false, default: null },
     passwordResetExpiry: { type: Date, required: false, default: null },
