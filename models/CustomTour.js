@@ -3,13 +3,13 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema(
   {
     by: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "users" },
-    to: {
-      type: mongoose.Schema.Types.ObjectId,
-      // type: String,
-      default: null,
-      // required: true,
-      ref: "users",
-    },
+    // to: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   // type: String,
+    //   default: null,
+    //   // required: true,
+    //   ref: "users",
+    // },
     requirements: {
       maxBudget: { type: Number, required: true },
       seats: { type: Number, required: true },
@@ -28,13 +28,13 @@ const Schema = mongoose.Schema(
       isGuide: { type: Boolean, default: false },
     },
     fulfilledBy: {
-      type: [mongoose.Schema.Types.ObjectId],
-      // type: [String],
-      required: true,
-      ref: "users",
+      type: mongoose.Schema.Types.ObjectId,
       default: null,
+      // type: [String],
+      // required: true,
+      ref: "users",
     },
-    amountTaken: { type: Number, default: 0 },
+    amountTaken: { type: Number, default: 0, required: true },
   },
   { timestamp: true }
 );

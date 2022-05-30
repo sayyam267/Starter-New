@@ -11,7 +11,7 @@ const { sendForgotPassword } = require("./SendEmail");
 // const UserType = require("../models/UserType");
 // const req = require("express/lib/request");
 
-module.exports = {
+const userService = {
   getProfileInfo: async (user) => {
     let details = await UserModel.findById(user.id)
       .select(["-password"])
@@ -457,19 +457,15 @@ module.exports = {
         }
       } else {
         try {
-          let user = await module.exports.createUserService(data);
+          let user = await userService.createUserService(data);
           return user;
         } catch (e) {
           throw e;
         }
       }
     } else {
-      try {
-        let user = await module.exports.createUserService(data);
-        return user;
-      } catch (e) {
-        throw e;
-      }
+      let user = await userService.createUserService(data);
+      return user;
     }
   },
 
@@ -728,3 +724,4 @@ module.exports = {
     }
   },
 };
+module.exports = userService;

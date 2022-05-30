@@ -664,16 +664,15 @@ const sendForgotPassword = async ({ name, email, confirmationCode }) => {
       pass: fromPass,
     },
   });
-  await transporter
-    .sendMail({
-      from: fromMail,
-      to: email,
-      subject: "TourBook : Forgot Password",
-      html: `<h1>TourBook : Password Reset Code</h1>
+  await transporter.sendMail({
+    from: fromMail,
+    to: email,
+    subject: "TourBook : Forgot Password",
+    html: `<h1>TourBook : Password Reset Code</h1>
         <h2>Hello ${name}</h2>
         <p>Your Password Reset Code is : <b>${confirmationCode}</b></p>
         </div>`,
-    })
-    .catch((e) => console.log(e));
+  });
+  //s.catch((e) => console.log(e));
 };
 module.exports = { sendVerificationEmail, sendForgotPassword };

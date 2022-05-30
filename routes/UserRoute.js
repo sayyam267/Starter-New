@@ -7,7 +7,7 @@ const authAdmin = require("../middlewares/adminAuth");
 const handleAuth = require("../middlewares/auth");
 router.post(
   "/login",
-  handleSingupAuth,
+  // handleSingupAuth,
   userRules.loginUserRules(),
   validation,
   // UserController.login
@@ -15,7 +15,7 @@ router.post(
 );
 router.post(
   "/signup",
-  handleSingupAuth,
+  // handleSingupAuth,
   userRules.signUpUserRules(),
   validation,
   UserController.createUser
