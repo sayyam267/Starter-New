@@ -2,6 +2,56 @@ const router = require("express").Router();
 const passport = require("passport");
 const UserModel = require("../models/UserModel");
 const jwt = require("jsonwebtoken");
+router.post("/google/createuser", async (req, res) => {
+  let { email, profilePicture, lname, fname } = req.body;
+  let existinguser = await UserModel.findOne({
+    email: email,
+    isDeleted: false,
+  });
+  if (!existinguser) {
+    let newUser = await UserModel({
+      email: email,
+      profilePicture: profilePicture,
+      lname: lname,
+      fname: fname,
+      source: "google",
+      userType: "tourist",
+      isVerified: true,
+      isActive: true,
+    }).save();
+    let user = { email, lname, fname, id: newUser._id };
+    const token = jwt.sign(user2, process.env.PRIVATE_KEY);
+    return res.send({
+      data: {
+        token: token,
+        role: newUser.userType,
+        profilePicture: newUser.profilePicture,
+      },
+      message: "Fetched",
+    });
+  } else if (existinguser?.source == "google") {
+    let user = {
+      id: existinguser._id,
+      fname: existinguser.fname,
+      lname: existinguser.lname,
+      email: existinguser.email,
+    };
+    const token = jwt.sign(user, process.env.PRIVATE_KEY);
+    return res.send({
+      data: {
+        token: token,
+        role: existinguser.userType,
+        profilePicture: existinguser.profilePicture,
+      },
+      message: "Fetched",
+    });
+  } else {
+    return res.status(400).send({
+      data: null,
+      message: "You have previously signed up with a different signin method",
+    });
+  }
+});
 router.get(
   "/google",
   passport.authenticate("google", {
