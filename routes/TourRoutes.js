@@ -15,7 +15,12 @@ const storage = multer.diskStorage({
     // console.log(file);
     const filename = file.originalname.split(".jpg")[0];
     // console.log(filename);
-    cb(null, Date.now() + " - " + filename + path.extname(file.originalname));
+    cb(
+      null,
+      `http://tourbook-backend.herokuapp.com/${
+        Date.now() + " - " + filename + path.extname(file.originalname)
+      }`
+    );
   },
 });
 const upload = multer({ storage: storage });
