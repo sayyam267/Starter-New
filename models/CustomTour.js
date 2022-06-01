@@ -26,6 +26,9 @@ const Schema = mongoose.Schema(
       },
       isHotel: { type: Boolean, default: false },
       isGuide: { type: Boolean, default: false },
+      places: { type: Array, default: [] },
+      startDate: { type: Date, required: true },
+      endDate: { type: Date, required: true },
     },
     fulfilledBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -34,7 +37,7 @@ const Schema = mongoose.Schema(
       // required: true,
       ref: "users",
     },
-    amountTaken: { type: Number, default: 0, required: true },
+    agreedAmount: { type: Number, default: 0, required: true },
   },
   { timestamp: true }
 );
