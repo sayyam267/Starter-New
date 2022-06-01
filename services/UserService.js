@@ -480,6 +480,7 @@ const userService = {
       isDeleted: false,
     });
     if (existingUser) {
+      console.log(existingUser);
       // if (existingUser?.isActive && existingUser?.isVerified) {
       //   let verify = await bcrypt.compare(data.password, existingUser.password);
       //   if (!verify) {
@@ -526,23 +527,31 @@ const userService = {
             e.message = "Either the email or Password is Wrong!";
             throw e;
           } else {
-            const user = {
-              id: existingUser._id,
-              email: existingUser.email,
-              name: existingUser.fname + " " + existingUser.lname,
-              role: existingUser.userType,
-              // isActive: existingUser.isActive,
-            };
-            const token = jwt.sign(user, process.env.PRIVATE_KEY);
-            return {
-              token: token,
-              role: existingUser.userType,
-              name: existingUser.fname + " " + existingUser.lname,
-              email: existingUser.email,
-              profilePicture: existingUser.profilePicture,
-              // isVerified: existingUser.isVerified,
-              balance: existingUser.balance,
-            };
+            if (existingUser.source != "google") {
+              const user = {
+                id: existingUser._id,
+                email: existingUser.email,
+                name: existingUser.fname + " " + existingUser.lname,
+                role: existingUser.userType,
+                // isActive: existingUser.isActive,
+              };
+              const token = jwt.sign(user, process.env.PRIVATE_KEY);
+              return {
+                token: token,
+                role: existingUser.userType,
+                name: existingUser.fname + " " + existingUser.lname,
+                email: existingUser.email,
+                profilePicture: existingUser.profilePicture,
+                // isVerified: existingUser.isVerified,
+                balance: existingUser.balance,
+              };
+            } else {
+              let e = new Error(
+                "You have signed up with different options like Google."
+              );
+              e.statusCode = 400;
+              throw e;
+            }
           }
         }
       }

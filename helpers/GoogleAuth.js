@@ -47,18 +47,18 @@ passport.use(
           userType: "tourist",
         }).save();
         user = newuser;
-        done(null, user);
+        return done(null, user);
       }
 
       if (existingUser?.source !== "google") {
         // console.log("INSIDE 2");
-        done(null, false, {
+        return done(null, false, {
           message: `You have previously signed up with a different signin method`,
         });
       } else {
         // console.log("INSIDE 3");
         user = existingUser;
-        done(null, user);
+        return done(null, user);
       }
     }
   )

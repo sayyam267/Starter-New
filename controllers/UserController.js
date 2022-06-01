@@ -269,7 +269,9 @@ module.exports = {
       let user = await UserService.loginUser(req.body);
       return res.send({ data: user, message: "Fetched" });
     } catch (e) {
-      return res.status(e.statusCode).send({ message: e.message, data: null });
+      return res
+        .status(e?.statusCode || 400)
+        .send({ message: e.message, data: null });
     }
   },
   verifyUser: async (req, res) => {
