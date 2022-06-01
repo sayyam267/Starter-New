@@ -49,9 +49,19 @@ module.exports = {
       // return String(item.tourID.vendorID) == String(user.id);
     });
     let refundRequests = await module.exports.getRefundTourRequests(user);
-    let customTourRequests = await CustomTour.find({ to: null });
+    let customTourRequests = await CustomTour.find({ to: null }).populate([
+      {
+        path: "by",
+        model: "users",
+        select: ["fname", "phoneNumber", "email", "profilePicture", "lname"],
+      },
+    ]);
     let approvedCustomTourRequests = await CustomTour.find({
       fulfilledBy: user.id,
+    }).populate({
+      path: "by",
+      model: "users",
+      select: ["fname", "phoneNumber", "email", "profilePicture", "lname"],
     });
     dahsboard.reservationRequests = resreq;
     dahsboard.refundRequests = refundRequests;
