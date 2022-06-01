@@ -517,17 +517,23 @@ const userService = {
           throw e;
         }
         if (existingUser?.isActive) {
-          let verify = await bcrypt.compare(
-            data.password,
-            existingUser.password
-          );
-          if (!verify) {
-            let e = new Error();
+          if (existingUser.source == "google") {
+            let e = new Error(
+              "You have signed up with different options like Google."
+            );
             e.statusCode = 400;
-            e.message = "Either the email or Password is Wrong!";
             throw e;
           } else {
-            if (existingUser.source != "google") {
+            let verify = await bcrypt.compare(
+              data.password,
+              existingUser.password
+            );
+            if (!verify) {
+              let e = new Error();
+              e.statusCode = 400;
+              e.message = "Either the email or Password is Wrong!";
+              throw e;
+            } else {
               const user = {
                 id: existingUser._id,
                 email: existingUser.email,
@@ -545,12 +551,6 @@ const userService = {
                 // isVerified: existingUser.isVerified,
                 balance: existingUser.balance,
               };
-            } else {
-              let e = new Error(
-                "You have signed up with different options like Google."
-              );
-              e.statusCode = 400;
-              throw e;
             }
           }
         }
