@@ -197,9 +197,16 @@ module.exports = {
         files.map((file) => {
           //SAVING IN DB
           // console.log("public/images/" + file.filename);
-          imageNames.push("images/tourpics/" + file.filename);
+          imageNames.push(
+            "http://tourbook-backend.herokuapp.com/images/tourpics/" +
+              file.filename
+          );
         });
-      } else imageNames.push("images/tourpics/" + file.filename);
+      } else
+        imageNames.push(
+          "http://tourbook-backend.herokuapp.com/images/tourpics/" +
+            file.filename
+        );
       // console.log(req.files.filename);
       // console.log(req.file);
       // console.log(req.body);
