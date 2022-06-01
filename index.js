@@ -30,17 +30,17 @@ const TouristRoute = require("./routes/TouristRoute");
 const VendorRoute = require("./routes/VendorRoute");
 const CustomTourRoute = require("./routes/CustomTourRoute");
 const OAuth2 = require("./routes/OAuth2");
-const flash = require("express-flash");
+// const flash = require("express-flash");
 
-app.use(
-  cookieSession({
-    name: "session",
-    secret: "tourbook",
-    keys: ["google", "facebook", "github", "auth", "by", "passportjs"],
-    maxAge: 24 * 60 * 60 * 1000,
-  })
-);
-app.use(flash());
+// app.use(
+//   cookieSession({
+//     name: "session",
+//     secret: "tourbook",
+//     keys: ["google", "facebook", "github", "auth", "by", "passportjs"],
+//     maxAge: 24 * 60 * 60 * 1000,
+//   })
+// );
+// app.use(flash());
 mongoose
   .connect(string)
   .then((res) => {
@@ -54,8 +54,8 @@ mongoose
 // app.use("/tourist", TouristRoute);
 // app.use("/guide", TourGuideRoute);
 // app.use("/vendor", VendorRoute);
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 app.use("/auth", OAuth2);
 app.use("/user", UserRoute);
