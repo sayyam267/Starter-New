@@ -26,7 +26,7 @@ router.post("/google/createuser", async (req, res) => {
         token: token,
         role: newUser.userType,
         profilePicture: newUser.profilePicture,
-        name: newUser.fname + " " + newUser.lname,
+        name: fname + " " + lname,
       },
       message: "Fetched",
     });
