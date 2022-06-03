@@ -21,7 +21,11 @@ const Schema = mongoose.Schema(
     //
     // duration: { type: String, required: true },
     // touristID: { type: mongoose.Schema.Types.ObjectId, ref: "Tourists" },
-    vendorID: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+    vendorID: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+    },
     seats: { type: Number, required: true },
     validTill: { type: Date, required: true },
     hasGuide: { type: Boolean, required: true },
@@ -35,9 +39,11 @@ const Schema = mongoose.Schema(
     },
     //
     //default empty str
+    places: { type: Array, default: [] },
     // tourGuide: { type: mongoose.Schema.Types.ObjectId, ref: "TourGuides" },
     tourpics: { type: Array, default: [] },
     description: { type: String, default: null, required: true },
+    stops: { type: Array, default: [] },
     //stops locations
     location: {
       long: { type: String, default: 0 },
@@ -50,4 +56,7 @@ const Schema = mongoose.Schema(
   }
 );
 
+Schema.virtual("duration").get(() => {
+  return new Date(this.validTill - this.addedOn);
+});
 module.exports = mongoose.model("tours", Schema);

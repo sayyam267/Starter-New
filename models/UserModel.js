@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const lodash = require("lodash");
 const Schema = mongoose.Schema(
   {
     fname: { type: String, required: true, trim: true },
@@ -56,5 +56,12 @@ const Schema = mongoose.Schema(
 // Schema.virtual('balance').get(()=>{
 //   return
 // })
-
+Schema.virtual("fullName").get(() => {
+  return lodash.startCase(this.fname + " " + this.lname);
+});
+Schema.virtual("fullName").set((value) => {
+  const nameA = value.split(" ");
+  this.name.fname = nameA[0];
+  this.name.lname = nameA[1];
+});
 module.exports = mongoose.model("users", Schema);

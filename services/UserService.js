@@ -394,6 +394,7 @@ const userService = {
       // await user.save();
       // return tourist;
       isRating = false;
+      isActive = true;
       role = "tourist";
     }
     if (data.role == "admin") {
@@ -557,13 +558,13 @@ const userService = {
       }
       if (!existingUser?.isActive && !existingUser?.isVerified) {
         let e = new Error();
-        e.message = "Please Verify Your Account through Email first";
+        e.message = "Blocked";
         e.statusCode = 400;
         throw e;
       }
       if (existingUser?.isActive && !existingUser?.isVerified) {
         let e = new Error();
-        e.message = "Internal Logic Error";
+        e.message = "Please Verify Email first";
         e.statusCode = 500;
         throw e;
       }
@@ -615,6 +616,7 @@ const userService = {
       });
       user.passwordResetCode = code;
       user.passwordResetExpiry = new Date(Date.now() + 3600000);
+      console.log("IN FORGOT" + code);
       await user.save();
       return true;
     } else {
@@ -636,6 +638,8 @@ const userService = {
           throw e;
         } else {
           user.isVerified = true;
+          user.passwordResetCode = null;
+          user.passwordResetExpiry = null;
           await user.save();
           return true;
         }
