@@ -26,7 +26,12 @@ module.exports = {
       isApproved: false,
       // "tourID.vendorID": user.id,
     })
-      .populate(["touristID", "tourID"])
+      .populate(["tourID"])
+      .populate({
+        path: "touristID",
+        model: "users",
+        select: ["fname", "phoneNumber", "email", "profilePicture"],
+      })
       .select(["-password"]);
     // OrderService.getPendingReservationRequests(
     //   user

@@ -20,12 +20,13 @@ router.post("/google/createuser", async (req, res) => {
       isActive: true,
     }).save();
     let user = { email, lname, fname, id: newUser._id };
-    const token = jwt.sign(user2, process.env.PRIVATE_KEY);
+    const token = jwt.sign(user, process.env.PRIVATE_KEY);
     return res.send({
       data: {
         token: token,
         role: newUser.userType,
         profilePicture: newUser.profilePicture,
+        name: newUser.fname + " " + newUser.lname,
       },
       message: "Fetched",
     });
