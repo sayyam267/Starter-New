@@ -51,7 +51,7 @@ const Schema = mongoose.Schema(
     // },
     //
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 // Schema.virtual('balance').get(()=>{
 //   return

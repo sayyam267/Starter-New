@@ -27,6 +27,8 @@ router.post("/google/createuser", async (req, res) => {
         role: newUser.userType,
         profilePicture: newUser.profilePicture,
         name: fname + " " + lname,
+        email: newUser.email,
+        balance: newUser.balance,
       },
       message: "Fetched",
     });
@@ -44,6 +46,8 @@ router.post("/google/createuser", async (req, res) => {
         role: existinguser.userType,
         profilePicture: existinguser.profilePicture,
         name: existinguser.fname + " " + existinguser.lname,
+        email: existinguser.email,
+        balance: existinguser.balance,
       },
       message: "Fetched",
     });

@@ -37,9 +37,10 @@ const Schema = mongoose.Schema(
       // required: true,
       ref: "users",
     },
+    offers: { type: Array, default: [] },
     agreedAmount: { type: Number, default: 0, required: true },
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("customtour", Schema);

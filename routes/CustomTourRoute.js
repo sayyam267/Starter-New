@@ -23,4 +23,6 @@ router.get(
   handleAuth,
   CustomTourController.getCustomTourByVendorID
 );
+router.post("/offer/give", handleAuth, CustomTourController.giveOffer);
+router.post("/offer/accept", handleAuth, CustomTourController.acceptOffer);
 module.exports = router;

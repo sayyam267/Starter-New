@@ -12,7 +12,7 @@ const Schema = mongoose.Schema(
     // to: { type: String },
     message: { type: String },
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Ratings", Schema);

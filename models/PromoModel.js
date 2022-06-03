@@ -15,7 +15,7 @@ const Schema = mongoose.Schema(
     amount: { type: Number, required: true },
     isPercent: { type: Boolean, required: true, default: true },
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
 //virtual expiry

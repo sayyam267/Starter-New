@@ -28,7 +28,7 @@ const UserTransactionsSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("UserTransactions", UserTransactionsSchema);

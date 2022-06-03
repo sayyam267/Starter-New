@@ -216,6 +216,7 @@ module.exports = {
         ...req.body,
         vendorID: req.user.id,
         tourpics: imageNames,
+        places: req.body.places,
         addedOn: addedOn,
       });
       await newTour.save();

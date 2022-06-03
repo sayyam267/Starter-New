@@ -29,7 +29,7 @@ const Schema = mongoose.Schema(
     // refundAmount: { type: Number, default: 0 },
     //
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Orders", Schema);

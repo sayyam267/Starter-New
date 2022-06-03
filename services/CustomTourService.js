@@ -144,6 +144,41 @@ const CustomTourService = {
       throw e;
     }
   },
+  giveOffer: async (data, user) => {
+    let customTourReq = await CustomTour.findById(data.requestID);
+    if (customTourReq) {
+      let offers = customTourReq.offers;
+      let offer = {};
+      offer.date = Date.now();
+      offer.amount = data.amount;
+      offer.vendorID = user.id;
+      offer.description = data.description;
+      if (offers.indexOf(offer) != -1) {
+        offers.push(offer);
+      }
+      customTourReq.offers = offers;
+      await customTourReq.save();
+    } else {
+      let e = new Error("Not Found");
+      e.statusCode = 404;
+      throw e;
+    }
+  },
+  acceptOffer: async (data, user) => {
+    let customTourReq = await CustomTour.findById(data.requestID);
+    if (offer) {
+      let offers = customTourReq.offers;
+      let offer = offers.filter((offer) => offer.vendorID == data.vendorID);
+      customTourReq.offers = offers.splice(offers.indexOf(offer), 1);
+      customTourReq.fulfilledBy = offer.vendorID;
+      customTourReq.agreedAmount = offer.amount;
+      await customTourReq.save();
+    } else {
+      let e = new Error("Not Found");
+      e.statusCode = 404;
+      throw e;
+    }
+  },
 };
 
 module.exports = CustomTourService;

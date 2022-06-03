@@ -103,4 +103,26 @@ module.exports = {
         .send({ data: null, message: e.message });
     }
   },
+  giveOffer: async (req, res) => {
+    try {
+      let user = req.user;
+      let isOffer = CustomTourService.giveOffer(req.body, user);
+      return res.send({ data: isOffer, message: "Offer Presented to User" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
+  acceptOffer: async (req, res) => {
+    try {
+      let user = req.user;
+      let isOffer = CustomTourService.acceptOffer(req.body, user);
+      return res.send({ data: isOffer, message: "Offer Accepted" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
 };
