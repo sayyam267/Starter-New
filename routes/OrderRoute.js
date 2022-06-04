@@ -15,6 +15,7 @@ router.get(
 );
 router.put("/request/refund", handleAuth, OrderController.requestRefund);
 router.post("/create/", handleAuth, OrderController.createOrder);
+router.get("/mine", handleAuth, OrderController.getmyOrders);
 router.put("/accept", handleAuth, authVendor, OrderController.approveTour);
 router.put("/reject", handleAuth, authVendor, OrderController.rejectTour);
 router.put(

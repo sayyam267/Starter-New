@@ -44,6 +44,7 @@ const CustomTourService = {
         select: ["fname", "phoneNumber", "email"],
       })
       .populate(["requirements.source", "requirements.destination"]);
+    console.log(myRequests);
     if (Object.keys(myRequests).length > 0) {
       return myRequests;
     } else {
