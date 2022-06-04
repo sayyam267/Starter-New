@@ -39,7 +39,7 @@ module.exports = {
   },
   deleteUser: async (req, res) => {
     try {
-      let deleteduser = await AdminService.deleteUser(req.body.userID);
+      let deleteduser = await AdminService.deleteUser(req.body.id);
       return res.status(200).send({ data: true, message: "Deleted User" });
     } catch (e) {
       return res
