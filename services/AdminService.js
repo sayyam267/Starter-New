@@ -1,6 +1,8 @@
 const UserModel = require("../models/UserModel");
 const OrderService = require("../services/OrderService");
 const UserService = require("../services/UserService");
+const TransactionModel = require("../models/Transactions.model");
+const TourPack = require("../models/TourPack");
 module.exports = {
   getVendors: async () => {
     let e = new Error();
@@ -205,7 +207,7 @@ module.exports = {
     let pendingVendorRequests =
       await module.exports.getpendingVendorsRequests();
     let pendingAdminRequests = await UserService.getPendingAdmins();
-    let totalNoOfUsers = await UserModel.find({}).count();
+    let totalNoOfUsers = await UserModel.find({ isDeleted }).count();
     let totalNoOfActiveUsers = await UserModel.find({
       isActive: true,
       isDeleted: false,
@@ -217,12 +219,26 @@ module.exports = {
     let activeUsers = await UserModel.find({ isActive: true })
       .populate("city")
       .select("-password");
+
+    let credits = await TransactionModel.find({ refunded: false });
+    let totalCredits = 0;
+    credits.forEach((credit) => {
+      totalCredits += credit.RechargedAmount;
+    });
+    let totalTours = await TourPack.find({}).count();
+    let totalOngoingTours = await OrderModel.find({
+      isApproved: true,
+      isRefunded: false,
+    }).count();
     dashboard.totalNoOfUsers = totalNoOfUsers;
     dashboard.pendingAdminRequests = pendingAdminRequests;
     dashboard.pendingVendorRequests = pendingVendorRequests;
     dashboard.totalNoOfActiveUsers = totalNoOfActiveUsers;
     dashboard.totalNoOfDeletedUsers = totalNoOfDeletedUsers;
     dashboard.allUsers = allUsers;
+    dashboard.totalNoOfTours = totalTours;
+    dashboard.totalOngoingTours = totalOngoingTours;
+    dashboard.totalCredits = totalCredits;
     dashboard.activeUsers = activeUsers;
     return dashboard;
   },
