@@ -18,7 +18,7 @@ module.exports = {
   getmyDetails: async (req, res) => {
     try {
       let user1 = req.user;
-      let user = await UserService.getmyDetails(user1.id);
+      let user = await UserService.getProfileInfo(user1.id);
       return res.send({ data: user, message: "Fetched" });
     } catch (e) {
       return res
