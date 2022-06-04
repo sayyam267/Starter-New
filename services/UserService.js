@@ -475,104 +475,119 @@ const userService = {
   },
 
   loginUser: async (data) => {
-    let existingUser = await UserModel.findOne({
-      email: data.email,
-      // isActive: true,
-      // isVerified: true,
-      isDeleted: false,
-    });
-    if (existingUser) {
-      console.log(existingUser);
-      // if (existingUser?.isActive && existingUser?.isVerified) {
-      //   let verify = await bcrypt.compare(data.password, existingUser.password);
-      //   if (!verify) {
-      //     let e = new Error();
-      //     e.statusCode = 400;
-      //     e.message = "Either the email or Password is Wrong!";
-      //     throw e;
-      //   } else {
-      //     const user = {
-      //       id: existingUser._id,
-      //       email: existingUser.email,
-      //       name: existingUser.fname + " " + existingUser.lname,
-      //       role: existingUser.userType,
-      //       // isActive: existingUser.isActive,
-      //     };
-      //     const token = jwt.sign(user, process.env.PRIVATE_KEY);
-      //     return {
-      //       token: token,
-      //       role: existingUser.userType,
-      //       name: existingUser.fname + " " + existingUser.lname,
-      //       email: existingUser.email,
-      //       // isVerified: existingUser.isVerified,
-      //       balance: existingUser.balance,
-      //     };
-      //   }
-      // }
-      // if (!existingUser?.isActive || !existingUser?.isVerified) {
-      if (existingUser?.isVerified) {
-        if (!existingUser?.isActive) {
-          let e = new Error();
-          e.message =
-            "Either You are Blocked from TourBook Or Signup Request is in Pending Status. Please Contact Support";
-          e.statusCode = 400;
+    if (data?.password) {
+      if (data?.password.length < 8) {
+        let e = new Error("Password must be min of 8 characters");
+        throw e;
+      } else {
+        if (data?.email) {
+          let existingUser = await UserModel.findOne({
+            email: data.email,
+            // isActive: true,
+            // isVerified: true,
+            isDeleted: false,
+          });
+          if (existingUser) {
+            console.log(existingUser);
+            // if (existingUser?.isActive && existingUser?.isVerified) {
+            //   let verify = await bcrypt.compare(data.password, existingUser.password);
+            //   if (!verify) {
+            //     let e = new Error();
+            //     e.statusCode = 400;
+            //     e.message = "Either the email or Password is Wrong!";
+            //     throw e;
+            //   } else {
+            //     const user = {
+            //       id: existingUser._id,
+            //       email: existingUser.email,
+            //       name: existingUser.fname + " " + existingUser.lname,
+            //       role: existingUser.userType,
+            //       // isActive: existingUser.isActive,
+            //     };
+            //     const token = jwt.sign(user, process.env.PRIVATE_KEY);
+            //     return {
+            //       token: token,
+            //       role: existingUser.userType,
+            //       name: existingUser.fname + " " + existingUser.lname,
+            //       email: existingUser.email,
+            //       // isVerified: existingUser.isVerified,
+            //       balance: existingUser.balance,
+            //     };
+            //   }
+            // }
+            // if (!existingUser?.isActive || !existingUser?.isVerified) {
+            if (existingUser?.isVerified) {
+              if (!existingUser?.isActive) {
+                let e = new Error();
+                e.message =
+                  "Either You are Blocked from TourBook Or Signup Request is in Pending Status. Please Contact Support";
+                e.statusCode = 400;
+                throw e;
+              }
+              if (existingUser?.isActive) {
+                if (existingUser.source == "google") {
+                  let e = new Error(
+                    "You have signed up with different options like Google."
+                  );
+                  e.statusCode = 400;
+                  throw e;
+                } else {
+                  let verify = await bcrypt.compare(
+                    data.password,
+                    existingUser.password
+                  );
+                  if (!verify) {
+                    let e = new Error();
+                    e.statusCode = 400;
+                    e.message = "Either the email or Password is Wrong!";
+                    throw e;
+                  } else {
+                    const user = {
+                      id: existingUser._id,
+                      email: existingUser.email,
+                      name: existingUser.fname + " " + existingUser.lname,
+                      role: existingUser.userType,
+                      // isActive: existingUser.isActive,
+                    };
+                    const token = jwt.sign(user, process.env.PRIVATE_KEY);
+                    return {
+                      token: token,
+                      role: existingUser.userType,
+                      name: existingUser.fname + " " + existingUser.lname,
+                      email: existingUser.email,
+                      profilePicture: existingUser.profilePicture,
+                      // isVerified: existingUser.isVerified,
+                      balance: existingUser.balance,
+                    };
+                  }
+                }
+              }
+            }
+            if (!existingUser?.isActive && !existingUser?.isVerified) {
+              let e = new Error();
+              e.message = "Blocked";
+              e.statusCode = 400;
+              throw e;
+            }
+            if (existingUser?.isActive && !existingUser?.isVerified) {
+              let e = new Error();
+              e.message = "Please Verify Email first";
+              e.statusCode = 500;
+              throw e;
+            }
+          } else {
+            let e = new Error();
+            e.message = `User not found against this email`;
+            e.statusCode = 404;
+            throw e;
+          }
+        } else {
+          let e = new Error("Please Provide Email");
           throw e;
         }
-        if (existingUser?.isActive) {
-          if (existingUser.source == "google") {
-            let e = new Error(
-              "You have signed up with different options like Google."
-            );
-            e.statusCode = 400;
-            throw e;
-          } else {
-            let verify = await bcrypt.compare(
-              data.password,
-              existingUser.password
-            );
-            if (!verify) {
-              let e = new Error();
-              e.statusCode = 400;
-              e.message = "Either the email or Password is Wrong!";
-              throw e;
-            } else {
-              const user = {
-                id: existingUser._id,
-                email: existingUser.email,
-                name: existingUser.fname + " " + existingUser.lname,
-                role: existingUser.userType,
-                // isActive: existingUser.isActive,
-              };
-              const token = jwt.sign(user, process.env.PRIVATE_KEY);
-              return {
-                token: token,
-                role: existingUser.userType,
-                name: existingUser.fname + " " + existingUser.lname,
-                email: existingUser.email,
-                profilePicture: existingUser.profilePicture,
-                // isVerified: existingUser.isVerified,
-                balance: existingUser.balance,
-              };
-            }
-          }
-        }
-      }
-      if (!existingUser?.isActive && !existingUser?.isVerified) {
-        let e = new Error();
-        e.message = "Blocked";
-        e.statusCode = 400;
-        throw e;
-      }
-      if (existingUser?.isActive && !existingUser?.isVerified) {
-        let e = new Error();
-        e.message = "Please Verify Email first";
-        e.statusCode = 500;
-        throw e;
       }
     } else {
-      let e = new Error();
-      e.message = `User not found against this email`;
-      e.statusCode = 404;
+      let e = new Error("Please Provide Password");
       throw e;
     }
   },

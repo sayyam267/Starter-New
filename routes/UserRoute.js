@@ -8,8 +8,8 @@ const handleAuth = require("../middlewares/auth");
 router.post(
   "/login",
   // handleSingupAuth,
-  userRules.loginUserRules(),
-  validation,
+  // userRules.loginUserRules(),
+  // validation,
   // UserController.login
   UserController.loginUser
 );
