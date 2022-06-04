@@ -16,8 +16,8 @@ router.post(
 router.post(
   "/signup",
   // handleSingupAuth,
-  userRules.signUpUserRules(),
-  validation,
+  // userRules.signUpUserRules(),
+  // validation,
   UserController.createUser
   // UserController.signup
 );

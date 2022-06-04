@@ -256,6 +256,7 @@ module.exports = {
   createUser: async (req, res) => {
     try {
       // console.log(req.body);
+
       let user = await UserService.createUser(req.body);
       return res.send({ data: user, message: "Created" });
     } catch (e) {
