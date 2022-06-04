@@ -15,7 +15,7 @@ module.exports = {
   },
   getCustomTourRequests: async (req, res) => {
     try {
-      let requests = await CustomTourService.getCustomTourRequests();
+      let requests = await CustomTourService.getCustomTourRequests(req?.user);
       return res.send({
         data: requests,
         message: "Fetched Custom Tour Requests",
@@ -84,6 +84,19 @@ module.exports = {
         user
       );
       return res.send({ data: aceptReq, message: "Accepted" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
+  rejectOffer: async (req, res) => {
+    try {
+      let reject = await CustomTourService.rejectOffer(req.body, req?.user);
+      res.send({
+        data: reject,
+        message: "Rejected, It wont appear in your feed!",
+      });
     } catch (e) {
       return res
         .status(e?.statusCode || 400)

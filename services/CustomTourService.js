@@ -5,7 +5,7 @@ const CustomTourService = {
     let newrequest = await CustomTour({ ...data, by: user.id });
     await newrequest.save();
   },
-  getCustomTourRequests: async () => {
+  getCustomTourRequests: async (user) => {
     let e = new Error();
     let requests = await CustomTour.find({ fulfilledBy: null })
       .populate({
@@ -28,7 +28,10 @@ const CustomTourService = {
     // .populate(["requirements.source", "requirements.destination", "by"])
     // .select(["by.fname", "by.phoneNumber"]);
     if (Object.keys(requests).length > 0) {
-      return requests;
+      let requests2 = requests.filter((req) => {
+        return !req.hiddenFrom.includes(user.id);
+      });
+      return requests2;
     } else {
       e.message = "Not Found";
       e.statusCode = 404;
@@ -147,11 +150,12 @@ const CustomTourService = {
   },
   giveOffer: async (data, user) => {
     let customTourReq = await CustomTour.findById(data.requestID);
+    console.log(data);
     if (customTourReq) {
       let offers = customTourReq.offers;
       let offer = {};
       offer.date = Date.now();
-      offer.amount = data.amount;
+      offer.amount = Number(data.amount);
       offer.vendorID = user.id;
       offer.description = data.description;
       if (offers.indexOf(offer) != -1) {
@@ -159,6 +163,7 @@ const CustomTourService = {
       }
       customTourReq.offers = offers;
       await customTourReq.save();
+      return true;
     } else {
       let e = new Error("Not Found");
       e.statusCode = 404;
@@ -174,6 +179,19 @@ const CustomTourService = {
       customTourReq.fulfilledBy = offer.vendorID;
       customTourReq.agreedAmount = offer.amount;
       await customTourReq.save();
+    } else {
+      let e = new Error("Not Found");
+      e.statusCode = 404;
+      throw e;
+    }
+  },
+  rejectOffer: async (data, user) => {
+    let customTour = await CustomTour.findbyId(data.id);
+    if (customTour) {
+      let hidden = customTour.hiddenFrom;
+      customTour.hiddenFrom = [...hidden, user.id];
+      await customTour.save();
+      return true;
     } else {
       let e = new Error("Not Found");
       e.statusCode = 404;

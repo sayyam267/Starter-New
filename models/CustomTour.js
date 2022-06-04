@@ -37,6 +37,10 @@ const Schema = mongoose.Schema(
       // required: true,
       ref: "users",
     },
+    hiddenFrom: {
+      type: Array,
+      default: [],
+    },
     offers: { type: Array, default: [] },
     agreedAmount: { type: Number, default: 0, required: true },
   },
