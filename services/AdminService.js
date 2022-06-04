@@ -207,7 +207,7 @@ module.exports = {
     let pendingVendorRequests =
       await module.exports.getpendingVendorsRequests();
     let pendingAdminRequests = await UserService.getPendingAdmins();
-    let totalNoOfUsers = await UserModel.find({ isDeleted }).count();
+    let totalNoOfUsers = await UserModel.find({ isDeleted: false }).count();
     let totalNoOfActiveUsers = await UserModel.find({
       isActive: true,
       isDeleted: false,
