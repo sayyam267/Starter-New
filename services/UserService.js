@@ -723,6 +723,8 @@ const userService = {
             lname: data.lname,
             email: email,
             isVerified: isVerified,
+            country: data?.country,
+            city: data?.city,
             // gender: String(data.gender).toLowerCase(),
             // address: data.address,
           },
