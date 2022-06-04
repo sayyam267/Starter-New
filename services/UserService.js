@@ -716,15 +716,15 @@ const userService = {
         { _id: data.id },
         {
           $set: {
-            cnic: data.cnic,
+            // cnic: data.cnic,
             phoneNumber: data.phoneNumber,
-            password: hashed,
+            // password: hashed,
             fname: data.fname,
             lname: data.lname,
             email: email,
             isVerified: isVerified,
-            gender: String(data.gender).toLowerCase(),
-            address: data.address,
+            // gender: String(data.gender).toLowerCase(),
+            // address: data.address,
           },
         }
       );
