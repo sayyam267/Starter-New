@@ -3,6 +3,7 @@ const OrderService = require("../services/OrderService");
 const UserService = require("../services/UserService");
 const TransactionModel = require("../models/Transactions.model");
 const TourPack = require("../models/TourPack");
+const OrderModel = require("../models/Orders");
 module.exports = {
   getVendors: async () => {
     let e = new Error();
