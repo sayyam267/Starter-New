@@ -12,11 +12,12 @@ const { sendForgotPassword } = require("./SendEmail");
 // const req = require("express/lib/request");
 
 const userService = {
-  getProfileInfo: async (user) => {
-    let details = await UserModel.findById(user.id)
+  getProfileInfo: async (id) => {
+    let details = await UserModel.findById(id)
       .select(["-password"])
       .populate("city");
     if (details) {
+      console.log(details);
       return details;
     } else {
       let e = new Error();
