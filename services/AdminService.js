@@ -66,7 +66,8 @@ module.exports = {
 
     if (vendor) {
       // await UserModel.updateOne({ _id: id }, { isActive: true });
-      await vendor.delete();
+
+      await vendor.remove();
       return true;
     } else {
       e.message = "Vendor Already Deleted or Rejected";
