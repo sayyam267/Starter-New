@@ -55,8 +55,9 @@ module.exports = {
     // .select("-password");
     if (existingOrder) {
       let requests = existingOrder.filter((req) => {
-        String(req.tourID.vendorID) == String(user.id);
+        return String(req.tourID.vendorID) == String(user.id);
       });
+      console.log(requests);
       return requests;
     } else {
       let e = new Error();
