@@ -14,7 +14,11 @@ module.exports = {
     }
   },
   getMyOrders: async (user) => {
-    let orders = OrderModel.find({ touristID: user.id });
+    let orders = OrderModel.find({ touristID: user.id }).populate({
+      path: "tourID",
+      model: "tours",
+      select: ["name", "description"],
+    });
     if (orders) {
       return orders;
     } else {
