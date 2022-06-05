@@ -46,13 +46,18 @@ module.exports = {
     //   },
     // }).populate("tourID");
     let existingOrder = await OrderModel.find({
-      "tourID.vendorID": user.id,
       requestRefund: true,
-    })
-      .populate(["tourID", "userID"])
-      .select("-password");
+    }).populate({
+      path: "tourID",
+      model: "tours",
+      select: ["vendorID"],
+    });
+    // .select("-password");
     if (existingOrder) {
-      return existingOrder;
+      let requests = existingOrder.filter((req) => {
+        String(req.tourID.vendorID) == String(user.id);
+      });
+      return requests;
     } else {
       let e = new Error();
       e.message = `Orders Not Found`;
