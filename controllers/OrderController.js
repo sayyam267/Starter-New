@@ -177,7 +177,7 @@ module.exports = {
   },
   requestRefund: async (req, res) => {
     try {
-      let user = await UserService.getUserByID(req.user.id);
+      let user = await OrderService.requestRefund(req.body);
       if (user) {
         let request = await OrderService.requestRefund(req.body);
         res.send({ data: true, message: "Requested" });
