@@ -693,7 +693,7 @@ const userService = {
   updateProfile: async (data, user) => {
     let existing = await UserModel.findById(user.id).select("email");
     let email = "";
-    let isVerified = "";
+    let isVerified = existing.isVerified;
     let isPasswordChange = false;
     var hashed = "";
 
