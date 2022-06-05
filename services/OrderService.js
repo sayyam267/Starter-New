@@ -50,7 +50,7 @@ module.exports = {
     }).populate({
       path: "tourID",
       model: "tours",
-      select: ["vendorID"],
+      select: "vendorID",
     });
     // .select("-password");
     if (existingOrder) {
