@@ -692,19 +692,19 @@ const userService = {
   },
   updateProfile: async (data, user) => {
     let existing = await UserModel.findById(user.id).select("email");
-    let email = "";
+    let email = existing.email;
     let isVerified = existing.isVerified;
-    let isPasswordChange = false;
-    var hashed = "";
+    // let isPasswordChange = false;
+    // var hashed = "";
 
     if (existing) {
-      if (data?.password) {
-        var salt = await bcrypt.genSalt(Number(process.env.SALT));
-        hashed = await bcrypt.hash(data.password, salt);
-        isPasswordChange = true;
-      } else {
-        hashed = existing.password;
-      }
+      // if (data?.password) {
+      //   var salt = await bcrypt.genSalt(Number(process.env.SALT));
+      //   hashed = await bcrypt.hash(data.password, salt);
+      //   isPasswordChange = true;
+      // } else {
+      //   hashed = existing.password;
+      // }
       if (data?.email) {
         if (existing.email != data.email) {
           email = data.email;
@@ -721,7 +721,7 @@ const userService = {
         }
       }
       let updatedProfile = await UserModel.updateOne(
-        { _id: data.id },
+        { _id: user.id },
         {
           $set: {
             // cnic: data.cnic,
