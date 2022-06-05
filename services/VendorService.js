@@ -54,13 +54,21 @@ module.exports = {
       // return String(item.tourID.vendorID) == String(user.id);
     });
     let refundRequests = await module.exports.getRefundTourRequests(user);
-    let customTourRequests = await CustomTour.find({ to: null }).populate([
-      {
-        path: "by",
+    let customTourRequests = await CustomTour.find({
+      $or: [{ fulfilledBy: user.id }, { fulfilledBy: null }],
+    })
+      .populate([
+        {
+          path: "by",
+          model: "users",
+          select: ["fname", "phoneNumber", "email", "profilePicture", "lname"],
+        },
+      ])
+      .populate({
+        path: "fulfilledBy",
         model: "users",
-        select: ["fname", "phoneNumber", "email", "profilePicture", "lname"],
-      },
-    ]);
+        select: ["fname", "email", "lname"],
+      });
     let approvedCustomTourRequests = await CustomTour.find({
       fulfilledBy: user.id,
     }).populate({

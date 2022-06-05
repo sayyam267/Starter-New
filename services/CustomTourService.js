@@ -46,6 +46,11 @@ const CustomTourService = {
         model: "users",
         select: ["fname", "phoneNumber", "email"],
       })
+      .populate({
+        path: "fulfilledBy",
+        model: "users",
+        select: ["fname", "email", "lname"],
+      })
       .populate(["requirements.source", "requirements.destination"]);
     console.log(myRequests);
     if (Object.keys(myRequests).length > 0) {
@@ -172,12 +177,13 @@ const CustomTourService = {
   },
   acceptOffer: async (data, user) => {
     let customTourReq = await CustomTour.findById(data.requestID);
-    console.log(data);
+    // console.log(data);
     if (customTourReq) {
       let offers = customTourReq.offers;
       let offer = offers.filter((offer) => offer.vendorID == data.vendorID);
-      console.log("offer", offer);
-      customTourReq.offers = offers.splice(offers.indexOf(offer), 1);
+      // console.log("offer", offer);
+      // customTourReq.offers = offers.splice(offers.indexOf(offer), 1);
+      customTourReq.offers = [];
       customTourReq.fulfilledBy = offer[0].vendorID;
       customTourReq.agreedAmount = offer[0].amount;
       await customTourReq.save();
