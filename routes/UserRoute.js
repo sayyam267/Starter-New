@@ -1,4 +1,5 @@
 const validation = require("../helpers/validation");
+const cors = require("cors");
 const userRules = require("../validations/UserValidation");
 const UserController = require("../controllers/UserController");
 const router = require("express").Router();
@@ -37,7 +38,7 @@ router.get("/mydetails", handleAuth, UserController.getmyDetails);
 router.put("/verify/otp", UserController.verifyOTP);
 router.put("/block", handleAuth, authAdmin, UserController.blockUser);
 router.put("/delete", handleAuth, UserController.deleteUser);
-router.put("/update/profile", handleAuth, UserController.updateProfile);
+router.put("/update/profile", cors(), handleAuth, UserController.updateProfile);
 router.get("/balance", handleAuth, UserController.getBalance);
 // router.post("/block/", handleAuth, authAdmin, UserController.blockUser);
 module.exports = router;
