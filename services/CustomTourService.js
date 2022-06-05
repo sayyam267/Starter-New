@@ -178,8 +178,8 @@ const CustomTourService = {
       let offer = offers.filter((offer) => offer.vendorID == data.vendorID);
       console.log("offer", offer);
       customTourReq.offers = offers.splice(offers.indexOf(offer), 1);
-      customTourReq.fulfilledBy = offer.vendorID;
-      customTourReq.agreedAmount = offer.amount;
+      customTourReq.fulfilledBy = offer[0].vendorID;
+      customTourReq.agreedAmount = offer[0].amount;
       await customTourReq.save();
     } else {
       let e = new Error("Not Found");
