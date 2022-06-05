@@ -158,7 +158,7 @@ const CustomTourService = {
       offer.amount = Number(data.amount);
       offer.vendorID = user.id;
       offer.description = data.description;
-      if (offers.indexOf(offer) != -1) {
+      if (!offers.includes(offer)) {
         offers.push(offer);
       }
       customTourReq.offers = offers;
