@@ -133,6 +133,7 @@ module.exports = {
     try {
       let data = req.body;
       let order = await OrderService.rejectTour(data);
+      res.send({ data: order, message: "Rejected and Refunded!" });
     } catch (e) {
       return res.status(e?.statusCode || 400).send(e.message);
     }
