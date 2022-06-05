@@ -347,12 +347,20 @@ const userService = {
       throw e;
     }
     let profilePicture = "";
-    if (String(data.gender).toLowerCase() == "male") {
+    if (data?.gender) {
+      if (String(data.gender).toLowerCase() == "male") {
+        profilePicture =
+          "http://tourbook-backend.herokuapp.com/images/profile-pictures/default-male.jpg";
+      } else if (String(data?.gender).toLocaleLowerCase() == "female") {
+        profilePicture =
+          "http://tourbook-backend.herokuapp.com/images/profile-pictures/default-female.jpg";
+      } else
+        profilePicture =
+          "http://tourbook-backend.herokuapp.com/images/profile-pictures/default-male.jpg";
+    } else {
       profilePicture =
         "http://tourbook-backend.herokuapp.com/images/profile-pictures/default-male.jpg";
-    } else
-      profilePicture =
-        "http://tourbook-backend.herokuapp.com/images/profile-pictures/default-female.jpg";
+    }
     // console.log("EMAIL: " + process.env.MAIL);
     // console.log("PASS: " + process.env.PASS);
     // let userType = await UserTypeService.findById(data.usertype);
