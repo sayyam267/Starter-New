@@ -176,6 +176,7 @@ const CustomTourService = {
     if (customTourReq) {
       let offers = customTourReq.offers;
       let offer = offers.filter((offer) => offer.vendorID == data.vendorID);
+      console.log("offer", offer);
       customTourReq.offers = offers.splice(offers.indexOf(offer), 1);
       customTourReq.fulfilledBy = offer.vendorID;
       customTourReq.agreedAmount = offer.amount;
