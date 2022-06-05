@@ -47,11 +47,17 @@ module.exports = {
     // }).populate("tourID");
     let existingOrder = await OrderModel.find({
       requestRefund: true,
-    }).populate({
-      path: "tourID",
-      model: "tours",
-      select: "vendorID",
-    });
+    })
+      .populate({
+        path: "tourID",
+        model: "tours",
+        select: "vendorID",
+      })
+      .populate({
+        path: "touristID",
+        model: "users",
+        select: ["fname", "email", "lname"],
+      });
     // .select("-password");
     if (existingOrder) {
       let requests = existingOrder.filter((req) => {
