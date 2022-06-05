@@ -132,7 +132,8 @@ module.exports = {
   rejectTour: async (req, res) => {
     try {
       let data = req.body;
-      let order = await OrderService.rejectTour(data);
+      let user = req.user;
+      let order = await OrderService.rejectTour(data, user);
       res.send({ data: order, message: "Rejected and Refunded!" });
     } catch (e) {
       return res.status(e?.statusCode || 400).send(e.message);
@@ -140,7 +141,8 @@ module.exports = {
   },
   approveTour: async (req, res) => {
     try {
-      let orders = await OrderService.approveTour(req.body);
+      let user = req.user;
+      let orders = await OrderService.approveTour(req.body, user);
       return res.send({
         data: orders,
         message: "Acepted",

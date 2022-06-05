@@ -235,12 +235,15 @@ module.exports = {
       throw e;
     }
   },
-  approveTour: async (data) => {
+  approveTour: async (data, user) => {
     let existingOrder = await OrderModel.findOneAndUpdate(
       { _id: data.id },
       { $set: { isApproved: true } }
     );
     if (existingOrder) {
+      let vendor = await UserModel.findById(user.id);
+      vendor.balance = vendor.balance + existingOrder.amount;
+      await vendor.save();
       return true;
     } else {
       let e = new Error();
