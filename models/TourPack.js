@@ -34,8 +34,8 @@ const Schema = mongoose.Schema(
     hasHotel: { type: Boolean, required: true },
     //backend validation
     meetLocation: {
-      long: { type: String, default: 0 },
-      lat: { type: String, default: 0 },
+      type: Array,
+      default: [],
     },
     //
     //default empty str
@@ -45,10 +45,10 @@ const Schema = mongoose.Schema(
     description: { type: String, default: null, required: true },
     stops: { type: Array, default: [] },
     //stops locations
-    location: {
-      long: { type: String, default: 0 },
-      lat: { type: String, default: 0 },
-    },
+    // location: {
+    //   long: { type: String, default: 0 },
+    //   lat: { type: String, default: 0 },
+    // },
     //
   },
   {

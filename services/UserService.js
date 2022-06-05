@@ -725,10 +725,10 @@ const userService = {
         {
           $set: {
             // cnic: data.cnic,
-            phoneNumber: data.phoneNumber,
+            phoneNumber: data?.phoneNumber,
             // password: hashed,
-            fname: data.fname,
-            lname: data.lname,
+            fname: data?.fname,
+            lname: data?.lname,
             email: email,
             isVerified: isVerified,
             country: data?.country,
