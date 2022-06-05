@@ -346,6 +346,7 @@ module.exports = {
     try {
       let user = req.user;
       let newDetails = await UserService.updateProfile(req.body, user);
+      return res.send({ data: true, message: "Updated Changes" });
     } catch (e) {
       return res
         .status(e?.statusCode || 400)
