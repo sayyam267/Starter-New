@@ -60,7 +60,7 @@ module.exports = {
   },
   createTour: async (req, res) => {
     try {
-      console.log(req.body);
+      console.log(req.body, "BODY");
       let tours = await TourService.createTour(req);
       return res.status(200).send({ data: tours, message: "Created" });
     } catch (e) {
