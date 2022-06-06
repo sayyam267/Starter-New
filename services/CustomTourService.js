@@ -4,6 +4,7 @@ const CustomTourService = {
   requestCustomTour: async (data, user) => {
     let newrequest = await CustomTour({ ...data, by: user.id });
     await newrequest.save();
+    return newrequest;
   },
   getCustomTourRequests: async (user) => {
     let e = new Error();
