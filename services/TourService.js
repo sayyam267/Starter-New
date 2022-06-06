@@ -191,9 +191,17 @@ module.exports = {
       // console.log(req.body);
       // console.log(req.files.multiImages);
       // console.log(req.body.places, "PLACES");
-      req.body.places.forEach((item) =>
-        console.log(JSON.parse(JSON.stringify(item)))
-      );
+      // req.body.places.forEach((item) => console.log(JSON.parse(item)));
+      // console.log(JSON.parse(req.body.places));
+      // console.log(JSON.parse(req.body.meetLocation));
+      req.body.meetLocation = JSON.parse(req.body.meetLocation);
+      req.body.places = JSON.parse(req.body.places);
+      // console.log("VALID", new Date(req.body.validTill));
+      req.body.validTill = new Date(req.body.validTill);
+      req.body.startDate = new Date(req.body.startDate);
+      // req.body.price=Number(req.body.price)
+      // req.body.seats=Number(req.body.seats);
+      // req.body.validTill=new Date(req.body.validTill);
       // req.body.meetLocation.forEach((item) =>
       //   console.log(item.name, item.location)
       // );

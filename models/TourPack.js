@@ -17,7 +17,8 @@ const Schema = mongoose.Schema(
       required: true,
     },
     //remove
-    addedOn: { type: Date, required: true, default: Date.now },
+    // addedOn: { type: Date, required: true, default: Date.now },
+    startDate: { type: Date, required: true },
     //
     // duration: { type: String, required: true },
     // touristID: { type: mongoose.Schema.Types.ObjectId, ref: "Tourists" },
