@@ -496,7 +496,7 @@ const userService = {
             isDeleted: false,
           });
           if (existingUser) {
-            console.log(existingUser);
+            // console.log(existingUser);
             // if (existingUser?.isActive && existingUser?.isVerified) {
             //   let verify = await bcrypt.compare(data.password, existingUser.password);
             //   if (!verify) {
@@ -533,13 +533,14 @@ const userService = {
                 throw e;
               }
               if (existingUser?.isActive) {
-                if (existingUser.source == "google") {
+                if (existingUser?.source == "google") {
                   let e = new Error(
                     "You have signed up with different options like Google."
                   );
                   e.statusCode = 400;
                   throw e;
                 } else {
+                  console.log("INSIDE PASS", data);
                   let verify = await bcrypt.compare(
                     data.password,
                     existingUser.password
@@ -557,6 +558,7 @@ const userService = {
                       role: existingUser.userType,
                       // isActive: existingUser.isActive,
                     };
+                    console.log(user);
                     const token = jwt.sign(user, process.env.PRIVATE_KEY);
                     return {
                       token: token,
@@ -571,9 +573,10 @@ const userService = {
                 }
               }
             }
-            if (!existingUser?.isActive && existingUser?.isVerified) {
+            if (!existingUser?.isActive && !existingUser?.isVerified) {
               let e = new Error();
-              e.message = "Blocked";
+              e.message =
+                "Either the User is Pending or Blocked Status or Please Verify Email";
               e.statusCode = 400;
               throw e;
             }
