@@ -191,6 +191,8 @@ module.exports = {
       // console.log(req.body);
       // console.log(req.files.multiImages);
       console.log(req.body.places, "PLACES");
+      req.body.places.forEach((item) => console.log(item));
+      req.body.meetLocation.forEach((item) => console.log(item));
       console.log(req.body.meetLocation, "MEET");
       const files = req.files.multiImages;
       const imageNames = [];
