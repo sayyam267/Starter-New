@@ -318,7 +318,7 @@ const userService = {
         throw e;
       } else {
         if (!user.isActive) {
-          user.isActive = false;
+          user.isActive = true;
           await user.save();
           return true;
         } else {
