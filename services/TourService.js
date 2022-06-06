@@ -190,12 +190,12 @@ module.exports = {
     try {
       // console.log(req.body);
       // console.log(req.files.multiImages);
-      console.log(req.body.places, "PLACES");
-      req.body.places.forEach((item) => console.log(item.name, item.location));
-      req.body.meetLocation.forEach((item) =>
-        console.log(item.name, item.location)
-      );
-      console.log(req.body.meetLocation, "MEET");
+      console.log(Array(req.body.places), "PLACES");
+      // req.body.places.forEach((item) => console.log(item.name, item.location));
+      // req.body.meetLocation.forEach((item) =>
+      //   console.log(item.name, item.location)
+      // );
+      console.log(Array(req.body.meetLocation), "MEET");
       const files = req.files.multiImages;
       const imageNames = [];
       const addedOn = Date.now();
