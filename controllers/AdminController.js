@@ -20,7 +20,7 @@ module.exports = {
       let blocked = await AdminService.unBlockUser(req.body.userID);
       return res
         .status(200)
-        .send({ data: true, message: "User Blocked Successfully" });
+        .send({ data: true, message: "User UnBlocked Successfully" });
     } catch (e) {
       return res
         .status(e?.statusCode || 400)
