@@ -571,7 +571,7 @@ const userService = {
                 }
               }
             }
-            if (!existingUser?.isActive && !existingUser?.isVerified) {
+            if (!existingUser?.isActive && existingUser?.isVerified) {
               let e = new Error();
               e.message = "Blocked";
               e.statusCode = 400;
