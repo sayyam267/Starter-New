@@ -145,7 +145,7 @@ module.exports = {
       let orders = await OrderService.approveTour(req.body, user);
       return res.send({
         data: orders,
-        message: "Acepted",
+        message: "Accepted",
       });
     } catch (e) {
       return res.status(e?.statusCode || 400).send(e.message);

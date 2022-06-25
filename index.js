@@ -1,4 +1,5 @@
 const express = require("express");
+const rateLimit = require("express-rate-limit");
 const mongoose = require("mongoose");
 const app = express();
 const path = require("path");
@@ -56,7 +57,13 @@ mongoose
 // app.use("/vendor", VendorRoute);
 // app.use(passport.initialize());
 // app.use(passport.session());
-
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(limiter);
 app.use("/auth", OAuth2);
 app.use("/user", UserRoute);
 app.use("/promo", PromoRoute);
@@ -73,23 +80,6 @@ app.use("/vendor", VendorRoute);
 app.use("/customtour", CustomTourRoute);
 // app.use("/request", ReserveTourRoute);
 app.use(express.static(path.join("public")));
-
-// app.get(
-//   "/auth/google",
-//   passport.authenticate("google", {
-//     scope: ["profile", "email"],
-//   })
-// );
-
-// app.get(
-//   "/auth/google/callback",
-//   passport.authenticate("google", {
-//     failureRedirect: "/",
-//     successRedirect: "/profile",
-//     failureFlash: true,
-//     successFlash: "Successfully logged in!",
-//   })
-// );
 
 app.get("/", (req, res) => {
   res.send("<h1>TourBook backend</h1>");

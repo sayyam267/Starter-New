@@ -1,6 +1,7 @@
 const OrderModel = require("../models/Orders");
 const TourModel = require("../models/TourPack");
 const UserModel = require("../models/UserModel");
+const { sendInfoEmail } = require("./SendEmail");
 module.exports = {
   getOrders: async () => {
     let existingOrders = await OrderModel.find({});
@@ -244,6 +245,18 @@ module.exports = {
       let vendor = await UserModel.findById(user.id);
       vendor.balance = vendor.balance + existingOrder.amount;
       await vendor.save();
+      let user = await UserModel.findById(existingOrder.touristID);
+      let tour = await TourModel.findById(existingOrder.tourID);
+      try {
+        await sendInfoEmail({
+          email: user.email,
+          name: `${user.fname} ${user.lname}`,
+          html: `<div style={{textAlign:"center"}}>Dear ${user.fname} ${user.lname}! <br/>Your Tour <b>${tour.name}</b> has been approved<br/>For Further details visit TourBook<br/>Thank You</div>`,
+          subject: `TourBook : Your Tour got approved`,
+        });
+      } catch (e) {
+        throw e;
+      }
       return true;
     } else {
       let e = new Error();

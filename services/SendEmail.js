@@ -675,4 +675,23 @@ const sendForgotPassword = async ({ name, email, confirmationCode }) => {
   });
   //s.catch((e) => console.log(e));
 };
-module.exports = { sendVerificationEmail, sendForgotPassword };
+const sendInfoEmail = async ({ name, email, subject, html }) => {
+  const transporter = await nodemailer.createTransport({
+    service: "hotmail",
+    auth: {
+      user: fromMail,
+      pass: fromPass,
+    },
+  });
+  try {
+    await transporter.sendMail({
+      from: fromMail,
+      to: email,
+      subject: subject,
+      html: html,
+    });
+  } catch (e) {
+    throw e;
+  }
+};
+module.exports = { sendVerificationEmail, sendForgotPassword, sendInfoEmail };
