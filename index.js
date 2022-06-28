@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(require("cors")());
 const passport = require("passport");
 const string = process.env.CONNECTION_STRING;
-const cookieSession = require("express-session");
+// const cookieSession = require("express-session");
 // const AdminRoute = require("./routes/AdminRoute");
 // const TouristRoute = require("./routes/TouristRoute");
 // const TourGuideRoute = require("./routes/TourGuideRoute");
@@ -31,6 +31,7 @@ const TouristRoute = require("./routes/TouristRoute");
 const VendorRoute = require("./routes/VendorRoute");
 const CustomTourRoute = require("./routes/CustomTourRoute");
 const OAuth2 = require("./routes/OAuth2");
+const getRoutes = require("./routes/index.js");
 // const flash = require("express-flash");
 
 // app.use(
@@ -73,11 +74,12 @@ app.use("/tour", TourRoutes);
 app.use("/city", CityRoute);
 app.use("/transaction", TransactionRoute);
 app.use("/usertype", UserTypeRoute);
-app.use("/favtours/", FavTourRoute);
-app.use("/admin/", AdminRoute);
+app.use("/favtours", FavTourRoute);
+app.use("/admin", AdminRoute);
 app.use("/tourist", TouristRoute);
 app.use("/vendor", VendorRoute);
 app.use("/customtour", CustomTourRoute);
+// app.use("/api/", getRoutes(app));
 // app.use("/request", ReserveTourRoute);
 app.use(express.static(path.join("public")));
 

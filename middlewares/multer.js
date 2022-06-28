@@ -20,4 +20,4 @@ const multerImages = (req, res, next) => {
     next();
   }
 };
-module.exports = authTourist;
+module.exports = multerImages;

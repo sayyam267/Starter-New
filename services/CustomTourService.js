@@ -1,8 +1,21 @@
+const pusher = require("../helpers/pusher");
 const CustomTour = require("../models/CustomTour");
+const UserModel = require("../models/UserModel");
 
 const CustomTourService = {
   requestCustomTour: async (data, user) => {
     let newrequest = await CustomTour({ ...data, by: user.id });
+    let user = await UserModel.findById(user.id).select(["fname", "lname"]);
+    let fullname = user.fname + " " + user.lname;
+    let all_vendors = await UserModel.find({ userType: "vendor" }).select(
+      "_id"
+    );
+    all_vendors.forEach((vendor) => {
+      pusher.trigger(`${vendor._id}`, "notifications", {
+        date: Date.now(),
+        text: `There is a new CustomTour Request by ${fullname} for you.`,
+      });
+    });
     await newrequest.save();
     return newrequest;
   },
@@ -158,6 +171,7 @@ const CustomTourService = {
     let customTourReq = await CustomTour.findById(data.requestID);
     console.log(data);
     if (customTourReq) {
+      let vendor = await UserModel.findById(user.id).select(["fname", "lname"]);
       let offers = customTourReq.offers;
       let offer = {};
       offer.date = Date.now();
@@ -169,6 +183,10 @@ const CustomTourService = {
       }
       customTourReq.offers = offers;
       await customTourReq.save();
+      pusher.trigger(`${customTourReq.by}`, "notifications", {
+        date: Date.now(),
+        text: `${vendor.fname} ${vendor.lname} gave you an offer of RS${offer.amount} on your Custom Tour Request of ${customTourReq.description}`,
+      });
       return true;
     } else {
       let e = new Error("Not Found");
@@ -187,6 +205,15 @@ const CustomTourService = {
       customTourReq.offers = [];
       customTourReq.fulfilledBy = offer[0].vendorID;
       customTourReq.agreedAmount = offer[0].amount;
+      let user = await UserModel.findById(customTourReq.by).select([
+        "fname",
+        "lname",
+      ]);
+      let fullname = user.fname + " " + user.lname;
+      pusher.trigger(`${offer[0].vendorID}`, "notifications", {
+        date: Date.now(),
+        text: `${fullname} just Accepted your Custom Tour Offer of RS ${offer[0].amount} on ${customTourReq.requirements.description}`,
+      });
       await customTourReq.save();
     } else {
       let e = new Error("Not Found");

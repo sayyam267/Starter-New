@@ -4,6 +4,7 @@ const UserService = require("../services/UserService");
 const TransactionModel = require("../models/Transactions.model");
 const TourPack = require("../models/TourPack");
 const OrderModel = require("../models/Orders");
+const pusher = require("../helpers/pusher");
 module.exports = {
   getVendors: async () => {
     let e = new Error();
@@ -269,6 +270,10 @@ module.exports = {
   },
   refundPackageByID: async (id) => {
     let package = await OrderService.refundOrder(id);
+    pusher.trigger(`${order.touristID}`, "notifications", {
+      date: Date.now(),
+      text: `Your order of RS ${order.amount} has been refunded by TourBook.`,
+    });
     if (package) return true;
     else {
       let e = new Error("Not Found");

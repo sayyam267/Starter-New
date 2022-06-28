@@ -12,6 +12,7 @@
 //     }
 // }
 
+const pusher = require("../helpers/pusher");
 const genToken = require("../helpers/Stripe");
 const TransactionsModel = require("../models/Transactions.model");
 const UserModel = require("../models/UserModel");
@@ -68,6 +69,10 @@ module.exports = {
         { _id: req.user.id },
         { balance: Number(user.balance) + Number(req.body.payment.Amount) }
       );
+      pusher.trigger(`${user._id}`, "notifications", {
+        date: Date.now(),
+        text: `Your Purchased ${req.body.payment.Amount} TourBook Credits`,
+      });
       // await user.update({ balance: balance + Amount });
       return {
         charges: charges,
@@ -101,6 +106,10 @@ module.exports = {
           // user.balance = transcantion.New_Balance;
           user.balance = user.balance - transcantion.RechargedAmount;
           await user.save();
+          pusher.trigger(`${user._id}`, "notifications", {
+            date: Date.now(),
+            text: `Your transaction of ${transcantion.RechargedAmount} TourBook Credits has been refunded!`,
+          });
           return refund;
         } else {
           let e = new Error("Not Sufficient Balance to Process Refund");
@@ -126,6 +135,20 @@ module.exports = {
       } else {
         let e = new Error();
         e.message = "Not Found";
+        e.statusCode = 404;
+        throw e;
+      }
+    } catch (e) {
+      throw e;
+    }
+  },
+  getMyTransactions: async (user) => {
+    try {
+      let transcantions = await TransactionsModel.find({ userID: user.id });
+      if (transcantions) {
+        return transcantions;
+      } else {
+        let e = new Error("No Transactions Found");
         e.statusCode = 404;
         throw e;
       }

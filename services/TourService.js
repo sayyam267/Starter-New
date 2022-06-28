@@ -1,7 +1,23 @@
 const TourModel = require("../models/TourPack");
 const UserModel = require("../models/UserModel");
 const OrderModel = require("../models/Orders");
+const pusher = require("../helpers/pusher");
 module.exports = {
+  markAsDone: async (tourID, user) => {
+    let tour = await TourModel.findById(tourID);
+    let updated = await tour.update({ isCompleted: true });
+    let orders = await OrderModel.find({
+      tourID: tourID,
+      isApproved: true,
+      isRefunded: false,
+    }).select("touristID");
+    orders.forEach((order) => {
+      pusher.trigger(`${order.touristID}`, "notifications", {
+        date: Date.now(),
+        text: `How was your Tour ${tour.name}? Please provide feedback.`,
+      });
+    });
+  },
   getTours: async () => {
     let tours = await TourModel.find({}).populate(["source", "destination"]);
     console.log(tours);

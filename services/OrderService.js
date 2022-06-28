@@ -1,3 +1,4 @@
+const pusher = require("../helpers/pusher");
 const OrderModel = require("../models/Orders");
 const TourModel = require("../models/TourPack");
 const UserModel = require("../models/UserModel");
@@ -226,6 +227,10 @@ module.exports = {
       tour.seats = tour.seats + existingOrder.seats;
       await user.save();
       await tour.save();
+      pusher.trigger(`${user._id}`, "notifications", {
+        date: Date.now(),
+        text: `Your Tour Reservation request got rejected by vendor and the amount ${existingOrder.amount} has been refunded to your account.`,
+      });
       await existingOrder.delete();
       return true;
       // return await module.exports.refundOrder(data.id);
@@ -253,6 +258,10 @@ module.exports = {
           name: `${user.fname} ${user.lname}`,
           html: `<div style={{textAlign:"center"}}>Dear ${user.fname} ${user.lname}! <br/>Your Tour <b>${tour.name}</b> has been approved<br/>For Further details visit TourBook<br/>Thank You</div>`,
           subject: `TourBook : Your Tour got approved`,
+        });
+        pusher.trigger(`${user._id}`, "notifications", {
+          date: Date.now(),
+          text: `Your Tour ${tour.name} with charges ${existingOrder.amount} got Approved!`,
         });
       } catch (e) {
         throw e;
@@ -332,6 +341,10 @@ module.exports = {
         tour.seats = tour.seats + existingOrder.seats;
         await tour.save();
         userToRefund = await UserModel.findById(existingOrder.touristID);
+        pusher.trigger(`${userToRefund._id}`, "notifications", {
+          date: Date.now(),
+          text: `Your Refund Tour Request for tour ${tour.name} and seats ${existingOrder.seats} and price ${existingOrder.amount} just got approved!`,
+        });
         return { data: true, balance: userToRefund.balance };
       } else {
         let e = new Error("Not Enough Balance to Refund!");
@@ -360,9 +373,19 @@ module.exports = {
     let order = await OrderModel.findOneAndUpdate(
       { _id: body.orderID },
       { $set: { requestRefund: true } }
-    );
-    if (order) return true;
-    else {
+    ).populate("tourID");
+    if (order) {
+      let tourist = await UserModel.findById(order.touristID).select([
+        "fname",
+        "lname",
+      ]);
+      let fullname = tourist.fname + " " + tourist.lname;
+      pusher.trigger(`${order.tourID.vendorID}`, "notifications", {
+        date: Date.now(),
+        text: `${fullname} just requested a refund on your Tour ${order.tourID.name} of RS ${order.amount}`,
+      });
+      return true;
+    } else {
       let e = new Error("Not Found");
       e.statusCode = 404;
       throw e;

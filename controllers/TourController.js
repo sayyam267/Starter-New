@@ -1,6 +1,16 @@
 const TourModel = require("../models/TourPack");
 const TourService = require("../services/TourService");
 module.exports = {
+  markAsDone: async (req, res) => {
+    try {
+      let tour = await TourService.markAsDone(req.body.tourID, req.user);
+      res.send({ data: tour, message: "Marked as Completed" });
+    } catch (e) {
+      res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e?.message });
+    }
+  },
   getTour: async (req, res) => {
     try {
       let query = {};

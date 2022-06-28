@@ -1,6 +1,6 @@
 const UserModel = require("../models/UserModel");
 const jwt = require("jsonwebtoken");
-const { sendVerificationEmail } = require("./SendEmail");
+const { sendVerificationEmail, sendInfoEmail } = require("./SendEmail");
 const uuid = require("uuid").v4;
 
 require("dotenv").config();
@@ -680,6 +680,10 @@ const userService = {
   updatePassword: async (email, password) => {
     var salt = await bcrypt.genSalt(Number(process.env.SALT));
     var hashed = await bcrypt.hash(password, salt);
+    let name = await UserModel.findOne({
+      email: email,
+      isDeleted: false,
+    }).select(["fname", "lname"]);
     let user = await UserModel.updateOne(
       {
         email: email,
@@ -691,7 +695,18 @@ const userService = {
     //   email: email,
     //   isDeleted: false,
     // }).update({ password: hashed, isVerified: true });
-    return true;
+    if (user) {
+      sendInfoEmail({
+        name: `${name.fname} ${name.lname}`,
+        email,
+        subject: "TourBook : Password Changed!",
+        html: `<div style={{textAlign:"center"}}>Your Password as been changed!</div>`,
+      });
+      return true;
+    } else {
+      let e = new Error("Cannot Update Password. Something Happend");
+      throw e;
+    }
   },
   updateProfile: async (data, user) => {
     let existing = await UserModel.findById(user.id).select("email");
@@ -720,7 +735,7 @@ const userService = {
           });
         } else {
           email = existing.email;
-          isVerified: existing.isVerified;
+          isVerified = existing.isVerified;
         }
       }
       let updatedProfile = await UserModel.updateOne(
@@ -734,13 +749,14 @@ const userService = {
             lname: data?.lname,
             email: email,
             isVerified: isVerified,
-            country: data?.country,
+            // country: data?.country,
             city: data?.city,
             // gender: String(data.gender).toLowerCase(),
             // address: data.address,
           },
         }
       );
+
       return updatedProfile;
     } else {
       let e = new Error();

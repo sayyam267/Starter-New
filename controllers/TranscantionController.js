@@ -38,4 +38,15 @@ module.exports = {
         .send({ data: null, message: e.message });
     }
   },
+  getMyTranscations: async (req, res) => {
+    try {
+      let user = req.user;
+      let transcantions = await TransactionService.getMyTransactions(user);
+      return res.send({ data: transcantions, message: "Fetched Transactions" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e?.message });
+    }
+  },
 };
