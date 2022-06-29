@@ -65,7 +65,7 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
-app.use(limiter);
+// app.use(limiter);
 app.use("/auth", OAuth2);
 app.use("/user", UserRoute);
 app.use("/promo", PromoRoute);
