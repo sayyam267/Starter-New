@@ -1,19 +1,28 @@
+const ConversationModel = require("../models/ChatRoom");
 const pusher = require("../helpers/pusher");
 const MessageModel = require("../models/Message");
 
 const MessageService = {
-  createMessage: async (data) => {
+  createMessage: async (data, user) => {
     try {
-      const payload = req.body;
+      // const payload = req.body;
       //   console.log(payload);
       let newMessage = await MessageModel.create({
-        roomID: req.body.roomID,
-        sender: req.body.sender,
-        receiver: req.body.receiver,
-        message: req.body.message,
+        roomID: data.roomID,
+        // sender: data.sender,
+        sender: user.id,
+        receiver: data.receiver,
+        message: data.message,
       });
+
       if (newMessage) {
-        pusher.trigger(`${req.body.roomID}`, "message-received", {
+        let conversation = await ConversationModel.findByIdAndUpdate(
+          data.roomID,
+          {
+            lastMessage: newMessage,
+          }
+        );
+        pusher.trigger(`${data.roomID}`, "message-received", {
           message: newMessage.message,
           from: newMessage.sender,
           to: newMessage.receiver,
@@ -27,11 +36,11 @@ const MessageService = {
       throw e;
     }
   },
-  getAllMessagesByConversationID: async (data) => {
+  getAllMessagesByConversationID: async (conversationID) => {
     try {
       let messages = await MessageModel.find({
-        roomID: data.conversationID,
-      });
+        roomID: conversationID,
+      }).sort("createdAt");
       if (messages) {
         return messages;
       } else {

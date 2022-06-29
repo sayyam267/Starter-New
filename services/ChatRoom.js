@@ -9,7 +9,7 @@ const ChatRoomService = {
       });
       if (existing) {
         // console.log(existing);
-        return existing;
+        return { data: existing, message: "Fetched" };
         // return res.status(200).json({ roomID: existing._id });
       } else {
         let people = [data.sender, data.receiver];
@@ -17,7 +17,8 @@ const ChatRoomService = {
           people,
         });
         // console.log(newConversation);
-        if (newConversation) return newConversation;
+        if (newConversation)
+          return { data: newConversation, message: "Created" };
         // res.json({ newConversation });
         else {
           throw new Error("Cannot create in DB");
@@ -31,8 +32,8 @@ const ChatRoomService = {
     try {
       console.log(data);
       let room = await ChatRoomModel.find({
-        people: { $all: [user.id] },
-      });
+        people: { $all: [data.id] },
+      }).sort("-updatedAt");
 
       if (room) return room;
       //   res.json(rooms);

@@ -5,8 +5,8 @@ const UserModel = require("../models/UserModel");
 const CustomTourService = {
   requestCustomTour: async (data, user) => {
     let newrequest = await CustomTour({ ...data, by: user.id });
-    let user = await UserModel.findById(user.id).select(["fname", "lname"]);
-    let fullname = user.fname + " " + user.lname;
+    let username = await UserModel.findById(user.id).select(["fname", "lname"]);
+    let fullname = username.fname + " " + username.lname;
     let all_vendors = await UserModel.find({ userType: "vendor" }).select(
       "_id"
     );
