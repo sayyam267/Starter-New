@@ -3,10 +3,10 @@ const MessageService = require("../services/Message");
 const MessageController = {
   getMessagesInConversation: async (req, res) => {
     try {
-      if (!req.body?.conversationID) {
-        let e = new Error("Please add Conversation ID in req.body");
-        throw e;
-      }
+      // if (!req.body?.conversationID) {
+      //   let e = new Error("Please add Conversation ID in req.body");
+      //   throw e;
+      // }
       // let { conversationID } = req.body;
 
       // let messages = await MessageService.getAllMessagesByConversationID(

@@ -10,12 +10,12 @@ const messageSchema = new mongoose.Schema(
     message: { type: String, required: true },
     sender: {
       type: mongoose.SchemaTypes.ObjectId,
-      ref: "Users",
+      ref: "users",
       required: true,
     },
     receiver: {
       type: mongoose.SchemaTypes.ObjectId,
-      ref: "Users",
+      ref: "users",
       required: true,
     },
   },

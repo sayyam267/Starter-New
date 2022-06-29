@@ -5,13 +5,18 @@ const MessageModel = require("../models/Message");
 const MessageService = {
   createMessage: async (data, user) => {
     try {
-      // const payload = req.body;
-      //   console.log(payload);
+      const payload = data;
+      console.log(payload);
+
+      let conversation = await ConversationModel.findById(data.roomID);
+      let receiver = conversation.people.filter((person) => person != user.id);
+      receiver = receiver[0];
       let newMessage = await MessageModel.create({
         roomID: data.roomID,
         // sender: data.sender,
         sender: user.id,
-        receiver: data.receiver,
+        receiver: receiver,
+        // receiver: data.receiver,
         message: data.message,
       });
 
@@ -40,7 +45,9 @@ const MessageService = {
     try {
       let messages = await MessageModel.find({
         roomID: conversationID,
-      }).sort("createdAt");
+      })
+        .sort("createdAt")
+        .populate(["sender", "receiver"]);
       if (messages) {
         return messages;
       } else {

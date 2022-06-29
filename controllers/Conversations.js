@@ -4,13 +4,14 @@ const ConversationService = require("../services/ChatRoom");
 const ConversationController = {
   initializeChat: async (req, res) => {
     try {
-      if (!req.body?.sender || !req.body?.receiver) {
-        let e = new Error("1 Person missing in req.body");
+      let user = req.user;
+      if (!req.body?.receiver) {
+        let e = new Error("RECEIVER Person missing in req.body");
         throw e;
       }
-      let data = { sender: req.body?.sender, receiver: req.body?.receiver };
+      let data = { sender: user.id, receiver: req.body?.receiver };
 
-      let chatroom = await ChatRoomService.getorCreate(body);
+      let chatroom = await ChatRoomService.getorCreate(data);
       return res.send({ data: chatroom.data, message: chatroom.message });
     } catch (e) {
       return res

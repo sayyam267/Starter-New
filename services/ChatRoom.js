@@ -7,6 +7,7 @@ const ChatRoomService = {
       let existing = await ChatRoomModel.findOne({
         people: { $all: [data.sender, data.receiver] },
       });
+      // .populate(["people", "lastMessage"]);
       if (existing) {
         // console.log(existing);
         return { data: existing, message: "Fetched" };
@@ -16,6 +17,7 @@ const ChatRoomService = {
         let newConversation = await ChatRoomModel.create({
           people,
         });
+        // .populate(["people", "lastMessage"]);
         // console.log(newConversation);
         if (newConversation)
           return { data: newConversation, message: "Created" };
@@ -33,7 +35,9 @@ const ChatRoomService = {
       console.log(data);
       let room = await ChatRoomModel.find({
         people: { $all: [data.id] },
-      }).sort("-updatedAt");
+      })
+        .sort("-updatedAt")
+        .populate(["people"]);
 
       if (room) return room;
       //   res.json(rooms);

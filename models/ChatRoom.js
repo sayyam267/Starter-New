@@ -1,7 +1,12 @@
 const mongoose = require("mongoose");
 const chatRoomSchema = new mongoose.Schema(
   {
-    people: { type: Array, required: true },
+    people: {
+      type: Array(mongoose.Types.ObjectId),
+      required: true,
+      default: [],
+      ref: "users",
+    },
     lastMessage: {
       type: mongoose.Types.ObjectId,
       ref: "messages",
