@@ -17,7 +17,7 @@ module.exports = {
         text: `How was your Tour ${tour.name}? Please provide feedback.`,
         contentID: tour._id,
         userID: order.touristID,
-        type: "info",
+        type: "tour",
       });
       pusher.trigger(`${order.touristID}`, "notifications", notification);
     });
@@ -301,7 +301,7 @@ module.exports = {
           text: `Your Tour ${tour.name} Info was edited`,
           contentID: tour._id,
           userID: existingTour.vendorID,
-          type: "info",
+          type: "tour",
         });
         pusher.trigger(
           `${existingTour.vendorID}`,

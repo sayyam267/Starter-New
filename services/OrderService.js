@@ -205,6 +205,7 @@ module.exports = {
             text: `Your Reservation Request for Tour ${tour.name} has been sent to Vendor for Approval!`,
             userID: user?.id,
             contentID: newOrder._id,
+            type: "order",
           });
           pusher.trigger(`${user.id}`, "notifications", notification);
           return { order: newOrder, balance: existinguser.balance };
@@ -240,7 +241,7 @@ module.exports = {
       let notification = await Notification.create({
         text: `Your Tour Reservation request got rejected by vendor and the amount ${existingOrder.amount} has been refunded to your account.`,
         contentID: tour._id,
-        type: "info",
+        type: "order",
         userID: user._id,
       });
       pusher.trigger(`${user._id}`, "notifications", notification);
@@ -275,7 +276,7 @@ module.exports = {
         let notification = await Notification.create({
           text: `Your Tour ${tour.name} with charges ${existingOrder.amount} got Approved!`,
           userID: user._id,
-          type: "info",
+          type: "order",
           contentID: tour._id,
         });
         pusher.trigger(`${user._id}`, "notifications", notification);
@@ -359,7 +360,7 @@ module.exports = {
         userToRefund = await UserModel.findById(existingOrder.touristID);
         let notification = await Notification.create({
           text: `Your Refund Tour Request for tour ${tour.name} and seats ${existingOrder.seats} and price ${existingOrder.amount} just got approved!`,
-          type: "info",
+          type: "order",
           userID: userToRefund._id,
           contentID: tour._id,
         });
@@ -401,7 +402,7 @@ module.exports = {
       let fullname = tourist.fname + " " + tourist.lname;
       let notification = await Notification.create({
         text: `${fullname} just requested a refund on your Tour ${order.tourID.name} of RS ${order.amount}`,
-        type: "info",
+        type: "order",
         userID: order.tourID.vendorID,
         contentID: order._id,
       });

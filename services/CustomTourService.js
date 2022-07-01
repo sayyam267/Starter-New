@@ -16,7 +16,7 @@ const CustomTourService = {
         let notification = await Notification.create({
           userID: vendor._id,
           text: `There is a new CustomTour Request by ${fullname} for you.`,
-          type: "info",
+          type: "customtour",
           contentID: newrequest._id,
         });
         pusher.trigger(`${vendor._id}`, "notifications", notification);
@@ -196,7 +196,7 @@ const CustomTourService = {
         text: `${vendor.fname} ${vendor.lname} gave you an offer of RS${offer.amount} on your Custom Tour Request of ${customTourReq.description}`,
         userID: customTourReq.by,
         contentID: customTourReq._id,
-        type: "info",
+        type: "customtour",
       });
       pusher.trigger(`${customTourReq.by}`, "notifications", notification);
       return true;
@@ -226,7 +226,7 @@ const CustomTourService = {
         userID: offer[0].vendorID,
         text: `${fullname} just Accepted your Custom Tour Offer of RS ${offer[0].amount} on ${customTourReq.requirements.description}`,
         contentID: customTourReq._id,
-        type: "info",
+        type: "customtour",
       });
       pusher.trigger(`${offer[0].vendorID}`, "notifications", notification);
       await customTourReq.save();

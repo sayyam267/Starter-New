@@ -113,6 +113,7 @@ module.exports = {
           let notification = await Notification.create({
             text: `Your transaction of ${transcantion.RechargedAmount} TourBook Credits has been refunded!`,
             userID: user._id,
+            type: "transaction",
             contentID: transcantion._id,
           });
           pusher.trigger(`${user._id}`, "notifications", notification);
