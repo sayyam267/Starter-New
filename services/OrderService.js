@@ -3,6 +3,8 @@ const OrderModel = require("../models/Orders");
 const TourModel = require("../models/TourPack");
 const UserModel = require("../models/UserModel");
 const { sendInfoEmail } = require("./SendEmail");
+const Notification = require("../models/Notifications");
+
 module.exports = {
   getOrders: async () => {
     let existingOrders = await OrderModel.find({});
@@ -16,11 +18,13 @@ module.exports = {
     }
   },
   getMyOrders: async (user) => {
-    let orders = OrderModel.find({ touristID: user.id }).populate({
-      path: "tourID",
-      model: "tours",
-      select: ["name", "description"],
-    });
+    let orders = OrderModel.find({ touristID: user.id })
+      .populate({
+        path: "tourID",
+        model: "tours",
+        select: ["name", "description"],
+      })
+      .sort("-updatedAt");
     if (orders) {
       return orders;
     } else {
@@ -197,6 +201,12 @@ module.exports = {
             Number(existinguser.balance) - Number(newOrder.amount);
           await existinguser.save();
           await newOrder.save();
+          let notification = await Notification.create({
+            text: `Your Reservation Request for Tour ${tour.name} has been sent to Vendor for Approval!`,
+            userID: user?.id,
+            contentID: newOrder._id,
+          });
+          pusher.trigger(`${user.id}`, "notifications", notification);
           return { order: newOrder, balance: existinguser.balance };
         } else {
           let e = new Error("Not Enough Seats Left");
@@ -227,10 +237,13 @@ module.exports = {
       tour.seats = tour.seats + existingOrder.seats;
       await user.save();
       await tour.save();
-      pusher.trigger(`${user._id}`, "notifications", {
-        date: Date.now(),
+      let notification = await Notification.create({
         text: `Your Tour Reservation request got rejected by vendor and the amount ${existingOrder.amount} has been refunded to your account.`,
+        contentID: tour._id,
+        type: "info",
+        userID: user._id,
       });
+      pusher.trigger(`${user._id}`, "notifications", notification);
       await existingOrder.delete();
       return true;
       // return await module.exports.refundOrder(data.id);
@@ -259,10 +272,13 @@ module.exports = {
           html: `<div style={{textAlign:"center"}}>Dear ${user.fname} ${user.lname}! <br/>Your Tour <b>${tour.name}</b> has been approved<br/>For Further details visit TourBook<br/>Thank You</div>`,
           subject: `TourBook : Your Tour got approved`,
         });
-        pusher.trigger(`${user._id}`, "notifications", {
-          date: Date.now(),
+        let notification = await Notification.create({
           text: `Your Tour ${tour.name} with charges ${existingOrder.amount} got Approved!`,
+          userID: user._id,
+          type: "info",
+          contentID: tour._id,
         });
+        pusher.trigger(`${user._id}`, "notifications", notification);
       } catch (e) {
         throw e;
       }
@@ -341,10 +357,13 @@ module.exports = {
         tour.seats = tour.seats + existingOrder.seats;
         await tour.save();
         userToRefund = await UserModel.findById(existingOrder.touristID);
-        pusher.trigger(`${userToRefund._id}`, "notifications", {
-          date: Date.now(),
+        let notification = await Notification.create({
           text: `Your Refund Tour Request for tour ${tour.name} and seats ${existingOrder.seats} and price ${existingOrder.amount} just got approved!`,
+          type: "info",
+          userID: userToRefund._id,
+          contentID: tour._id,
         });
+        pusher.trigger(`${userToRefund._id}`, "notifications", notification);
         return { data: true, balance: userToRefund.balance };
       } else {
         let e = new Error("Not Enough Balance to Refund!");
@@ -380,10 +399,13 @@ module.exports = {
         "lname",
       ]);
       let fullname = tourist.fname + " " + tourist.lname;
-      pusher.trigger(`${order.tourID.vendorID}`, "notifications", {
-        date: Date.now(),
+      let notification = await Notification.create({
         text: `${fullname} just requested a refund on your Tour ${order.tourID.name} of RS ${order.amount}`,
+        type: "info",
+        userID: order.tourID.vendorID,
+        contentID: order._id,
       });
+      pusher.trigger(`${order.tourID.vendorID}`, "notifications", notification);
       return true;
     } else {
       let e = new Error("Not Found");

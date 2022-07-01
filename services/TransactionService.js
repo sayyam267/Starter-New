@@ -16,8 +16,9 @@ const pusher = require("../helpers/pusher");
 const genToken = require("../helpers/Stripe");
 const TransactionsModel = require("../models/Transactions.model");
 const UserModel = require("../models/UserModel");
-const OrderService = require("./OrderService");
+// const OrderService = require("./OrderService");
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
+const Notification = require("../models/Notifications");
 
 module.exports = {
   rechargeAccount: async (req) => {
@@ -56,7 +57,7 @@ module.exports = {
       });
       let user = await UserModel.findById(req.user.id);
       // console.log(user);
-      await new TransactionsModel({
+      let transac = await new TransactionsModel({
         CardNumber: n,
         userID: user._id,
         TransID: charges.id,
@@ -69,10 +70,13 @@ module.exports = {
         { _id: req.user.id },
         { balance: Number(user.balance) + Number(req.body.payment.Amount) }
       );
-      pusher.trigger(`${user._id}`, "notifications", {
-        date: Date.now(),
+      let notification = await Notification.create({
         text: `Your Purchased ${req.body.payment.Amount} TourBook Credits`,
+        contentID: transac._id,
+        userID: user._id,
+        type: "transaction",
       });
+      pusher.trigger(`${user._id}`, "notifications", notification);
       // await user.update({ balance: balance + Amount });
       return {
         charges: charges,
@@ -106,10 +110,12 @@ module.exports = {
           // user.balance = transcantion.New_Balance;
           user.balance = user.balance - transcantion.RechargedAmount;
           await user.save();
-          pusher.trigger(`${user._id}`, "notifications", {
-            date: Date.now(),
+          let notification = await Notification.create({
             text: `Your transaction of ${transcantion.RechargedAmount} TourBook Credits has been refunded!`,
+            userID: user._id,
+            contentID: transcantion._id,
           });
+          pusher.trigger(`${user._id}`, "notifications", notification);
           return refund;
         } else {
           let e = new Error("Not Sufficient Balance to Process Refund");
@@ -144,7 +150,9 @@ module.exports = {
   },
   getMyTransactions: async (user) => {
     try {
-      let transcantions = await TransactionsModel.find({ userID: user.id });
+      let transcantions = await TransactionsModel.find({
+        userID: user.id,
+      }).sort("-updatedAt");
       if (transcantions) {
         return transcantions;
       } else {

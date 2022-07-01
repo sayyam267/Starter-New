@@ -1,23 +1,33 @@
 const pusher = require("../helpers/pusher");
 const CustomTour = require("../models/CustomTour");
 const UserModel = require("../models/UserModel");
+const Notification = require("../models/Notifications")
 
 const CustomTourService = {
   requestCustomTour: async (data, user) => {
-    let newrequest = await CustomTour({ ...data, by: user.id });
+    let newrequest = await CustomTour.create({ ...data, by: user.id });
     let username = await UserModel.findById(user.id).select(["fname", "lname"]);
     let fullname = username.fname + " " + username.lname;
     let all_vendors = await UserModel.find({ userType: "vendor" }).select(
       "_id"
     );
+    if(newrequest){
     all_vendors.forEach((vendor) => {
-      pusher.trigger(`${vendor._id}`, "notifications", {
-        date: Date.now(),
-        text: `There is a new CustomTour Request by ${fullname} for you.`,
-      });
+      let notification = await Notification.create({
+        userID:vendor._id,
+        text:`There is a new CustomTour Request by ${fullname} for you.`,
+        type:"info",
+        contentID:newrequest._id
+      })
+      pusher.trigger(`${vendor._id}`, "notifications", notification);
     });
-    await newrequest.save();
     return newrequest;
+  }
+  else{
+    let e= new Error("Cannot Create CustomTour in DB");
+    e.statusCode=400;
+    throw e
+  }
   },
   getCustomTourRequests: async (user) => {
     let e = new Error();
@@ -183,10 +193,13 @@ const CustomTourService = {
       }
       customTourReq.offers = offers;
       await customTourReq.save();
-      pusher.trigger(`${customTourReq.by}`, "notifications", {
-        date: Date.now(),
+      let notification = await Notification.create({
         text: `${vendor.fname} ${vendor.lname} gave you an offer of RS${offer.amount} on your Custom Tour Request of ${customTourReq.description}`,
-      });
+        userID:customTourReq.by,
+        contentID:customTourReq._id,
+        type:"info"
+      })
+      pusher.trigger(`${customTourReq.by}`, "notifications", notification);
       return true;
     } else {
       let e = new Error("Not Found");
@@ -210,10 +223,14 @@ const CustomTourService = {
         "lname",
       ]);
       let fullname = user.fname + " " + user.lname;
-      pusher.trigger(`${offer[0].vendorID}`, "notifications", {
-        date: Date.now(),
-        text: `${fullname} just Accepted your Custom Tour Offer of RS ${offer[0].amount} on ${customTourReq.requirements.description}`,
-      });
+      let notification = await Notification.create({
+        userID:offer[0].vendorID,
+        text:`${fullname} just Accepted your Custom Tour Offer of RS ${offer[0].amount} on ${customTourReq.requirements.description}`,
+        contentID:customTourReq._id,
+        type:"info"
+
+      })
+      pusher.trigger(`${offer[0].vendorID}`, "notifications", notification);
       await customTourReq.save();
     } else {
       let e = new Error("Not Found");

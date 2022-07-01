@@ -6,6 +6,8 @@ const uuid = require("uuid").v4;
 require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const { sendForgotPassword } = require("./SendEmail");
+const Notifications = require("../models/Notifications");
+const pusher = require("../helpers/pusher");
 // const UserTypeController = require("../controllers/UserTypeController");
 // const UserTypeService = require("./UserTypeService");
 // const UserType = require("../models/UserType");
@@ -702,6 +704,13 @@ const userService = {
         subject: "TourBook : Password Changed!",
         html: `<div style={{textAlign:"center"}}>Your Password as been changed!</div>`,
       });
+      let notification = await Notifications.create({
+        text: `Your Password was Updated!`,
+        userID: user._id,
+        contentID: null,
+        type: "security",
+      });
+      pusher.trigger(`${user._id}`, "notifications", notification);
       return true;
     } else {
       let e = new Error("Cannot Update Password. Something Happend");
@@ -756,7 +765,13 @@ const userService = {
           },
         }
       );
-
+      let notification = await Notifications.create({
+        text: `Your Profile Info was Updated!`,
+        userID: user._id,
+        contentID: null,
+        type: "security",
+      });
+      pusher.trigger(`${user._id}`, "notifications", notification);
       return updatedProfile;
     } else {
       let e = new Error();

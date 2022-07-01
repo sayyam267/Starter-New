@@ -2,6 +2,7 @@ const TourModel = require("../models/TourPack");
 const UserModel = require("../models/UserModel");
 const OrderModel = require("../models/Orders");
 const pusher = require("../helpers/pusher");
+const Notification = require("../models/Notifications")
 module.exports = {
   markAsDone: async (tourID, user) => {
     let tour = await TourModel.findById(tourID);
@@ -12,10 +13,13 @@ module.exports = {
       isRefunded: false,
     }).select("touristID");
     orders.forEach((order) => {
-      pusher.trigger(`${order.touristID}`, "notifications", {
-        date: Date.now(),
-        text: `How was your Tour ${tour.name}? Please provide feedback.`,
-      });
+      let notification = await Notification.create({
+        text:`How was your Tour ${tour.name}? Please provide feedback.`,
+        contentID:tour._id,
+        userID:order.touristID,
+        type:"info"
+      })
+      pusher.trigger(`${order.touristID}`, "notifications", notification);
     });
   },
   getTours: async () => {
@@ -293,6 +297,13 @@ module.exports = {
           { _id: data.id },
           newdetails
         );
+        let notification = await Notification.create({
+          text:`Your Tour ${tour.name} Info was edited`,
+          contentID:tour._id,
+          userID:existingTour.vendorID,
+          type:"info"
+        })
+        pusher.trigger(`${existingTour.vendorID}`, "notifications", notification);
         return newTour;
       } else {
         let e = new Error();

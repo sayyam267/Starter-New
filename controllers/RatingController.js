@@ -104,8 +104,4 @@ module.exports = {
         .send({ data: null, message: e.message });
     }
   },
-  a: async (req, res) => {
-    try {
-    } catch (e) {}
-  },
 };

@@ -106,12 +106,12 @@ module.exports = {
       throw e;
     }
   },
-  requestCustomTour: async (data) => {
-    let customTour = await CustomTour({
-      ...data,
-    });
-    await customTour.save();
-  },
+  // requestCustomTour: async (data) => {
+  //   // let customTour = await CustomTour({
+  //   //   ...data,
+  //   // });
+  //   // await customTour.save();
+  // },
   addFavTours: async (data) => {
     let favTours = await FavToursService.addFavTour(data.user.id, data.tourID);
     if (favTours) {
@@ -134,7 +134,9 @@ module.exports = {
     }
   },
   getMyTransactions: async (user) => {
-    let myTrans = await TransactionsModel.find({ touristID: user.id });
+    let myTrans = await TransactionsModel.find({ touristID: user.id }).sort(
+      "-updatedAt"
+    );
     if (myTrans) return myTrans;
     else {
       let e = new Error();
