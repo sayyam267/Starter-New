@@ -3,6 +3,20 @@ const TransactionService = require("../services/TransactionService");
 module.exports = {
   purchaseCredits: async (req, res) => {
     try {
+      const schema = Joi.object({
+        payment: Joi.object.keys({
+          CardNumber: Joi.string().required(),
+          Month: Joi.number().min(1).max(12).required(),
+          Year: Joi.number().required(),
+          CVC: Joi.number().required(),
+          Amount: Joi.number().required(),
+        }),
+        user: Joi.object().keys({
+          email: Joi.string().email().required(),
+          name: Joi.string().min(5).required(),
+        }),
+      });
+      await schema.validateAsync(req.body);
       let purchase = await TransactionService.rechargeAccount(req);
       return res.status(200).send({
         data: purchase,
@@ -16,7 +30,11 @@ module.exports = {
   },
   refundPurchase: async (req, res) => {
     try {
-      let refund = await TransactionService.refundPurchase(req);
+      const schema = Joi.object({
+        id: Joi.string().required(),
+      });
+      await schema.validateAsync(req.body);
+      let refund = await TransactionService.refundPurchase(req.body);
       return res
         .status(200)
         .send({ data: refund, message: "Refund Successfully" });
@@ -28,6 +46,10 @@ module.exports = {
   },
   getTransactionByID: async (req, res) => {
     try {
+      const schema = Joi.object({
+        id: Joi.string().required(),
+      });
+      await schema.validateAsync(req.params);
       let transcantion = await TransactionService.getTransactionByID(
         req.params.id
       );

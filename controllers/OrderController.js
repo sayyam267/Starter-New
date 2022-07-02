@@ -1,7 +1,7 @@
 const OrderService = require("../services/OrderService");
 const UserService = require("../services/UserService");
 let e = new Error();
-
+const Joi = require("joi");
 // module.exports = {
 //   getOrders: async (req, res) => {
 //     try {
@@ -78,6 +78,10 @@ module.exports = {
   },
   getOrderByID: async (req, res) => {
     try {
+      const schema = Joi.object({
+        id: Joi.string().required(),
+      });
+      await schema.validateAsync(req.params);
       let orders = await OrderService.getOrderByID(req.params.id);
       return res.send(orders);
     } catch (e) {
@@ -86,6 +90,10 @@ module.exports = {
   },
   getOrdersByAmount: async (req, res) => {
     try {
+      const schema = Joi.object({
+        amount: Joi.number().min(3).required(),
+      });
+      await schema.validateAsync(req.query);
       let orders = await OrderService.getOrdersByAmount(req.query?.amount);
       return res.send(orders);
     } catch (e) {
@@ -94,6 +102,10 @@ module.exports = {
   },
   getOrdersByApporval: async (req, res) => {
     try {
+      const schema = Joi.object({
+        approved: Joi.boolean().required(),
+      });
+      await schema.validateAsync(req.query);
       let orders = await OrderService.getOrdersByApporval(req.query?.approved);
       return res.send(orders);
     } catch (e) {
@@ -102,6 +114,11 @@ module.exports = {
   },
   getOrdersByApporvalByTouristID: async (req, res) => {
     try {
+      const schema = Joi.object({
+        approved: Joi.boolean().required(),
+        touristID: Joi.boolean().required(),
+      });
+      await schema.validateAsync(req.query);
       let orders = await OrderService.getOrdersByApporvalByTouristID({
         approved: req.query?.approved,
         touristID: req.query?.touristID,
@@ -121,6 +138,10 @@ module.exports = {
   },
   getRefundedOrdersByTouristID: async (req, res) => {
     try {
+      const schema = Joi.object({
+        touristID: Joi.string().min(3).required(),
+      });
+      await schema.validateAsync(req.query);
       let orders = await OrderService.getRefundedOrdersByTouristID(
         req.query?.touristID
       );
@@ -131,6 +152,10 @@ module.exports = {
   },
   rejectTour: async (req, res) => {
     try {
+      const schema = Joi.object({
+        id: Joi.string().required(),
+      });
+      await schema.validateAsync(req.body);
       let data = req.body;
       let user = req.user;
       let order = await OrderService.rejectTour(data, user);
@@ -141,6 +166,10 @@ module.exports = {
   },
   approveTour: async (req, res) => {
     try {
+      const schema = Joi.object({
+        id: Joi.string().required(),
+      });
+      await schema.validateAsync(req.body);
       let user = req.user;
       let orders = await OrderService.approveTour(req.body, user);
       return res.send({
@@ -153,6 +182,13 @@ module.exports = {
   },
   createOrder: async (req, res) => {
     try {
+      const schema = Joi.object({
+        touristID: Joi.string().required(),
+        amount: Joi.number().required().min(100),
+        tourID: Joi.string().required(),
+        seats: Joi.number().required().min(1),
+      });
+      await schema.validateAsync(req.body);
       let user = req.user;
       let orders = await OrderService.createOrder(req.body, user);
       return res.send({ data: orders, message: "Created" });
@@ -162,6 +198,11 @@ module.exports = {
   },
   refundTour: async (req, res) => {
     try {
+      const schema = Joi.object({
+        id: Joi.string().required(),
+      });
+      await schema.validateAsync(req.body);
+
       let orders = await OrderService.refundOrder(req.body);
       return res.send({ orders, message: "Refunded" });
     } catch (e) {
@@ -170,6 +211,10 @@ module.exports = {
   },
   rejectRefundRequest: async (req, res) => {
     try {
+      const schema = Joi.object({
+        id: Joi.string().required(),
+      });
+      await schema.validateAsync(req.body);
       let data = req.body;
       let approval = await OrderService.rejectRefundRequest(data);
     } catch (e) {
@@ -180,11 +225,13 @@ module.exports = {
   },
   requestRefund: async (req, res) => {
     try {
-      let user = await OrderService.requestRefund(req.body);
-      if (user) {
-        let request = await OrderService.requestRefund(req.body);
-        res.send({ data: true, message: "Requested" });
-      }
+      const schema = Joi.object({
+        orderID: Joi.string().required(),
+      });
+      await schema.validateAsync(req.body);
+      let user = req.user;
+      let request = await OrderService.requestRefund(req.body, user);
+      res.send({ data: true, message: "Requested" });
     } catch (e) {
       res.status(e?.statusCode || 400).send({ data: null, message: e.message });
     }

@@ -4,11 +4,15 @@ const ConversationService = require("../services/ChatRoom");
 const ConversationController = {
   initializeChat: async (req, res) => {
     try {
+      const schema = Joi.object({
+        receiver: Joi.string().required(),
+      });
+      await schema.validateAsync(req.body.receiver);
       let user = req.user;
-      if (!req.body?.receiver) {
-        let e = new Error("RECEIVER Person missing in req.body");
-        throw e;
-      }
+      // if (!req.body?.receiver) {
+      //   let e = new Error("RECEIVER Person missing in req.body");
+      //   throw e;
+      // }
       let data = { sender: user.id, receiver: req.body?.receiver };
 
       let chatroom = await ChatRoomService.getorCreate(data);

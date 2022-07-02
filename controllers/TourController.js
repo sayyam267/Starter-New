@@ -1,8 +1,14 @@
 const TourModel = require("../models/TourPack");
 const TourService = require("../services/TourService");
+const Joi = require("joi");
+
 module.exports = {
   markAsDone: async (req, res) => {
     try {
+      const schema = Joi.object({
+        tourID: Joi.string().required(),
+      });
+      await schema.validateAsync(req.body);
       let tour = await TourService.markAsDone(req.body.tourID, req.user);
       res.send({ data: tour, message: "Marked as Completed" });
     } catch (e) {
@@ -70,7 +76,24 @@ module.exports = {
   },
   createTour: async (req, res) => {
     try {
-      console.log(req.body, "BODY");
+      // console.log(req.body, "BODY");
+      const schema = Joi.object({
+        meetLocation: Joi.string().required(),
+        places: Joi.string().required(),
+        validTill: Joi.date().required(),
+        name: Joi.string().required().min(10),
+        price: Joi.number().min(1000).required(),
+        source: Joi.string().required(),
+        destination: Joi.string().required(),
+        startDate: Joi.date().required(),
+        seats: Joi.number().min(4).required(),
+        hasGuide: Joi.boolean().required(),
+        hasFood: Joi.boolean().required(),
+        hasHotel: Joi.boolean().required(),
+        hasTransport: Joi.boolean().required(),
+        description: Joi.string().required(),
+      });
+      await schema.validateAsync(req.body);
       let tours = await TourService.createTour(req);
       return res.status(200).send({ data: tours, message: "Created" });
     } catch (e) {
@@ -109,6 +132,10 @@ module.exports = {
   // },
   deleteTours: async (req, res) => {
     try {
+      const schema = Joi.object({
+        id: Joi.string().required(),
+      });
+      await schema.validateAsync(req.body);
       let { id } = req.body;
       const tourToDelete = await TourService.deleteTours(id);
       return res.send({ data: tourToDelete, message: "Deleted" });
@@ -140,6 +167,10 @@ module.exports = {
   },
   getTourByID: async (req, res) => {
     try {
+      const schema = Joi.object({
+        id: Joi.string().required(),
+      });
+      await schema.validateAsync(req.params);
       let { id } = req.params;
       let user = req?.user;
       let tour = await TourService.getToursByID(id, user);

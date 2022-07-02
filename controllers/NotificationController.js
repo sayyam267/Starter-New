@@ -3,6 +3,10 @@ const NotificationService = require("../services/NotificationService");
 const NotificationController = {
   getNotificationByID: async (req, res) => {
     try {
+      const schema = Joi.object({
+        id: Joi.string().required(),
+      });
+      await schema.validateAsync(req.params);
       let id = req?.params?.id;
       let notification = await NotificationService.getNotificationByID(id);
       return res.send({ data: notification, message: "Fetched" });
@@ -27,7 +31,11 @@ const NotificationController = {
   },
   markAsread: async (req, res) => {
     try {
-      let notificationID = req.body.notificationID;
+      const schema = Joi.object({
+        notificationID: Joi.string().required(),
+      });
+      await schema.validateAsync(req.body);
+      let { notificationID } = req.body;
       let status = await NotificationService.markAsread(notificationID);
       return res.send({
         data: status,

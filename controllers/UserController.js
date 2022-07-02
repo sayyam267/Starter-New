@@ -3,7 +3,8 @@ const UserModel = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 const multer = require("multer");
 const UserService = require("../services/UserService");
-require("dotenv").config();
+const Joi = require("joi");
+// require("dotenv")
 const storage = multer.diskStorage({
   destination: (req, res, cb) => {
     cb(null, "public/Images/profile-pictures");
@@ -277,6 +278,11 @@ module.exports = {
   },
   verifyUser: async (req, res) => {
     try {
+      const schema = Joi.object({
+        email: Joi.string().email().required(),
+        code: Joi.string().required(),
+      });
+      await schema.validateAsync(req.query);
       if (Object.keys(req?.query).length > 0) {
         let user = await UserService.verifyUser({
           email: req.query.email,
@@ -304,6 +310,10 @@ module.exports = {
   blockUser: async (req, res) => {
     try {
       let { id } = req.body;
+      const schema = Joi.object({
+        id: Joi.string().required(),
+      });
+      await schema.validateAsync(req.body);
       let user = await UserService.blockUser(id);
       if (user)
         return res
@@ -319,6 +329,10 @@ module.exports = {
   forgotPassword: async (req, res) => {
     try {
       let { email } = req.body;
+      const schema = Joi.object({
+        email: Joi.string().email().required(),
+      });
+      await schema.validateAsync(req.body);
       let code = await UserService.forgotPassword(email);
       return res.send({
         data: code,
@@ -333,6 +347,11 @@ module.exports = {
   updatePassword: async (req, res) => {
     try {
       let { email, password } = req.body;
+      const schema = Joi.object({
+        email: Joi.string().email().required(),
+        password: Joi.string().min(8).required(),
+      });
+      await schema.validateAsync(req.body);
       let changes = await UserService.updatePassword(email, password);
       return res.send({
         data: changes,
@@ -345,6 +364,13 @@ module.exports = {
   updateProfile: async (req, res) => {
     try {
       let user = req.user;
+      const schema = Joi.object({
+        email: Joi.string().email(),
+        fname: Joi.string().min(5),
+        lname: Joi.string().min(5),
+        city: Joi.string(),
+      });
+      await schema.validateAsync(req.body);
       let newDetails = await UserService.updateProfile(req.body, user);
       return res.send({ data: true, message: "Updated Changes" });
     } catch (e) {
@@ -366,6 +392,11 @@ module.exports = {
   },
   verifyOTP: async (req, res) => {
     try {
+      const schema = Joi.object({
+        email: Joi.string().email().required(),
+        code: Joi.string().required(),
+      });
+      await schema.validateAsync(req.body);
       let otpmatched = await UserService.verifyOTP(req.body);
       return res.send({ data: otpmatched, message: "Matched" });
     } catch (e) {

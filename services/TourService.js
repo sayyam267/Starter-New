@@ -212,7 +212,7 @@ module.exports = {
       // console.log(req.files.multiImages);
       // console.log(req.body.places, "PLACES");
       // req.body.places.forEach((item) => console.log(JSON.parse(item)));
-      console.log(req.body);
+      // console.log(req.body);
       // console.log(JSON.parse(req.body.places));
       // console.log(JSON.parse(req.body.meetLocation));
       req.body.meetLocation = JSON.parse(req.body.meetLocation);

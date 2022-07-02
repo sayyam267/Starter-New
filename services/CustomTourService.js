@@ -178,7 +178,7 @@ const CustomTourService = {
   },
   giveOffer: async (data, user) => {
     let customTourReq = await CustomTour.findById(data.requestID);
-    console.log(data);
+    // console.log(data);
     if (customTourReq) {
       let vendor = await UserModel.findById(user.id).select(["fname", "lname"]);
       let offers = customTourReq.offers;

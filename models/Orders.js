@@ -9,11 +9,11 @@ const Schema = mongoose.Schema(
     },
     // tourID: { type: String, required: true },
     seats: { type: Number, requierd: true },
-    promo: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "PromoCodes",
-      default: null,
-    },
+    // promo: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "PromoCodes",
+    //   default: null,
+    // },
     amount: { type: Number, required: true },
     touristID: {
       type: mongoose.Schema.Types.ObjectId,

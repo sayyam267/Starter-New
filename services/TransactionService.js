@@ -19,6 +19,7 @@ const UserModel = require("../models/UserModel");
 // const OrderService = require("./OrderService");
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const Notification = require("../models/Notifications");
+const Joi = require("joi");
 
 module.exports = {
   rechargeAccount: async (req) => {
@@ -86,9 +87,9 @@ module.exports = {
       throw e;
     }
   },
-  refundPurchase: async (req) => {
+  refundPurchase: async (data) => {
     try {
-      let { id } = req.body;
+      let { id } = data;
       let transcantion = await TransactionsModel.findOne({
         _id: id,
       });

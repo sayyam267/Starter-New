@@ -178,7 +178,7 @@ module.exports = {
       let existingOrder = await OrderModel.findOne({
         tourID: data?.tourID,
         seats: data?.seats,
-        promo: data?.promo,
+        // promo: data?.promo,
         amount: data?.amount,
         // touristID: data.touristID,
         touristID: user?.id,
@@ -191,7 +191,7 @@ module.exports = {
           let newOrder = await OrderModel({
             tourID: data.tourID,
             seats: data.seats,
-            promo: data?.promo,
+            // promo: data?.promo,
             amount: data.amount,
             // amount: Number(data.seats) * Number(tour.amount),
             // touristID: data.touristID,
@@ -389,9 +389,9 @@ module.exports = {
       throw e;
     }
   },
-  requestRefund: async (body) => {
+  requestRefund: async (body, user) => {
     let order = await OrderModel.findOneAndUpdate(
-      { _id: body.orderID },
+      { _id: body.orderID, touristID: user.id },
       { $set: { requestRefund: true } }
     ).populate("tourID");
     if (order) {

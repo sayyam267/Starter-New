@@ -1,5 +1,6 @@
 const RatingService = require("../services/RatingService");
 const Orders = require("../models/Orders");
+const Joi = require("joi");
 // module.exports = {
 //   addNewRating: async (req, res) => {
 //     try {
@@ -68,6 +69,12 @@ module.exports = {
   addRating: async (req, res) => {
     try {
       let user = req.user;
+      const schema = Joi.object({
+        to: Joi.string().required(),
+        message: Joi.string().required(),
+        rating: Joi.number().min(1).max(5).required(),
+      });
+      await schema.validateAsync(req.body);
       let newRating = await RatingService.addRatings(req.body, user);
       return res.send({ data: newRating, message: "Created" });
     } catch (e) {
@@ -96,6 +103,10 @@ module.exports = {
   },
   deleteRating: async (req, res) => {
     try {
+      const schema = Joi.object({
+        id: Joi.string().required(),
+      });
+      await schema.validateAsync(req.body);
       let rating = await RatingService.deleteRating(req.body);
       return res.send({ data: rating, message: "deleted" });
     } catch (e) {

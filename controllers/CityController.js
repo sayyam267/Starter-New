@@ -1,5 +1,5 @@
 const CityService = require("../services/CityService");
-
+const Joi = require("joi");
 module.exports = {
   getCities: async (req, res) => {
     try {
@@ -23,6 +23,10 @@ module.exports = {
   },
   addCity: async (req, res) => {
     try {
+      const schema = Joi.object({
+        name: Joi.string().min(3).required(),
+      });
+      await schema.validateAsync(req.body.name);
       let { name } = req.body;
       let newCity = await CityService.addCity(name);
       return res
@@ -31,7 +35,7 @@ module.exports = {
     } catch (e) {
       return res
         .status(e?.statusCode || 400)
-        .send({ data: null, message: e.message });
+        .send({ data: null, message: e?.message });
     }
   },
 };

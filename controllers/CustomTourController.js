@@ -1,9 +1,24 @@
 const CustomTourService = require("../services/CustomTourService");
 const CustomTour = require("../services/CustomTourService");
-
+const Joi = require("joi");
 module.exports = {
   requestCustomTour: async (req, res) => {
     try {
+      const schema = Joi.object({
+        requirements: Joi.object().keys({
+          maxBudget: Joi.number().min(100).max(99999).required(),
+          seats: Joi.number().min(1).required(),
+          description: Joi.string().required(),
+          source: Joi.string().required(),
+          destination: Joi.string().required(),
+          isHotel: Joi.boolean().required(),
+          isGuide: Joi.boolean().required(),
+          places: Joi.array().required(),
+          startDate: Joi.date().required(),
+          endDate: Joi.date().required(),
+        }),
+      });
+      await schema.validateAsync(req.body);
       let user = req?.user;
       let newTourRequest = await CustomTour.requestCustomTour(req.body, user);
       return res.send({ data: newTourRequest, message: "Request Created" });
@@ -28,6 +43,10 @@ module.exports = {
   },
   getCustomTourRequestsByTouristID: async (req, res) => {
     try {
+      const schema = Joi.object({
+        id: Joi.string().required(),
+      });
+      await schema.validateAsync(req.body);
       let requests = await CustomTourService.getCustomTourRequestsBytouristID(
         req.body.id
       );
@@ -53,6 +72,10 @@ module.exports = {
   },
   getCustomTourByID: async (req, res) => {
     try {
+      const schema = Joi.object({
+        id: Joi.string().min(3).required(),
+      });
+      await schema.validateAsync(req.params);
       let request = await CustomTourService.getCustomTourRequestByID(
         req.params.id
       );
@@ -65,6 +88,10 @@ module.exports = {
   },
   deleteCustomTourRequest: async (req, res) => {
     try {
+      const schema = Joi.object({
+        id: Joi.string().min(3).required(),
+      });
+      await schema.validateAsync(req.body);
       let request = await CustomTourService.deleteCustomTourRequest(
         req.body,
         req.user
@@ -92,6 +119,10 @@ module.exports = {
   },
   rejectOffer: async (req, res) => {
     try {
+      const schema = Joi.object({
+        id: Joi.string().min(3).required(),
+      });
+      await schema.validateAsync(req.body);
       let reject = await CustomTourService.rejectOffer(req.body, req?.user);
       res.send({
         data: reject,
@@ -118,6 +149,12 @@ module.exports = {
   },
   giveOffer: async (req, res) => {
     try {
+      const schema = Joi.object({
+        amount: Joi.number().min(100).required(),
+        description: Joi.string().required(),
+        requestID: Joi.string().required(),
+      });
+      await schema.validateAsync(req.body);
       let user = req.user;
       let isOffer = CustomTourService.giveOffer(req.body, user);
       return res.send({ data: isOffer, message: "Offer Presented to User" });
@@ -129,6 +166,11 @@ module.exports = {
   },
   acceptOffer: async (req, res) => {
     try {
+      const schema = Joi.object({
+        requestID: Joi.string().required(),
+        vendorID: Joi.string().required(),
+      });
+      await schema.validateAsync(req.body);
       let user = req.user;
       let isOffer = CustomTourService.acceptOffer(req.body, user);
       return res.send({ data: isOffer, message: "Offer Accepted" });
