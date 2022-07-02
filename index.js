@@ -33,6 +33,7 @@ const VendorRoute = require("./routes/VendorRoute");
 const CustomTourRoute = require("./routes/CustomTourRoute");
 const OAuth2 = require("./routes/OAuth2");
 const getRoutes = require("./routes/index.js");
+const NotificationRoute = require("./routes/NotificationRoute");
 // const flash = require("express-flash");
 
 // app.use(
@@ -82,6 +83,7 @@ app.use("/vendor", VendorRoute);
 app.use("/customtour", CustomTourRoute);
 app.use("/messages", MessageRoute);
 app.use("/conversations", ConversationRoute);
+app.use("/notifications", NotificationRoute);
 // app.use("/api/", getRoutes(app));
 // app.use("/request", ReserveTourRoute);
 app.use(express.static(path.join("public")));
