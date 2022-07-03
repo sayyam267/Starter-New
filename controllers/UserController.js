@@ -400,7 +400,7 @@ module.exports = {
         city: Joi.string().error(() => {
           return Error("Please Provide city");
         }),
-        phoneNumber: Joi.string.min(11),
+        phoneNumber: Joi.string().min(11),
       });
       await schema.validateAsync(req.body);
       let newDetails = await UserService.updateProfile(req.body, user);
