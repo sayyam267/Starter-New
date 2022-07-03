@@ -41,7 +41,7 @@ const ChatRoomService = {
         .populate({
           path: "people",
           model: "users",
-          select: ["fname", , "lname", "phoneNumber", "email"],
+          select: ["fname", "lname", "phoneNumber", "email", "profilePicture"],
         });
 
       if (room) return room;
