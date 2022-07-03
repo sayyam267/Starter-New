@@ -635,19 +635,27 @@ const userService = {
   forgotPassword: async (email) => {
     let user = await UserModel.findOne({ email: email, isDeleted: false });
     if (user) {
-      let fullname = user.fname + " " + user.lname;
-      let code = Math.floor(Math.random() * 90000 + 10000);
+      if (user.source == "google") {
+        let e = new Error(
+          "You created your acount using Google Auth. Please Go to Login Page and Login using Google!"
+        );
 
-      await sendForgotPassword({
-        name: fullname,
-        email: user.email,
-        confirmationCode: code,
-      });
-      user.passwordResetCode = code;
-      user.passwordResetExpiry = new Date(Date.now() + 3600000);
-      console.log("IN FORGOT" + code);
-      await user.save();
-      return true;
+        throw e;
+      } else {
+        let fullname = user.fname + " " + user.lname;
+        let code = Math.floor(Math.random() * 90000 + 10000);
+
+        await sendForgotPassword({
+          name: fullname,
+          email: user.email,
+          confirmationCode: code,
+        });
+        user.passwordResetCode = code;
+        user.passwordResetExpiry = new Date(Date.now() + 3600000);
+        console.log("IN FORGOT" + code);
+        await user.save();
+        return true;
+      }
     } else {
       let e = new Error("Not Found");
       e.statusCode = 404;
@@ -752,7 +760,9 @@ const userService = {
         {
           $set: {
             // cnic: data.cnic,
-            phoneNumber: data?.phoneNumber,
+            phoneNumber: data?.phoneNumber
+              ? data?.phoneNumber
+              : existing.phoneNumber,
             // password: hashed,
             fname: data?.fname,
             lname: data?.lname,
