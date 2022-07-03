@@ -5,7 +5,11 @@ const ConversationController = {
   initializeChat: async (req, res) => {
     try {
       const schema = Joi.object({
-        receiver: Joi.string().required(),
+        receiver: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide receiverID");
+          }),
       });
       await schema.validateAsync(req.body.receiver);
       let user = req.user;

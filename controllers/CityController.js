@@ -24,7 +24,13 @@ module.exports = {
   addCity: async (req, res) => {
     try {
       const schema = Joi.object({
-        name: Joi.string().min(3).required(),
+        name: Joi.string()
+          .min(3)
+          .required()
+          .messages({
+            "any.required": "Please provide name of City",
+            "string.min": "Name must be greater than 3",
+          }),
       });
       await schema.validateAsync(req.body.name);
       let { name } = req.body;

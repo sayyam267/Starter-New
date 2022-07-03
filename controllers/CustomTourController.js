@@ -6,25 +6,71 @@ module.exports = {
     try {
       const schema = Joi.object({
         requirements: Joi.object().keys({
-          maxBudget: Joi.number()
-            .min(100)
-            .max(99999)
-            .required("Please Provide maxBudget"),
-          seats: Joi.number().min(1).required("Please provide # of seats!"),
-          description: Joi.string().required("Please provide Description!"),
-          source: Joi.string().required("Please provide Source City!"),
-          destination: Joi.string().required(
-            "Please provide Destination City!"
-          ),
+          maxBudget: Joi.number().min(100).max(99999).required().messages({
+            "any.required": "Please provide # of seats!",
+            "number.min": "Number of seats must be greater than 100",
+            "number.max": "Number of seats must be less than 99999",
+          }),
+          // .error((err) => {
+          //   if (err.type == "any.required")
+          //     return Error("Please Provide maxBudget");
+          //   if (err.type == "string.min")
+          //     return Error(
+          //       `Value should have at least ${err.context.limit} characters!`
+          //     );
+          //   if (err.type == "string.max")
+          //     return Error(
+          //       `Value should have at least ${err.context.limit} characters!`
+          //     );
+          // }),
+          seats: Joi.number().min(1).required().messages({
+            "any.required": "Please provide # of seats!",
+            "number.min": "Number of seats must be greater than 1",
+          }),
+          // .error((err) => {
+          //   if (err.type == "any.required")
+          //     return Error("Please provide # of seats!");
+          //   if (err.type == "string.min")
+          //     return Error(
+          //       `Value should have at least ${err.context.limit} characters!`
+          //     );
+          // }),
+          description: Joi.string()
+            .required()
+            .error(() => {
+              return Error("Please provide Description!");
+            }),
+          source: Joi.string()
+            .required()
+            .error(() => {
+              return Error("Please provide Source City!");
+            }),
+          destination: Joi.string()
+            .required()
+            .error(() => {
+              return Error("Please provide Destination City!");
+            }),
           isHotel: Joi.boolean().required("Please provide Hotel Requirement!"),
-          isGuide: Joi.boolean().required("Please provide Guide Requirement!"),
-          places: Joi.array().required(
-            "Please provide places you want to visit!"
-          ),
-          startDate: Joi.date().required("Please provide Date you want to go!"),
-          endDate: Joi.date().required(
-            "Please provide Date that will tell the duration of tour!"
-          ),
+          isGuide: Joi.boolean()
+            .required()
+            .error(() => {
+              return Error("Please provide Guide Requirement!");
+            }),
+          places: Joi.array()
+            .required()
+            .label("places")
+            .error(() => {
+              return Error("Please provide places you want to visit!");
+            }),
+          startDate: Joi.date().required().messages({
+            "any.required": "Please provide Date when you want to go!",
+            "date.format": "Please provide the correct format for Date!",
+          }),
+          endDate: Joi.date().required().messages({
+            "any.required":
+              "Please provide Date when your tour will be ending or duration of tour!",
+            "date.format": "Please provide the correct format for Date!",
+          }),
         }),
       });
       await schema.validateAsync(req.body);
@@ -53,7 +99,9 @@ module.exports = {
   getCustomTourRequestsByTouristID: async (req, res) => {
     try {
       const schema = Joi.object({
-        id: Joi.string().required(),
+        id: Joi.string()
+          .required()
+          .messages({ "any.required": "Please provide id" }),
       });
       await schema.validateAsync(req.body);
       let requests = await CustomTourService.getCustomTourRequestsBytouristID(
@@ -82,7 +130,10 @@ module.exports = {
   getCustomTourByID: async (req, res) => {
     try {
       const schema = Joi.object({
-        id: Joi.string().min(3).required(),
+        id: Joi.string()
+          .min(3)
+          .required()
+          .messages({ "any.required": "Please provide id" }),
       });
       await schema.validateAsync(req.params);
       let request = await CustomTourService.getCustomTourRequestByID(
@@ -98,7 +149,10 @@ module.exports = {
   deleteCustomTourRequest: async (req, res) => {
     try {
       const schema = Joi.object({
-        id: Joi.string().min(3).required(),
+        id: Joi.string()
+          .min(3)
+          .required()
+          .messages({ "any.required": "Please provide id" }),
       });
       await schema.validateAsync(req.body);
       let request = await CustomTourService.deleteCustomTourRequest(
@@ -129,7 +183,12 @@ module.exports = {
   rejectOffer: async (req, res) => {
     try {
       const schema = Joi.object({
-        id: Joi.string().min(3).required(),
+        id: Joi.string()
+          .min(3)
+          .required()
+          .error(() => {
+            return Error("Please Provide id");
+          }),
       });
       await schema.validateAsync(req.body);
       let reject = await CustomTourService.rejectOffer(req.body, req?.user);
@@ -159,9 +218,20 @@ module.exports = {
   giveOffer: async (req, res) => {
     try {
       const schema = Joi.object({
-        amount: Joi.number().min(100).required(),
-        description: Joi.string().required(),
-        requestID: Joi.string().required(),
+        amount: Joi.number().min(50).required().messages({
+          "any.required": "Please provide amount",
+          "number.min": "Amount must be greater than 50",
+        }),
+        description: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide description");
+          }),
+        requestID: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide requestID");
+          }),
       });
       await schema.validateAsync(req.body);
       let user = req.user;
@@ -176,8 +246,16 @@ module.exports = {
   acceptOffer: async (req, res) => {
     try {
       const schema = Joi.object({
-        requestID: Joi.string().required(),
-        vendorID: Joi.string().required(),
+        requestID: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide requestID");
+          }),
+        vendorID: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide vendorID");
+          }),
       });
       await schema.validateAsync(req.body);
       let user = req.user;

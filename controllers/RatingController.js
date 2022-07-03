@@ -70,9 +70,21 @@ module.exports = {
     try {
       let user = req.user;
       const schema = Joi.object({
-        to: Joi.string().required(),
-        message: Joi.string().required(),
-        rating: Joi.number().min(1).max(5).required(),
+        tourID: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide roomID");
+          }),
+        message: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide Feedback Message");
+          }),
+        rating: Joi.number().min(1).max(5).required().messages({
+          "any.required": "Please Provide amount",
+          "number.min": "Rating must be between 1 and 5",
+          "number.max": "Rating must be between 1 and 5",
+        }),
       });
       await schema.validateAsync(req.body);
       let newRating = await RatingService.addRatings(req.body, user);
@@ -104,7 +116,11 @@ module.exports = {
   deleteRating: async (req, res) => {
     try {
       const schema = Joi.object({
-        id: Joi.string().required(),
+        id: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide id");
+          }),
       });
       await schema.validateAsync(req.body);
       let rating = await RatingService.deleteRating(req.body);

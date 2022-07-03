@@ -6,7 +6,11 @@ module.exports = {
   markAsDone: async (req, res) => {
     try {
       const schema = Joi.object({
-        tourID: Joi.string().required(),
+        tourID: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide tourID");
+          }),
       });
       await schema.validateAsync(req.body);
       let tour = await TourService.markAsDone(req.body.tourID, req.user);
@@ -78,20 +82,75 @@ module.exports = {
     try {
       // console.log(req.body, "BODY");
       const schema = Joi.object({
-        meetLocation: Joi.string().required(),
-        places: Joi.string().required(),
-        validTill: Joi.date().required(),
-        name: Joi.string().required().min(10),
-        price: Joi.number().min(1000).required(),
-        source: Joi.string().required(),
-        destination: Joi.string().required(),
-        startDate: Joi.date().required(),
-        seats: Joi.number().min(4).required(),
-        hasGuide: Joi.boolean().required(),
-        hasFood: Joi.boolean().required(),
-        hasHotel: Joi.boolean().required(),
-        hasTransport: Joi.boolean().required(),
-        description: Joi.string().required(),
+        meetLocation: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide meetLocation");
+          }),
+        places: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide places you will be visiting");
+          }),
+        validTill: Joi.date()
+          .required()
+          .error(() => {
+            return Error(
+              "Please Provide Date on which tour booking will expire"
+            );
+          }),
+        name: Joi.string().required().min(10).messages({
+          "any.required": "Please Provide name of tour",
+          "string.min": "Name must be greater than 10 characters",
+        }),
+        price: Joi.number().min(700).required().messages({
+          "any.required": "Please Provide price of tour",
+          "number.min": "Price must be greater than 700",
+        }),
+        source: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide source city");
+          }),
+        destination: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide destination city");
+          }),
+        startDate: Joi.date()
+          .required()
+          .error(() => {
+            return Error("Please Provide date when the tour will start");
+          }),
+        seats: Joi.number().min(2).required().messages({
+          "any.required": "Please Provide seats",
+          "number.min": "Seats must be greater than 2",
+        }),
+        hasGuide: Joi.boolean()
+          .required()
+          .error(() => {
+            return Error("Please Provide Guide Requirement");
+          }),
+        hasFood: Joi.boolean()
+          .required()
+          .error(() => {
+            return Error("Please Provide Food Requirement");
+          }),
+        hasHotel: Joi.boolean()
+          .required()
+          .error(() => {
+            return Error("Please Provide Hotel Requirement");
+          }),
+        hasTransport: Joi.boolean()
+          .required()
+          .error(() => {
+            return Error("Please Provide Transport Requirement");
+          }),
+        description: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide description");
+          }),
       });
       await schema.validateAsync(req.body);
       let tours = await TourService.createTour(req);
@@ -133,7 +192,11 @@ module.exports = {
   deleteTours: async (req, res) => {
     try {
       const schema = Joi.object({
-        id: Joi.string().required(),
+        id: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide id");
+          }),
       });
       await schema.validateAsync(req.body);
       let { id } = req.body;
@@ -168,7 +231,11 @@ module.exports = {
   getTourByID: async (req, res) => {
     try {
       const schema = Joi.object({
-        id: Joi.string().required(),
+        id: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide id");
+          }),
       });
       await schema.validateAsync(req.params);
       let { id } = req.params;

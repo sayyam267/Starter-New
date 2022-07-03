@@ -4,7 +4,11 @@ const NotificationController = {
   getNotificationByID: async (req, res) => {
     try {
       const schema = Joi.object({
-        id: Joi.string().required(),
+        id: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide id");
+          }),
       });
       await schema.validateAsync(req.params);
       let id = req?.params?.id;
@@ -32,7 +36,11 @@ const NotificationController = {
   markAsread: async (req, res) => {
     try {
       const schema = Joi.object({
-        notificationID: Joi.string().required(),
+        notificationID: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide notificationID");
+          }),
       });
       await schema.validateAsync(req.body);
       let { notificationID } = req.body;

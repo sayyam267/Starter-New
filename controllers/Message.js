@@ -14,7 +14,11 @@ const MessageController = {
       //   conversationID
       // );
       const schema = Joi.object({
-        id: Joi.string().required(),
+        id: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide id");
+          }),
       });
       await schema.validateAsync(req.params);
       let messages = await MessageService.getAllMessagesByConversationID(
@@ -30,8 +34,18 @@ const MessageController = {
   sendMessage: async (req, res) => {
     try {
       const schema = Joi.object({
-        name: Joi.string().min(3).required(),
-        roomID: Joi.string().required(),
+        message: Joi.string()
+          .min(3)
+          .required()
+          .messages({
+            "any.required": "Please Provide message text",
+            "string.min": "Message content must be greater than 3",
+          }),
+        roomID: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide roomID");
+          }),
         message: Joi.string().min(4).required(),
       });
       await schema.validateAsync(req.body);

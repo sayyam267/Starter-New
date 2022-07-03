@@ -5,15 +5,40 @@ module.exports = {
     try {
       const schema = Joi.object({
         payment: Joi.object.keys({
-          CardNumber: Joi.string().required(),
-          Month: Joi.number().min(1).max(12).required(),
-          Year: Joi.number().required(),
-          CVC: Joi.number().required(),
-          Amount: Joi.number().required(),
+          CardNumber: Joi.string()
+            .required()
+            .error(() => {
+              return Error("Please Provide CardNumber");
+            }),
+          Month: Joi.number().min(1).max(12).required().messages({
+            "any.required": "Please Provide Month",
+            "number.min": "Month must be between 1 and 12",
+            "number.max": "Month must be between 1 and 12",
+          }),
+          Year: Joi.number()
+            .required()
+            .error(() => {
+              return Error("Please Provide Year");
+            }),
+          CVC: Joi.number()
+            .required()
+            .error(() => {
+              return Error("Please Provide CVC");
+            }),
+          Amount: Joi.number().min(300).required().messages({
+            "any.required": "Please Provide Amount",
+            "number.min": "Amount must be greater than 300",
+          }),
         }),
         user: Joi.object().keys({
-          email: Joi.string().email().required(),
-          name: Joi.string().min(5).required(),
+          email: Joi.string().email().required().messages({
+            "any.required": "Please Provide email",
+            "string.email": "Must be a valid Email",
+          }),
+          name: Joi.string().min(5).required().messages({
+            "any.required": "Please Provide name",
+            "number.min": "name must be greater than 5 characters",
+          }),
         }),
       });
       await schema.validateAsync(req.body);
@@ -31,7 +56,11 @@ module.exports = {
   refundPurchase: async (req, res) => {
     try {
       const schema = Joi.object({
-        id: Joi.string().required(),
+        id: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide id");
+          }),
       });
       await schema.validateAsync(req.body);
       let refund = await TransactionService.refundPurchase(req.body);
@@ -47,7 +76,11 @@ module.exports = {
   getTransactionByID: async (req, res) => {
     try {
       const schema = Joi.object({
-        id: Joi.string().required(),
+        id: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide id");
+          }),
       });
       await schema.validateAsync(req.params);
       let transcantion = await TransactionService.getTransactionByID(

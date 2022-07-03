@@ -279,8 +279,15 @@ module.exports = {
   verifyUser: async (req, res) => {
     try {
       const schema = Joi.object({
-        email: Joi.string().email().required(),
-        code: Joi.string().required(),
+        email: Joi.string().email().required().messages({
+          "any.required": "Please Provide email",
+          "string.email": "Email must be valid",
+        }),
+        code: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide code");
+          }),
       });
       await schema.validateAsync(req.query);
       if (Object.keys(req?.query).length > 0) {
@@ -311,7 +318,11 @@ module.exports = {
     try {
       let { id } = req.body;
       const schema = Joi.object({
-        id: Joi.string().required(),
+        id: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide id");
+          }),
       });
       await schema.validateAsync(req.body);
       let user = await UserService.blockUser(id);
@@ -330,7 +341,10 @@ module.exports = {
     try {
       let { email } = req.body;
       const schema = Joi.object({
-        email: Joi.string().email().required(),
+        email: Joi.string().email().required().messages({
+          "any.required": "Please Provide email",
+          "number.min": "Email muust be valid",
+        }),
       });
       await schema.validateAsync(req.body);
       let code = await UserService.forgotPassword(email);
@@ -348,8 +362,14 @@ module.exports = {
     try {
       let { email, password } = req.body;
       const schema = Joi.object({
-        email: Joi.string().email().required(),
-        password: Joi.string().min(8).required(),
+        email: Joi.string().email().required().messages({
+          "any.required": "Please Provide email",
+          "string.email": "Email must be valid",
+        }),
+        password: Joi.string().min(8).required().messages({
+          "any.required": "Please Provide password",
+          "string.min": "Password must be greater than 8 characters",
+        }),
       });
       await schema.validateAsync(req.body);
       let changes = await UserService.updatePassword(email, password);
@@ -365,10 +385,21 @@ module.exports = {
     try {
       let user = req.user;
       const schema = Joi.object({
-        email: Joi.string().email(),
-        fname: Joi.string().min(5),
-        lname: Joi.string().min(5),
-        city: Joi.string(),
+        email: Joi.string().email().messages({
+          "any.required": "Please Provide email",
+          "string.email": "Email must be valid",
+        }),
+        fname: Joi.string().min(5).messages({
+          "any.required": "Please Provide First Name",
+          "string.min": "First Name must be greater than 5 characters",
+        }),
+        lname: Joi.string().min(5).messages({
+          "any.required": "Please Provide Last Name",
+          "string.min": "Last Name must be greater than 5 characters",
+        }),
+        city: Joi.string().error(() => {
+          return Error("Please Provide city");
+        }),
       });
       await schema.validateAsync(req.body);
       let newDetails = await UserService.updateProfile(req.body, user);
@@ -393,8 +424,15 @@ module.exports = {
   verifyOTP: async (req, res) => {
     try {
       const schema = Joi.object({
-        email: Joi.string().email().required(),
-        code: Joi.string().required(),
+        email: Joi.string().email().required().messages({
+          "any.required": "Please Provide email",
+          "string.email": "Email must be valid",
+        }),
+        code: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide code");
+          }),
       });
       await schema.validateAsync(req.body);
       let otpmatched = await UserService.verifyOTP(req.body);

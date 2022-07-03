@@ -79,7 +79,11 @@ module.exports = {
   getOrderByID: async (req, res) => {
     try {
       const schema = Joi.object({
-        id: Joi.string().required(),
+        id: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide id");
+          }),
       });
       await schema.validateAsync(req.params);
       let orders = await OrderService.getOrderByID(req.params.id);
@@ -91,7 +95,9 @@ module.exports = {
   getOrdersByAmount: async (req, res) => {
     try {
       const schema = Joi.object({
-        amount: Joi.number().min(3).required(),
+        amount: Joi.number()
+          .required()
+          .messages({ "any.required": "Please provide amount" }),
       });
       await schema.validateAsync(req.query);
       let orders = await OrderService.getOrdersByAmount(req.query?.amount);
@@ -103,7 +109,11 @@ module.exports = {
   getOrdersByApporval: async (req, res) => {
     try {
       const schema = Joi.object({
-        approved: Joi.boolean().required(),
+        approved: Joi.boolean()
+          .required()
+          .error(() => {
+            return Error("Please Provide approved status");
+          }),
       });
       await schema.validateAsync(req.query);
       let orders = await OrderService.getOrdersByApporval(req.query?.approved);
@@ -115,8 +125,16 @@ module.exports = {
   getOrdersByApporvalByTouristID: async (req, res) => {
     try {
       const schema = Joi.object({
-        approved: Joi.boolean().required(),
-        touristID: Joi.boolean().required(),
+        approved: Joi.boolean()
+          .required()
+          .error(() => {
+            return Error("Please Provide approved status");
+          }),
+        touristID: Joi.boolean()
+          .required()
+          .error(() => {
+            return Error("Please Provide touristID");
+          }),
       });
       await schema.validateAsync(req.query);
       let orders = await OrderService.getOrdersByApporvalByTouristID({
@@ -139,7 +157,11 @@ module.exports = {
   getRefundedOrdersByTouristID: async (req, res) => {
     try {
       const schema = Joi.object({
-        touristID: Joi.string().min(3).required(),
+        touristID: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide touristID");
+          }),
       });
       await schema.validateAsync(req.query);
       let orders = await OrderService.getRefundedOrdersByTouristID(
@@ -153,7 +175,11 @@ module.exports = {
   rejectTour: async (req, res) => {
     try {
       const schema = Joi.object({
-        id: Joi.string().required(),
+        id: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide id");
+          }),
       });
       await schema.validateAsync(req.body);
       let data = req.body;
@@ -167,7 +193,11 @@ module.exports = {
   approveTour: async (req, res) => {
     try {
       const schema = Joi.object({
-        id: Joi.string().required(),
+        id: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide id");
+          }),
       });
       await schema.validateAsync(req.body);
       let user = req.user;
@@ -183,10 +213,24 @@ module.exports = {
   createOrder: async (req, res) => {
     try {
       const schema = Joi.object({
-        touristID: Joi.string().required(),
-        amount: Joi.number().required().min(100),
-        tourID: Joi.string().required(),
-        seats: Joi.number().required().min(1),
+        touristID: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide touristID");
+          }),
+        amount: Joi.number().required().min(50).messages({
+          "any.required": "Please Provide amount",
+          "number.min": "Amount must be greater than 50",
+        }),
+        tourID: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide tourID");
+          }),
+        seats: Joi.number().required().min(1).messages({
+          "any.required": "Please Provide amount",
+          "number.min": "Seats must be greater than 1",
+        }),
       });
       await schema.validateAsync(req.body);
       let user = req.user;
@@ -199,7 +243,11 @@ module.exports = {
   refundTour: async (req, res) => {
     try {
       const schema = Joi.object({
-        id: Joi.string().required(),
+        id: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide id");
+          }),
       });
       await schema.validateAsync(req.body);
 
@@ -212,7 +260,11 @@ module.exports = {
   rejectRefundRequest: async (req, res) => {
     try {
       const schema = Joi.object({
-        id: Joi.string().required(),
+        id: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide id");
+          }),
       });
       await schema.validateAsync(req.body);
       let data = req.body;
@@ -226,7 +278,11 @@ module.exports = {
   requestRefund: async (req, res) => {
     try {
       const schema = Joi.object({
-        orderID: Joi.string().required(),
+        orderID: Joi.string()
+          .required()
+          .error(() => {
+            return Error("Please Provide orderID");
+          }),
       });
       await schema.validateAsync(req.body);
       let user = req.user;
