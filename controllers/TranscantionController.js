@@ -4,7 +4,7 @@ module.exports = {
   purchaseCredits: async (req, res) => {
     try {
       const schema = Joi.object({
-        payment: Joi.object.keys({
+        payment: Joi.object().keys({
           CardNumber: Joi.string()
             .required()
             .error(() => {
