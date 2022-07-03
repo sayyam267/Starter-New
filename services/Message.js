@@ -27,10 +27,14 @@ const MessageService = {
             lastMessage: newMessage,
           }
         );
+        let message = await MessageModel.findById(newMessage._id).populate([
+          "sender",
+          "receiver",
+        ]);
         pusher.trigger(
           `${data.roomID}`,
           "message-received",
-          newMessage
+          message
           // {
           //   message: newMessage.message,
           //   from: newMessage.sender,

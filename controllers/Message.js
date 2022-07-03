@@ -34,9 +34,8 @@ const MessageController = {
   sendMessage: async (req, res) => {
     try {
       const schema = Joi.object({
-        message: Joi.string().min(3).required().messages({
+        message: Joi.string().required().messages({
           "any.required": "Please Provide message text",
-          "string.min": "Message content must be greater than 3",
         }),
         roomID: Joi.string()
           .required()
