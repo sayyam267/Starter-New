@@ -27,12 +27,17 @@ const MessageService = {
             lastMessage: newMessage,
           }
         );
-        pusher.trigger(`${data.roomID}`, "message-received", {
-          message: newMessage.message,
-          from: newMessage.sender,
-          to: newMessage.receiver,
-          date: newMessage.createdAt,
-        });
+        pusher.trigger(
+          `${data.roomID}`,
+          "message-received",
+          newMessage
+          // {
+          //   message: newMessage.message,
+          //   from: newMessage.sender,
+          //   to: newMessage.receiver,
+          //   date: newMessage.createdAt,
+          // }
+        );
         return newMessage;
       }
       // res.send({ message: req.body.message, from: req.body.from, to: req.body.to });
