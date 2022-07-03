@@ -645,11 +645,11 @@ const userService = {
         let fullname = user.fname + " " + user.lname;
         let code = Math.floor(Math.random() * 90000 + 10000);
 
-        // await sendForgotPassword({
-        //   name: fullname,
-        //   email: user.email,
-        //   confirmationCode: code,
-        // });
+        await sendForgotPassword({
+          name: fullname,
+          email: user.email,
+          confirmationCode: code,
+        });
         user.passwordResetCode = code;
         user.passwordResetExpiry = new Date(Date.now() + 3600000);
         console.log("IN FORGOT" + code);
