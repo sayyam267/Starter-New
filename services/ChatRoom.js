@@ -18,7 +18,7 @@ const ChatRoomService = {
           select: ["fname", "lname", "email", "profilePicture"],
         })
         .populate({
-          path: ["lastMessage.sender", "lastMessage.receiver"],
+          path: "lastMessage.sender",
           model: "users",
           select: ["fname", "lname"],
         });
@@ -64,7 +64,7 @@ const ChatRoomService = {
           select: ["message", "sender"],
         })
         .populate({
-          path: ["lastMessage.sender", "lastMessage.receiver"],
+          path: "lastMessage.sender",
           model: "users",
           select: ["fname", "lname"],
         });
