@@ -34,19 +34,16 @@ const MessageController = {
   sendMessage: async (req, res) => {
     try {
       const schema = Joi.object({
-        message: Joi.string()
-          .min(3)
-          .required()
-          .messages({
-            "any.required": "Please Provide message text",
-            "string.min": "Message content must be greater than 3",
-          }),
+        message: Joi.string().min(3).required().messages({
+          "any.required": "Please Provide message text",
+          "string.min": "Message content must be greater than 3",
+        }),
         roomID: Joi.string()
           .required()
           .error(() => {
             return Error("Please Provide roomID");
           }),
-        message: Joi.string().min(4).required(),
+        receiver: Joi.string().required(),
       });
       await schema.validateAsync(req.body);
       let user = req?.user;
