@@ -6,16 +6,25 @@ module.exports = {
     try {
       const schema = Joi.object({
         requirements: Joi.object().keys({
-          maxBudget: Joi.number().min(100).max(99999).required(),
-          seats: Joi.number().min(1).required(),
-          description: Joi.string().required(),
-          source: Joi.string().required(),
-          destination: Joi.string().required(),
-          isHotel: Joi.boolean().required(),
-          isGuide: Joi.boolean().required(),
-          places: Joi.array().required(),
-          startDate: Joi.date().required(),
-          endDate: Joi.date().required(),
+          maxBudget: Joi.number()
+            .min(100)
+            .max(99999)
+            .required("Please Provide maxBudget"),
+          seats: Joi.number().min(1).required("Please provide # of seats!"),
+          description: Joi.string().required("Please provide Description!"),
+          source: Joi.string().required("Please provide Source City!"),
+          destination: Joi.string().required(
+            "Please provide Destination City!"
+          ),
+          isHotel: Joi.boolean().required("Please provide Hotel Requirement!"),
+          isGuide: Joi.boolean().required("Please provide Guide Requirement!"),
+          places: Joi.array().required(
+            "Please provide places you want to visit!"
+          ),
+          startDate: Joi.date().required("Please provide Date you want to go!"),
+          endDate: Joi.date().required(
+            "Please provide Date that will tell the duration of tour!"
+          ),
         }),
       });
       await schema.validateAsync(req.body);
