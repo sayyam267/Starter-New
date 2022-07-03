@@ -11,7 +11,7 @@ const ConversationController = {
             return Error("Please Provide receiverID");
           }),
       });
-      await schema.validateAsync(req.body.receiver);
+      await schema.validateAsync(req.body);
       let user = req.user;
       // if (!req.body?.receiver) {
       //   let e = new Error("RECEIVER Person missing in req.body");
