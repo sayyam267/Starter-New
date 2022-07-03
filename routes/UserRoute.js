@@ -35,8 +35,8 @@ router.post("/forgot", UserController.forgotPassword);
 router.put(
   "/update/password",
   handleSingupAuth,
-  userRules.updatePassword(),
-  validation,
+  // userRules.updatePassword(),
+  // validation,
   UserController.updatePassword
 );
 router.get("/mydetails", handleAuth, UserController.getmyDetails);

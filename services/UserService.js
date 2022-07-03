@@ -694,7 +694,7 @@ const userService = {
       email: email,
       isDeleted: false,
     }).select(["fname", "lname"]);
-    let user = await UserModel.updateOne(
+    let user = await UserModel.findOneAndUpdate(
       {
         email: email,
         isDeleted: false,
