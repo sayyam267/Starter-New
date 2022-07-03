@@ -37,7 +37,12 @@ const ChatRoomService = {
         people: { $all: [data.id] },
       })
         .sort("-updatedAt")
-        .populate(["people"]);
+        // .populate(["people"]);
+        .populate({
+          path: "people",
+          model: "users",
+          select: ["fname", , "lname", "phoneNumber", "email"],
+        });
 
       if (room) return room;
       //   res.json(rooms);
