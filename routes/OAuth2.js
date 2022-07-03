@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const passport = require("passport");
+// const passport = require("passport");
 const UserModel = require("../models/UserModel");
 const jwt = require("jsonwebtoken");
 router.post("/google/createuser", async (req, res) => {
