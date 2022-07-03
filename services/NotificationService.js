@@ -17,7 +17,9 @@ const NotificationService = {
   },
   getNotificationsByUserID: async (user) => {
     try {
-      let notifications = await NotificationsModel.find({ userID: user.id });
+      let notifications = await NotificationsModel.find({
+        userID: user.id,
+      }).sort("-createdAt");
       if (notifications) {
         return notifications;
       } else {

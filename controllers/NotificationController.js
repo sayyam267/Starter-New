@@ -21,7 +21,7 @@ const NotificationController = {
       let user = req.user;
       let notifications = await NotificationService.getNotificationsByUserID(
         user
-      ).sort("-createdAt");
+      );
       return res.send({ data: notifications, message: "Fetched Notificaions" });
     } catch (e) {
       return res
