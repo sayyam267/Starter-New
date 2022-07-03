@@ -389,17 +389,18 @@ module.exports = {
           "any.required": "Please Provide email",
           "string.email": "Email must be valid",
         }),
-        fname: Joi.string().min(5).messages({
+        fname: Joi.string().min(3).messages({
           "any.required": "Please Provide First Name",
           "string.min": "First Name must be greater than 5 characters",
         }),
-        lname: Joi.string().min(5).messages({
+        lname: Joi.string().min(3).messages({
           "any.required": "Please Provide Last Name",
           "string.min": "Last Name must be greater than 5 characters",
         }),
         city: Joi.string().error(() => {
           return Error("Please Provide city");
         }),
+        phoneNumber: Joi.string.min(11),
       });
       await schema.validateAsync(req.body);
       let newDetails = await UserService.updateProfile(req.body, user);
