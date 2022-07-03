@@ -6,7 +6,17 @@ const ChatRoomService = {
       //   console.log(data);
       let existing = await ChatRoomModel.findOne({
         people: { $all: [data.sender, data.receiver] },
-      });
+      })
+        .populate({
+          path: "lastMessage",
+          model: "messages",
+          select: ["message", "sender"],
+        })
+        .populate({
+          path: "people",
+          model: "users",
+          select: ["fname", "lname", "email", "profilePicture"],
+        });
       // .populate(["people", "lastMessage"]);
       if (existing) {
         // console.log(existing);
@@ -41,7 +51,7 @@ const ChatRoomService = {
         .populate({
           path: "people",
           model: "users",
-          select: ["fname", "lname", "phoneNumber", "email", "profilePicture"],
+          select: ["fname", "lname", "email", "profilePicture"],
         })
         .populate({
           path: "lastMessage",
