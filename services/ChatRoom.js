@@ -16,6 +16,11 @@ const ChatRoomService = {
           path: "people",
           model: "users",
           select: ["fname", "lname", "email", "profilePicture"],
+        })
+        .populate({
+          path: ["lastMessage.sender", "lastMessage.receiver"],
+          model: "users",
+          select: ["fname", "lname"],
         });
       // .populate(["people", "lastMessage"]);
       if (existing) {
@@ -57,6 +62,11 @@ const ChatRoomService = {
           path: "lastMessage",
           model: "Messages",
           select: ["message", "sender"],
+        })
+        .populate({
+          path: ["lastMessage.sender", "lastMessage.receiver"],
+          model: "users",
+          select: ["fname", "lname"],
         });
 
       if (room) return room;
