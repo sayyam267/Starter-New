@@ -645,11 +645,11 @@ const userService = {
         let fullname = user.fname + " " + user.lname;
         let code = Math.floor(Math.random() * 90000 + 10000);
 
-        await sendForgotPassword({
-          name: fullname,
-          email: user.email,
-          confirmationCode: code,
-        });
+        // await sendForgotPassword({
+        //   name: fullname,
+        //   email: user.email,
+        //   confirmationCode: code,
+        // });
         user.passwordResetCode = code;
         user.passwordResetExpiry = new Date(Date.now() + 3600000);
         console.log("IN FORGOT" + code);
@@ -668,9 +668,9 @@ const userService = {
       "passwordResetExpiry",
     ]);
     if (user) {
-      if (user.passwordResetCode == data.code) {
+      if (Number(user.passwordResetCode) == Number(data.code)) {
         if (user.passwordResetExpiry < Date.now()) {
-          let e = new Error("Expired");
+          let e = new Error("Password Reset Expired. Please try Again!");
           e.statusCode = 400;
           throw e;
         } else {
