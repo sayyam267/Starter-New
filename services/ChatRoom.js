@@ -42,6 +42,11 @@ const ChatRoomService = {
           path: "people",
           model: "users",
           select: ["fname", "lname", "phoneNumber", "email", "profilePicture"],
+        })
+        .populate({
+          path: "lastMessage",
+          model: "messages",
+          select: ["message", "sender"],
         });
 
       if (room) return room;
