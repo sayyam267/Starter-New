@@ -145,6 +145,8 @@ const userService = {
     }
   },
   getPendingAdmins: async () => {
+    // console.log("INside pending admins")
+
     let admins = await UserModel.find({
       userType: "admin",
       isActive: false,

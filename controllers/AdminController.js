@@ -79,7 +79,9 @@ module.exports = {
   },
   getDashBoard: async (req, res) => {
     try {
-      let dashboard = await AdminService.getDashboard();
+      let user = req.user;
+      // console.log("inside get deshboard");
+      let dashboard = await AdminService.getDashboard(user);
       return res.send({ data: dashboard, message: "Fetched" });
     } catch (e) {
       return res

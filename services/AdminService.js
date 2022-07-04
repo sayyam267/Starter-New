@@ -103,6 +103,7 @@ module.exports = {
     }
   },
   getpendingVendorsRequests: async () => {
+    // console.log("INside pending vendor req")
     let vendors = await UserService.getPendingVendors();
     if (vendors) {
       // let filtered = vendors.filter((user) => {
@@ -196,7 +197,7 @@ module.exports = {
       else return false;
     }
   },
-  getDashboard: async () => {
+  getDashboard: async (user) => {
     // let dashboard = {};
     // if (req.user) {
     //   const pendingRequests = await module.exports.getpendingVendorsRequests();
@@ -217,7 +218,7 @@ module.exports = {
     let totalNoOfDeletedUsers = await UserModel.find({
       isDeleted: true,
     }).count();
-    let allUsers = await UserService.getAll();
+    let allUsers = await UserService.getAll(user);
     let activeUsers = await UserModel.find({ isActive: true })
       .populate("city")
       .select("-password");
