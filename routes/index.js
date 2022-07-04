@@ -33,8 +33,7 @@ const getRoutes = (app) => {
     { path: "messages", router: MessageRoute },
     { path: "conversations", router: ConversationRoute },
     { path: "notifications", router: NotificationRoute },
-    {path:  "vendor", router:VendorRoute}
-
+    { path: "vendor", router: VendorRoute },
   ];
   routes.forEach((route) => {
     app.use(`${prefix}${route.path}`, route.router);

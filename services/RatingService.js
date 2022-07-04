@@ -68,6 +68,9 @@ module.exports = {
     if (query?.to) {
       finalQuery.to = query?.to;
     }
+    if (query?.tourid) {
+      finalQuery.tourID = query?.tourid;
+    }
     console.log(finalQuery);
     if (Object.keys(finalQuery).length > 0) {
       let results = await RatingModel.find(finalQuery).select([
