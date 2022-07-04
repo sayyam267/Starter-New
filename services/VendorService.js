@@ -3,7 +3,24 @@ const OrderModel = require("../models/Orders");
 const TourModel = require("../models/TourPack");
 const { default: mongoose } = require("mongoose");
 const CustomTour = require("../models/CustomTour");
+const UserModel = require("../models/UserModel");
+
 module.exports = {
+  getVendorByID: async (id) => {
+    let vendor = await UserModel.find({ _id: id, isDeleted: false }).select([
+      "fname",
+      "lname",
+      "rating",
+      "profilePicture",
+      "email",
+    ]);
+    if (vendor) return vendor;
+    else {
+      let e = new Error("Not Found");
+      e.statusCode = 404;
+      throw e;
+    }
+  },
   getRefundTourRequests: async (user) => {
     let refundRequests = await OrderService.getRefundRequestsByVendorID(user);
     if (refundRequests) {

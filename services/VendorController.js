@@ -1,7 +1,23 @@
 const OrderService = require("./OrderService");
 const VendorService = require("./VendorService");
-
+const Joi = require("joi");
 module.exports = {
+  getVendorByID: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        id: Joi.string()
+          .required()
+          .messages({ "any.required": "Please provide id in params" }),
+      });
+      await schema.validateAsync(req.params);
+      let vendor = await VendorService.getVendorByID(req.params.id);
+      return res.send({ data: vendor, message: "Fetched" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
   getRefundTourRequests: async (req, res) => {
     try {
       let user = req.user;

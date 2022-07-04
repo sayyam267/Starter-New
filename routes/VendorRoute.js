@@ -5,6 +5,7 @@ const VendorController = require("../services/VendorController");
 
 const router = require("express").Router();
 
+router.get("/get/:id", VendorController.getVendorByID);
 router.get(
   "/requests/refunds",
   handleAuth,
