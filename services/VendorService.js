@@ -14,8 +14,17 @@ module.exports = {
       "profilePicture",
       "email",
     ]);
-    if (vendor) return vendor;
-    else {
+    if (vendor) {
+      let tours = await TourModel.find({ vendorID: id }).populate([
+        "source",
+        "destination",
+      ]);
+      if (tours) {
+        return { vendor, tours };
+      } else {
+        return { vendor, tours: [] };
+      }
+    } else {
       let e = new Error("Not Found");
       e.statusCode = 404;
       throw e;
