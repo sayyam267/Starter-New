@@ -18,7 +18,7 @@ module.exports = {
     }
   },
   getMyOrders: async (user) => {
-    let orders = OrderModel.find({ touristID: user.id })
+    let orders = await OrderModel.find({ touristID: user.id })
       .populate({
         path: "tourID",
         model: "tours",

@@ -52,7 +52,6 @@ const ChatRoomService = {
         people: { $all: [data.id] },
       })
         .sort("-updatedAt")
-        // .populate(["people"]);
         .populate({
           path: "people",
           model: "users",
@@ -64,9 +63,12 @@ const ChatRoomService = {
           select: ["message", "sender"],
         })
         .populate({
-          path: "lastMessage.sender",
-          model: "users",
-          select: ["fname", "lname"],
+          path: "lastMessage",
+          populate: {
+            path: "sender",
+            model: "users",
+            select: ["fname", "lname"],
+          },
         });
 
       if (room) return room;
