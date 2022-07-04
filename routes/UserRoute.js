@@ -27,8 +27,8 @@ router.get("/get", UserController.getUser);
 router.get("/get/:id", UserController.getUserByID);
 router.get(
   "/all",
-  // handleAuth,
-  // authAdmin,
+  handleAuth,
+  authAdmin,
   UserController.getAll
 );
 router.post("/forgot", UserController.forgotPassword);

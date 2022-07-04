@@ -456,7 +456,8 @@ module.exports = {
   },
   getAll: async (req, res) => {
     try {
-      let users = await UserService.getAll();
+      let user= req?.user;
+      let users = await UserService.getAll(user);
       return res.send({ data: users, message: "Fetched" });
     } catch (e) {
       return res

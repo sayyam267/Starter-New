@@ -800,8 +800,8 @@ const userService = {
       throw e;
     }
   },
-  getAll: async () => {
-    let users = await UserModel.find({}).select("-password").populate("city");
+  getAll: async (user) => {
+    let users = await UserModel.find({_id:{$ne:user._id}}).select("-password").populate("city");
     if (users) return users;
     else {
       let e = new Error("NOT FOUND");
