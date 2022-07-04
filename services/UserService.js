@@ -801,7 +801,7 @@ const userService = {
     }
   },
   getAll: async (user) => {
-    let users = await UserModel.find({_id:{$ne:user._id}}).select("-password").populate("city").sort("-createdAt");
+    let users = await UserModel.find({_id:{$ne:user.id}}).select("-password").populate("city").sort("-createdAt");
     if (users) return users;
     else {
       let e = new Error("NOT FOUND");
