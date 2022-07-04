@@ -22,7 +22,15 @@ module.exports = {
       .populate({
         path: "tourID",
         model: "tours",
-        select: ["name", "description"],
+        select: ["name", "description", "vendorID"],
+      })
+      .populate({
+        path: "tourID",
+        populate: {
+          path: "vendorID",
+          model: "users",
+          select: ["fname", "lname", "email"],
+        },
       })
       .sort("-updatedAt");
     if (orders) {
