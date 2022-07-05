@@ -9,7 +9,7 @@ const ChatRoomService = {
       })
         .populate({
           path: "lastMessage",
-          model: "Messages",
+          model: "messages",
           select: ["message", "sender"],
         })
         .populate({
@@ -59,7 +59,7 @@ const ChatRoomService = {
         })
         .populate({
           path: "lastMessage",
-          model: "Messages",
+          model: "messages",
           select: ["message", "sender"],
         })
         .populate({
