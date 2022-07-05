@@ -18,9 +18,13 @@ const ChatRoomService = {
           select: ["fname", "lname", "email", "profilePicture"],
         })
         .populate({
-          path: "lastMessage.sender",
-          model: "users",
+          path: "lastMessage",
+          populate:{
+            path:"sender",
+            model: "users",
           select: ["fname", "lname"],
+          }
+          
         });
       // .populate(["people", "lastMessage"]);
       if (existing) {
