@@ -62,10 +62,13 @@ module.exports = {
   getToursByID: async (id, user) => {
     let touristApproved = false;
 
-    let tours = await TourModel.findById(id).populate([
-      "source",
-      "destination",
-    ]);
+    let tours = await TourModel.findById(id)
+      .populate(["source", "destination"])
+      .populate({
+        path: "vendorID",
+        model: "users",
+        select: ["fname", "lname", "email", "profilePicture"],
+      });
     if (tours) {
       if (user) {
         let order = await OrderModel.find({ touristID: user.id });
