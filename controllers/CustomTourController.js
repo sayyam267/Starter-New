@@ -9,8 +9,8 @@ module.exports = {
         requirements: Joi.object().keys({
           maxBudget: Joi.number().min(100).max(99999).required().messages({
             "any.required": "Please provide # of seats!",
-            "number.min": "Number of seats must be greater than 100",
-            "number.max": "Number of seats must be less than 99999",
+            "number.min": "Number of maxBudget must be greater than 100",
+            "number.max": "Number of maxBudget must be less than 99999",
           }),
           // .error((err) => {
           //   if (err.type == "any.required")
@@ -24,9 +24,10 @@ module.exports = {
           //       `Value should have at least ${err.context.limit} characters!`
           //     );
           // }),
-          seats: Joi.number().min(1).required().messages({
+          seats: Joi.number().min(1).max(200).required().messages({
             "any.required": "Please provide # of seats!",
             "number.min": "Number of seats must be greater than 1",
+            "number.max": "Number of seats must be less than 200",
           }),
           // .error((err) => {
           //   if (err.type == "any.required")

@@ -6,6 +6,7 @@ const handleAuth = require("../middlewares/auth");
 
 router.get("/get/:id", RatingController.getRatingByID);
 router.get("/get", RatingController.getRating);
+router.get("/vendor", RatingController.getRatingByVendorID);
 // router.post("/edit", authTourist, RatingController.editRating);
 router.post("/delete", handleAuth, authTourist, RatingController.deleteRating);
 router.post("/add", handleAuth, authTourist, RatingController.addRating);

@@ -304,11 +304,10 @@ module.exports = {
       e.statusCode = 404;
       throw e;
     } else {
-      if (existingTour.vendorID === data.vendorID) {
-        let newdetails = data.newdetails;
+      if (existingTour.vendorID === user.id) {
         let newTour = await TourModel.findOneAndReplace(
           { _id: data.id },
-          newdetails
+          ...data
         );
         let notification = await Notification.create({
           text: `Your Tour ${tour.name} Info was edited`,

@@ -35,6 +35,6 @@ router.get("/all", TourController.getAll);
 router.get("/home/", handleAuth, TourController.home);
 router.put("/done", handleAuth, TourController.markAsDone);
 //EDIT ROUTE
-// router.put("/edit", TourController.edit);
+router.put("/edit", handleAuth, authVendor, TourController.edit);
 
 module.exports = router;

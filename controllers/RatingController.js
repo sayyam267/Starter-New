@@ -66,6 +66,16 @@ const Joi = require("joi");
 // };
 
 module.exports = {
+  getRatingByVendorID: async (req, res) => {
+    try {
+      let ratings = await RatingService.getRatingsByVendorID(req.body);
+      return res.send({ data: ratings, message: "Fetched" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: e.data || null, message: e.message });
+    }
+  },
   addRating: async (req, res) => {
     try {
       let user = req.user;

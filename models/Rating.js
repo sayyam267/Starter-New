@@ -9,7 +9,7 @@ const Schema = mongoose.Schema(
     },
     rating: { type: Number, required: true, default: 2.5 },
     tourID: { type: mongoose.Schema.Types.ObjectId, ref: "Tours" },
-    // to: { type: String },
+    vendorID: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
     message: { type: String },
   },
   { timestamps: true }

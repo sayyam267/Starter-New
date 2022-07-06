@@ -3,6 +3,18 @@ const TourService = require("../services/TourService");
 const Joi = require("joi");
 
 module.exports = {
+  edit: async (req, res) => {
+    try {
+      let user = req?.user;
+      let edited = await TourService.editTour(req.body, user);
+      return res.send({ data: edited, message: "Edited" });
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e?.message });
+    }
+  },
+
   markAsDone: async (req, res) => {
     try {
       const schema = Joi.object({

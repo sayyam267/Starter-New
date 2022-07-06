@@ -1,4 +1,5 @@
 const RatingModel = require("../models/Rating");
+const TourPack = require("../models/TourPack");
 const UserModel = require("../models/UserModel");
 
 module.exports = {
@@ -26,6 +27,17 @@ module.exports = {
   },
   getRatingsByTourID: async (data) => {
     let tourRating = await RatingModel.find({ tourID: data.tourID });
+    if (Object.keys(tourRating) > 0) {
+      return tourRating;
+    } else {
+      let e = new Error();
+      e.message = `No Ratings Found`;
+      e.statusCode = 404;
+      throw e;
+    }
+  },
+  getRatingsByVendorID: async (data) => {
+    let tourRating = await RatingModel.find({ vendorID: data.vendorID });
     if (Object.keys(tourRating) > 0) {
       return tourRating;
     } else {
@@ -93,20 +105,18 @@ module.exports = {
     // console.log(user);
     let existingRating = await RatingModel.findOne({
       touristID: user.id,
-      to: data.to,
+      tourID: data.tourID,
     }).select(["rating", "message"]);
     if (existingRating) {
-      let e = new Error();
-      e.message = "Already Exist";
-      e.statusCode = 400;
-      e.data = existingRating;
-      throw e;
+      return existingRating;
     } else {
+      let vendor = await TourPack.findById(data.tourID).select("vendorID");
       let newRatings = await RatingModel({
-        to: data.to,
+        tourID: data.tourID,
         message: data.message,
         rating: data.rating,
         touristID: user.id,
+        vendorID: vendor.vendorID,
       });
       await newRatings.save();
       return newRatings;
