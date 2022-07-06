@@ -7,11 +7,25 @@ const handleAuth = require("../middlewares/auth");
 const validation = require("../helpers/validation");
 const multer_middleware = require("../middlewares/multer");
 
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join("./public/images/tourpics"));
+  },
+  filename: (req, file, cb) => {
+    const filename = file.originalname.split(".jpg")[0];
+    cb(null, Date.now() + " - " + filename + path.extname(file.originalname));
+  },
+});
+const upload = multer({ storage: storage });
+
 router.post(
   "/create",
   handleAuth,
   authVendor,
-  multer_middleware,
+  // multer_middleware,
+  upload.fields([{ name: "multiImages", maxCount: 5 }]),
   TourController.createTour
 );
 router.post("/delete", handleAuth, authVendor, TourController.deleteTours);

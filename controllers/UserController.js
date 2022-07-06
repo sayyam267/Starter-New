@@ -413,11 +413,10 @@ module.exports = {
   },
   updateProfilePicture: async (req, res) => {
     try {
+      console.log(req.body);
       let user = req?.user;
-      if (req?.body?.picture) {
-        let newPicture = await UserService.updatePicture(req?.body, user);
-        return res.send({ data: true, message: "Updated" });
-      }
+      let newPicture = await UserService.updatePicture(req, user);
+      return res.send({ data: true, message: "Updated" });
     } catch (e) {
       return res
         .status(e?.statusCode || 400)
@@ -480,8 +479,8 @@ module.exports = {
   },
   getUserByID: async (req, res) => {
     try {
-      let user = req.user;
-      let userFetched = await UserService.getUserByID(req.user.id);
+      // let user = req.user;
+      let userFetched = await UserService.getUserByID(req.params.id);
       return res.send({ data: userFetched, message: "Fetched" });
     } catch (e) {
       return res

@@ -6,6 +6,21 @@ const router = require("express").Router();
 const handleSingupAuth = require("../middlewares/signUpauth");
 const authAdmin = require("../middlewares/adminAuth");
 const handleAuth = require("../middlewares/auth");
+const multerprofileImages = require("../middlewares/multer_profilePicture");
+const path = require("path");
+
+const multer = require("multer");
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join("./public/images/profile-pictures"));
+  },
+  filename: (req, file, cb) => {
+    const filename = file.originalname.split(".jpg")[0];
+    cb(null, Date.now() + "-" + filename + path.extname(file.originalname));
+  },
+});
+const upload = multer({ storage: storage });
+
 router.post(
   "/login",
   // handleSingupAuth,
@@ -38,7 +53,13 @@ router.get("/mydetails", handleAuth, UserController.getmyDetails);
 router.put("/verify/otp", UserController.verifyOTP);
 router.put("/block", handleAuth, authAdmin, UserController.blockUser);
 router.put("/delete", handleAuth, UserController.deleteUser);
-router.put("/update/picture", handleAuth, UserController.updateProfilePicture);
+router.put(
+  "/update/picture",
+  cors(),
+  handleAuth,
+  upload.single("picture"),
+  UserController.updateProfilePicture
+);
 router.put("/update/profile", cors(), handleAuth, UserController.updateProfile);
 router.get("/balance", handleAuth, UserController.getBalance);
 // router.post("/block/", handleAuth, authAdmin, UserController.blockUser);

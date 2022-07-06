@@ -11,6 +11,7 @@ app.use(express.json());
 app.use(require("cors")());
 const string = process.env.CONNECTION_STRING;
 const getRoutes = require("./routes/index.js");
+app.use(express.static(path.join("public")));
 
 mongoose
   .connect(string)
@@ -29,7 +30,6 @@ const limiter = rateLimit({
 });
 getRoutes(app);
 app.use(limiter);
-app.use(express.static(path.join("public")));
 
 app.get("/", (req, res) => {
   res.send("<h1>TourBook backend</h1>");

@@ -14,9 +14,9 @@ const pusher = require("../helpers/pusher");
 // const req = require("express/lib/request");
 
 const userService = {
-  updatePicture: async (data, user) => {
+  updatePicture: async (req, user) => {
     const file = req.file;
-    const imageNames = `http://tourbook-backend.herokuapp.com/images/profile-pictures/"${file.filename}`;
+    const imageNames = `http://tourbook-backend.herokuapp.com/images/profile-pictures/${file.filename}`;
     let user1 = await UserModel.findByIdAndUpdate(user.id, {
       $set: { profilePicture: imageNames },
     });
