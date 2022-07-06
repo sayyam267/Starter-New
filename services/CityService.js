@@ -4,9 +4,12 @@ module.exports = {
   addCity: async (data) => {
     try {
       let cityname = data;
-      let city = await new CityModel({ name: cityname });
-      await city.save();
-      return city;
+      let existing = await CityModel.findOne({ name: cityname });
+      if (!existing) {
+        let city = await CityModel.create({ name: cityname });
+        return city;
+      }
+      return existing;
     } catch (e) {
       throw e;
     }

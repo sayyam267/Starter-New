@@ -5,8 +5,7 @@ const router = require("express").Router();
 const handleAuth = require("../middlewares/auth");
 // const { createTourCheck } = require("../validations/TourValidation");
 const validation = require("../helpers/validation");
-const multer_middleware = require("../middlewares/multer");
-
+const cors = require("cors");
 const multer = require("multer");
 
 const storage = multer.diskStorage({
@@ -24,7 +23,7 @@ router.post(
   "/create",
   handleAuth,
   authVendor,
-  // multer_middleware,
+  cors(),
   upload.fields([{ name: "multiImages", maxCount: 5 }]),
   TourController.createTour
 );

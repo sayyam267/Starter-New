@@ -23,16 +23,13 @@ module.exports = {
   },
   addCity: async (req, res) => {
     try {
-      const schema = Joi.object({
-        name: Joi.string()
-          .min(3)
-          .required()
-          .messages({
-            "any.required": "Please provide name of City",
-            "string.min": "Name must be greater than 3",
-          }),
+      const schema = Joi.object().keys({
+        name: Joi.string().min(3).required().messages({
+          "any.required": "Please provide name of City",
+          "string.min": "Name must be greater than 3",
+        }),
       });
-      await schema.validateAsync(req.body.name);
+      await schema.validateAsync(req.body);
       let { name } = req.body;
       let newCity = await CityService.addCity(name);
       return res
