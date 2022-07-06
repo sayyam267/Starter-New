@@ -23,8 +23,14 @@ module.exports = {
     });
   },
   getTours: async () => {
-    let tours = await TourModel.find({}).populate(["source", "destination"]);
-    let latestTours = await TourModel.find({ seats: { $gt: 0 } })
+    let tours = await TourModel.find({
+      seats: { $gt: 0 },
+      startDate: { $gte: Date.now() },
+    }).populate(["source", "destination"]);
+    let latestTours = await TourModel.find({
+      seats: { $gt: 0 },
+      startDate: { $gte: Date.now() },
+    })
       .select(["tourpics", "vendorID", "seats", "name", "price"])
       .sort("-createdAt")
       .limit(5);
