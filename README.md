@@ -6,11 +6,18 @@
 
 ## TourBook provides:
 
-- Secure Payments (Scam Proof and Refund Options).
+- Secure Payments (Refund Options).
 - Secure Authentication.
 - Powerful Admin Rights.
 - Providing a Platform for Vendors, Tourists, Tour Guides To Interact with each other.
 - CustomTour Facility for those who can't find their desired tours.
+- Chat Facility with live saved Conversastions.
+- Notifications Facility with live Notifications.
+- Vendor Check by Admin.
+- Email Send / Receive using NodeMailer.
+> Security Email.
+> Order Info Email.
+> Refund Info Email.
 
 ### **A Project by COMSATS University Students of FA18 Batch**
 
