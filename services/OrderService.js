@@ -403,19 +403,31 @@ module.exports = {
       { $set: { requestRefund: true } }
     ).populate("tourID");
     if (order) {
-      let tourist = await UserModel.findById(order.touristID).select([
-        "fname",
-        "lname",
-      ]);
-      let fullname = tourist.fname + " " + tourist.lname;
-      let notification = await Notification.create({
-        text: `${fullname} just requested a refund on your Tour ${order.tourID.name} of RS ${order.amount}`,
-        type: "order",
-        userID: order.tourID.vendorID,
-        contentID: order._id,
-      });
-      pusher.trigger(`${order.tourID.vendorID}`, "notifications", notification);
-      return true;
+      let tour = await TourModel.findById(order.tourID).select("startDate");
+      if (new Date.now() < new Date(tour.startDate)) {
+        let tourist = await UserModel.findById(order.touristID).select([
+          "fname",
+          "lname",
+        ]);
+        let fullname = tourist.fname + " " + tourist.lname;
+        let notification = await Notification.create({
+          text: `${fullname} just requested a refund on your Tour ${order.tourID.name} of RS ${order.amount}`,
+          type: "order",
+          userID: order.tourID.vendorID,
+          contentID: order._id,
+        });
+        pusher.trigger(
+          `${order.tourID.vendorID}`,
+          "notifications",
+          notification
+        );
+        return true;
+      } else {
+        let e = new Error(
+          "The Respective Tour has already passed Due Date. You cannot request Refund now!"
+        );
+        throw e;
+      }
     } else {
       let e = new Error("Not Found");
       e.statusCode = 404;

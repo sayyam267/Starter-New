@@ -24,9 +24,13 @@ module.exports = {
   },
   getTours: async () => {
     let tours = await TourModel.find({}).populate(["source", "destination"]);
-    console.log(tours);
+    let latestTours = await TourModel.find({ seats: { $gt: 0 } })
+      .select(["tourpics", "vendorID", "seats", "name", "price"])
+      .sort("-createdAt")
+      .limit(5);
+    // console.log(tours);
     if (Object.keys(tours).length > 0) {
-      return tours;
+      return { tours, carousal: latestTours };
     } else {
       let e = new Error();
       e.message = "No Tours FOUND";
