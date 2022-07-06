@@ -61,7 +61,11 @@ const NotificationController = {
       let status = await NotificationService.markAllAsRead(user);
       return res.send({
         data: status,
-        message: `${status} Notifications Marked As Read!`,
+        message: `${
+          status == 0
+            ? "All Notifications are Already Marked As Read"
+            : `${status} Notifications Marked As Read!`
+        } `,
       });
     } catch (e) {
       return res

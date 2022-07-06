@@ -54,10 +54,11 @@ const NotificationService = {
   markAllAsRead: async (user) => {
     try {
       let notification = await NotificationsModel.updateMany(
-        { userID: user.id },
+        { userID: user.id, isRead: false },
         { $set: { isRead: true } }
       );
-      if (notification.modifiedCount) {
+      console.log(notification.modifiedCount);
+      if (notification.modifiedCount >= 0) {
         return notification.modifiedCount;
       } else {
         let e = new Error("Something Went Wrong!");
