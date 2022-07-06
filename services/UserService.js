@@ -17,10 +17,10 @@ const userService = {
   updatePicture: async (data, user) => {
     const file = req.file;
     const imageNames = `http://tourbook-backend.herokuapp.com/images/profile-pictures/"${file.filename}`;
-    let user = await UserModel.findByIdAndUpdate(user.id, {
+    let user1 = await UserModel.findByIdAndUpdate(user.id, {
       $set: { profilePicture: imageNames },
     });
-    if (user) {
+    if (user1) {
       return true;
     } else {
       let e = new Error("CANNOT Update");
