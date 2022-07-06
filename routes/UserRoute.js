@@ -55,7 +55,7 @@ router.put("/block", handleAuth, authAdmin, UserController.blockUser);
 router.put("/delete", handleAuth, UserController.deleteUser);
 router.put(
   "/update/picture",
-  cors(),
+  // cors(),
   handleAuth,
   upload.single("picture"),
   UserController.updateProfilePicture
