@@ -25,12 +25,7 @@ router.post(
 router.get("/validate", UserController.verifyUser);
 router.get("/get", UserController.getUser);
 router.get("/get/:id", UserController.getUserByID);
-router.get(
-  "/all",
-  handleAuth,
-  authAdmin,
-  UserController.getAll
-);
+router.get("/all", handleAuth, authAdmin, UserController.getAll);
 router.post("/forgot", UserController.forgotPassword);
 router.put(
   "/update/password",
@@ -43,6 +38,7 @@ router.get("/mydetails", handleAuth, UserController.getmyDetails);
 router.put("/verify/otp", UserController.verifyOTP);
 router.put("/block", handleAuth, authAdmin, UserController.blockUser);
 router.put("/delete", handleAuth, UserController.deleteUser);
+router.put("/update/picture", handleAuth, UserController.updateProfilePicture);
 router.put("/update/profile", cors(), handleAuth, UserController.updateProfile);
 router.get("/balance", handleAuth, UserController.getBalance);
 // router.post("/block/", handleAuth, authAdmin, UserController.blockUser);

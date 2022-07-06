@@ -14,6 +14,20 @@ const pusher = require("../helpers/pusher");
 // const req = require("express/lib/request");
 
 const userService = {
+  updatePicture: async (data, user) => {
+    const file = req.file;
+    const imageNames = `http://tourbook-backend.herokuapp.com/images/profile-pictures/"${file.filename}`;
+    let user = await UserModel.findByIdAndUpdate(user.id, {
+      $set: { profilePicture: imageNames },
+    });
+    if (user) {
+      return true;
+    } else {
+      let e = new Error("CANNOT Update");
+      e.statusCode = 404;
+      throw e;
+    }
+  },
   getProfileInfo: async (id) => {
     let details = await UserModel.findById(id)
       .select(["-password"])
@@ -803,7 +817,10 @@ const userService = {
     }
   },
   getAll: async (user) => {
-    let users = await UserModel.find({_id:{$ne:user.id}}).select("-password").populate("city").sort("-createdAt");
+    let users = await UserModel.find({ _id: { $ne: user.id } })
+      .select("-password")
+      .populate("city")
+      .sort("-createdAt");
     if (users) return users;
     else {
       let e = new Error("NOT FOUND");

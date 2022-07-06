@@ -411,6 +411,19 @@ module.exports = {
         .send({ data: null, message: e.message });
     }
   },
+  updateProfilePicture: async (req, res) => {
+    try {
+      let user = req?.user;
+      if (req?.body?.picture) {
+        let newPicture = await UserService.updatePicture(req?.body, user);
+        return res.send({ data: true, message: "Updated" });
+      }
+    } catch (e) {
+      return res
+        .status(e?.statusCode || 400)
+        .send({ data: null, message: e.message });
+    }
+  },
   deleteUser: async (req, res) => {
     try {
       let { id } = req.user;
@@ -456,7 +469,7 @@ module.exports = {
   },
   getAll: async (req, res) => {
     try {
-      let user= req?.user;
+      let user = req?.user;
       let users = await UserService.getAll(user);
       return res.send({ data: users, message: "Fetched" });
     } catch (e) {
