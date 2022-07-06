@@ -586,6 +586,7 @@ const userService = {
                       profilePicture: existingUser.profilePicture,
                       // isVerified: existingUser.isVerified,
                       balance: existingUser.balance,
+                      id: existingUser._id,
                     };
                   }
                 }

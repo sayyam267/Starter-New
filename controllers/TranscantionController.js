@@ -3,7 +3,7 @@ const Joi = require("joi");
 module.exports = {
   purchaseCredits: async (req, res) => {
     try {
-      const schema = Joi.object({
+      const schema = Joi.object().keys({
         payment: Joi.object().keys({
           CardNumber: Joi.string()
             .required()
