@@ -13,7 +13,7 @@ module.exports = {
   },
   getCities: async () => {
     try {
-      let cities = await CityModel.find({});
+      let cities = await CityModel.find({}).sort("name");
       if (Object.keys(cities).length > 0) {
         return cities;
       } else {
