@@ -416,7 +416,7 @@ module.exports = {
       console.log(req.body);
       let user = req?.user;
       let newPicture = await UserService.updatePicture(req, user);
-      return res.send({ data: true, message: "Updated" });
+      return res.send({ data: newPicture, message: "Updated" });
     } catch (e) {
       return res
         .status(e?.statusCode || 400)

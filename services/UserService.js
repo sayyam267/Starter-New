@@ -21,7 +21,7 @@ const userService = {
       $set: { profilePicture: imageNames },
     });
     if (user1) {
-      return true;
+      return { datatrue, src: user1.profilePicture };
     } else {
       let e = new Error("CANNOT Update");
       e.statusCode = 404;
