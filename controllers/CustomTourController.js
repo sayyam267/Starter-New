@@ -4,6 +4,7 @@ const Joi = require("joi");
 module.exports = {
   requestCustomTour: async (req, res) => {
     try {
+      console.log("CUSTOM TOUR REQ", req.body);
       const schema = Joi.object({
         requirements: Joi.object().keys({
           maxBudget: Joi.number().min(100).max(99999).required().messages({
