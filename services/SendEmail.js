@@ -8,7 +8,9 @@ const fromPass = process.env.PASS;
 const sendVerificationEmail = async ({ name, email, confirmationCode }) => {
   const transporter = await nodemailer.createTransport({
     // service: "gmail",
-    service: "hotmail",
+    // service: "hotmail",
+    host: "smtp.zoho.eu",
+    port: 465,
     auth: {
       user: fromMail,
       pass: fromPass,
@@ -658,7 +660,9 @@ const sendVerificationEmail = async ({ name, email, confirmationCode }) => {
 };
 const sendForgotPassword = async ({ name, email, confirmationCode }) => {
   const transporter = await nodemailer.createTransport({
-    service: "hotmail",
+    // service: "hotmail",
+    host: "smtp.zoho.eu",
+    port: 465,
     auth: {
       user: fromMail,
       pass: fromPass,
@@ -677,7 +681,9 @@ const sendForgotPassword = async ({ name, email, confirmationCode }) => {
 };
 const sendInfoEmail = async ({ name, email, subject, html }) => {
   const transporter = await nodemailer.createTransport({
-    service: "hotmail",
+    // service: "hotmail",
+    host: "smtp.zoho.eu",
+    port: 465,
     auth: {
       user: fromMail,
       pass: fromPass,
