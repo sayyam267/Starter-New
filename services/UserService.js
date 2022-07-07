@@ -794,11 +794,11 @@ const userService = {
       );
       let notification = await Notifications.create({
         text: `Your Profile Info was Updated!`,
-        userID: user._id,
+        userID: user.id,
         contentID: null,
         type: "security",
       });
-      pusher.trigger(`${user._id}`, "notifications", notification);
+      pusher.trigger(`${user.id}`, "notifications", notification);
       return updatedProfile;
     } else {
       let e = new Error();

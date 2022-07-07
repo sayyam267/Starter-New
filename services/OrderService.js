@@ -263,13 +263,13 @@ module.exports = {
       throw e;
     }
   },
-  approveTour: async (data, user) => {
+  approveTour: async (data, usert) => {
     let existingOrder = await OrderModel.findOneAndUpdate(
       { _id: data.id },
       { $set: { isApproved: true } }
     );
     if (existingOrder) {
-      let vendor = await UserModel.findById(user.id);
+      let vendor = await UserModel.findById(usert.id);
       vendor.balance = vendor.balance + existingOrder.amount;
       await vendor.save();
       let user = await UserModel.findById(existingOrder.touristID);
