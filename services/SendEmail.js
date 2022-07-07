@@ -10,7 +10,7 @@ const sendVerificationEmail = async ({ name, email, confirmationCode }) => {
     // service: "gmail",
     // service: "hotmail",
     host: "smtp.zoho.eu",
-    port: 465,
+    // port: 465,
     auth: {
       user: fromMail,
       pass: fromPass,
@@ -662,7 +662,7 @@ const sendForgotPassword = async ({ name, email, confirmationCode }) => {
   const transporter = await nodemailer.createTransport({
     // service: "hotmail",
     host: "smtp.zoho.eu",
-    port: 465,
+    // port: 465,
     auth: {
       user: fromMail,
       pass: fromPass,
@@ -683,7 +683,7 @@ const sendInfoEmail = async ({ name, email, subject, html }) => {
   const transporter = await nodemailer.createTransport({
     // service: "hotmail",
     host: "smtp.zoho.eu",
-    port: 465,
+    // port: 465,
     auth: {
       user: fromMail,
       pass: fromPass,
