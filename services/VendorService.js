@@ -75,6 +75,7 @@ module.exports = {
           date: item.date,
           email: item.touristID.email,
           name: item.touristID.fname,
+          touristID: item.touristID._id,
         });
       }
       // return String(item.tourID.vendorID) == String(user.id);
