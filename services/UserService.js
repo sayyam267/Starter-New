@@ -445,6 +445,7 @@ const userService = {
       userID: user._id,
       text: `Welcome ${user.fname} to TourBook. Stay Safe and spread Love.`,
       contentID: null,
+      type:"newuser"
     });
     await notification.save();
     return user;
