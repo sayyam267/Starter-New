@@ -441,7 +441,12 @@ const userService = {
       emailVerificationCode: uniqueCode,
     });
     await user.save();
-
+    let notification = await Notifications({
+      userID: user._id,
+      text: `Welcome ${user.fname} to TourBook. Stay Safe and spread Love.`,
+      contentID: null,
+    });
+    await notification.save();
     return user;
   },
   createAdmin: async (data) => {
