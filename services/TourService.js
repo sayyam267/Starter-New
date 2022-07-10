@@ -3,6 +3,18 @@ const UserModel = require("../models/UserModel");
 const OrderModel = require("../models/Orders");
 const pusher = require("../helpers/pusher");
 const Notification = require("../models/Notifications");
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+  cloud_name: 'snakecloud',
+  api_key: '494282718685512',
+  api_secret: 'ykZ8B12bVZFDQnqhna7Q2JcHaTE',
+  secure: true
+});
+
+
+
+
 module.exports = {
   markAsDone: async (tourID, user) => {
     let tour = await TourModel.findById(tourID);
@@ -188,37 +200,37 @@ module.exports = {
   //   await newTour.save();
   //   return newTour;
   // },
-  createTour: async (req) => {
-    try {
-      console.log(req.body);
-      // console.log(req.files.multiImages);
-      const files = req.files.multiImages;
-      const imageNames = [];
-      const addedOn = Date.now();
-      if (files.length > 0) {
-        files.map((file) => {
-          //SAVING IN DB
-          // console.log("public/images/" + file.filename);
-          imageNames.push("images/tourpics/" + file.filename);
-        });
-      } else imageNames.push("images/tourpics/" + file.filename);
-      // console.log(req.files.filename);
-      // console.log(req.file);
-      // console.log(req.body);
-      req.body.validTill = new Date(req.body.validTill);
-      //   console.log(imageNames);
-      const newTour = await TourModel({
-        ...req.body,
-        vendorID: req.user.id,
-        tourpics: imageNames,
-        addedOn: addedOn,
-      });
-      await newTour.save();
-      return newTour;
-    } catch (e) {
-      throw e;
-    }
-  },
+  // createTour: async (req) => {
+  //   try {
+  //     console.log(req.body);
+  //     // console.log(req.files.multiImages);
+  //     const files = req.files.multiImages;
+  //     const imageNames = [];
+  //     const addedOn = Date.now();
+  //     if (files.length > 0) {
+  //       files.map((file) => {
+  //         //SAVING IN DB
+  //         // console.log("public/images/" + file.filename);
+  //         imageNames.push("images/tourpics/" + file.filename);
+  //       });
+  //     } else imageNames.push("images/tourpics/" + file.filename);
+  //     // console.log(req.files.filename);
+  //     // console.log(req.file);
+  //     // console.log(req.body);
+  //     req.body.validTill = new Date(req.body.validTill);
+  //     //   console.log(imageNames);
+  //     const newTour = await TourModel({
+  //       ...req.body,
+  //       vendorID: req.user.id,
+  //       tourpics: imageNames,
+  //       addedOn: addedOn,
+  //     });
+  //     await newTour.save();
+  //     return newTour;
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // },
   createTour: async (req) => {
     try {
       // console.log(req.body);
@@ -246,22 +258,18 @@ module.exports = {
       const imageNames = [];
       const addedOn = Date.now();
       if (files.length > 0) {
-        files.map((file) => {
-          //SAVING IN DB
-          // console.log("public/images/" + file.filename);
-          imageNames.push(
-            "http://tourbook-backend.herokuapp.com/images/tourpics/" +
-              file.filename
-          );
-        });
-      } else
-        imageNames.push(
-          "http://tourbook-backend.herokuapp.com/images/tourpics/" +
-            file.filename
+        await Promise.all(
+        files.map(async (file) => {
+          const data = await cloudinary.uploader.upload(file.path);
+          imageNames.push(data.url);
+        })
         );
-      // console.log(req.files.filename);
-      // console.log(req.file);
-      // console.log(req.body);
+      } else{
+        const data = await cloudinary.uploader.upload(files.path);
+        imageNames.push(data.url);
+      }
+        
+      
       req.body.validTill = new Date(req.body.validTill);
       //   console.log(imageNames);
       const newTour = await TourModel({
