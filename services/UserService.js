@@ -8,17 +8,27 @@ const bcrypt = require("bcryptjs");
 const { sendForgotPassword } = require("./SendEmail");
 const Notifications = require("../models/Notifications");
 const pusher = require("../helpers/pusher");
+
+const cloudinary = require("cloudinary").v2;
 // const UserTypeController = require("../controllers/UserTypeController");
 // const UserTypeService = require("./UserTypeService");
 // const UserType = require("../models/UserType");
 // const req = require("express/lib/request");
 
+cloudinary.config({
+  cloud_name: 'snakecloud',
+  api_key: '494282718685512',
+  api_secret: 'ykZ8B12bVZFDQnqhna7Q2JcHaTE',
+  secure: true
+});
+
 const userService = {
   updatePicture: async (req, user) => {
     const file = req.file;
-    const imageNames = `http://tourbook-backend.herokuapp.com/images/profile-pictures/${file.filename}`;
+    const data = await cloudinary.uploader.upload(file.path);
+    // const imageNames = `http://tourbook-backend.herokuapp.com/images/profile-pictures/${file.filename}`;
     let user1 = await UserModel.findByIdAndUpdate(user.id, {
-      $set: { profilePicture: imageNames },
+      $set: { profilePicture: data.url },
     });
     if (user1) {
       return { data:true, src: user1.profilePicture };
